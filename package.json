@@ -6,6 +6,8 @@
 
         "up:prod": "docker compose -f docker-compose.yaml  up --build -d",
         "down:prod": "docker compose -f docker-compose.yaml down",
-        "restart:prod": "docker compose -f docker-compose.yaml down && docker compose -f docker-compose.yaml up --build -d"
+        "restart:prod": "docker compose -f docker-compose.yaml down && docker compose -f docker-compose.yaml up --build -d",
+
+        "yarn": "cd Gateway && yarn && cd .. && cd UsersMS && yarn && cd .."
     }
 }
