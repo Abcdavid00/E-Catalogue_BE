@@ -21,3 +21,16 @@
 .ionide
 
 # End of https://www.toptal.com/developers/gitignore/api/visualstudiocode
+
+# Docker volumes
+DockerVolume
+
+# env file
+.env
+
+node_modules
+
+# Sandbox
+TestBE
+TestMS
+docker-compose.sb.yaml
