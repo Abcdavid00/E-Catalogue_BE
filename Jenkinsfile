@@ -37,12 +37,12 @@ pipeline {
         }
         stage('Define variable') {
             steps {
-                def version = "${majorVersion}.${minorVersion}.${BUILD_NUMBER}"
-                def harborURL = 'harbor.abcdavid.top'
-                def projectName = 'library'
+                sh 'def version = "${majorVersion}.${minorVersion}.${BUILD_NUMBER}"'
+                sh 'def harborURL = "harbor.abcdavid.top"'
+                sh 'def projectName = "library"'
 
-                def gatewayTag = "${harborURL}/${projectName}/gateway:${version}"
-                def usersmsTag = "${harborURL}/${projectName}/usersms:${version}"
+                sh 'def gatewayTag = "${harborURL}/${projectName}/gateway:${version}"'
+                sh 'def usersmsTag = "${harborURL}/${projectName}/usersms:${version}"'
             }
         }
         stage('Build') {
