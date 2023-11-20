@@ -2,6 +2,11 @@ pipeline {
     environment {
         majorVersion = '0'
         minorVersion = '0'
+        version = "${majorVersion}.${minorVersion}.${BUILD_NUMBER}"
+        harborURL = 'harbor.abcdavid.top'
+        projectName = 'library'
+        gatewayTag = "${harborURL}/${projectName}/gateway:${version}"
+        usersmsTag = "${harborURL}/${projectName}/usersms:${version}"
     }
 
     agent {
@@ -35,17 +40,17 @@ pipeline {
                 }
             }
         }
-        stage('Define variable') {
-            steps {
-                export version="${majorVersion}.${minorVersion}.${BUILD_NUMBER}"
-                export harborURL="harbor.abcdavid.top"
-                export projectName="library"
+        // stage('Define variable') {
+        //     steps {
+        //         export version="${majorVersion}.${minorVersion}.${BUILD_NUMBER}"
+        //         export harborURL="harbor.abcdavid.top"
+        //         export projectName="library"
 
-                export gatewayTag="${harborURL}/${projectName}/gateway:${version}"
-                echo 'gatewayTag: ${gatewayTag}'
-                export usersmsTag="${harborURL}/${projectName}/usersms:${version}"
-            }
-        }
+        //         export gatewayTag="${harborURL}/${projectName}/gateway:${version}"
+        //         echo 'gatewayTag: ${gatewayTag}'
+        //         export usersmsTag="${harborURL}/${projectName}/usersms:${version}"
+        //     }
+        // }
         stage('Build') {
             steps {
                 echo 'Listing files...'
