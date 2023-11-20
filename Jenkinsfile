@@ -72,11 +72,13 @@ pipeline {
                 sh 'docker build -t ${usersmsTag} ./UsersMS --platform linux/amd64'
             }
         }
+
         stage('Test') {
             steps {
                 echo 'To be implemented...'
             }
         }
+
         stage('Push to Harbor') {
             steps {
                 echo 'Pushing api-gateway image to Harbor...'
@@ -85,6 +87,13 @@ pipeline {
                 echo 'Pushing users microservice image to Harbor...'
                 sh 'docker push ${usersmsTag}'
             }
+        }
+
+        stage('Trigger manifest update') {
+          steps {
+              echo 'Triggering manifest update...'
+              build job: 'manifest-updater', parameters: [string(name: 'IMAGE_VERSION', value: ${version})]
+          }
         }
         
     }
