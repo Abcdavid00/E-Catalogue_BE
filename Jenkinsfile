@@ -66,10 +66,10 @@ pipeline {
                 echo 'gatewayTag: ${gatewayTag}'
 
                 echo 'Building api-gateway...'
-                sh 'docker build -t ${gatewayTag} ./Gateway'
+                sh 'docker build -t ${gatewayTag} ./Gateway --platform linux/amd64'
 
                 echo 'Building users microservice...'
-                sh 'docker build -t ${usersmsTag} ./UsersMS'
+                sh 'docker build -t ${usersmsTag} ./UsersMS --platform linux/amd64'
             }
         }
         stage('Test') {
@@ -86,5 +86,6 @@ pipeline {
                 sh 'docker push ${usersmsTag}'
             }
         }
+        
     }
 }
