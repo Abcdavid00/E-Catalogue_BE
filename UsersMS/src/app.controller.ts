@@ -13,6 +13,7 @@ export class AppController {
 
   @MessagePattern({ cmd: 'Hi' })
   ping(_: any): string {
-    return 'Hello from UserMS!';
+
+    return this.appService.hi();
   }
 }
