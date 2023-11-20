@@ -4,7 +4,7 @@ pipeline {
         minorVersion = '0'
         version = "${majorVersion}.${minorVersion}.${BUILD_NUMBER}"
         harborURL = 'harbor.abcdavid.top'
-        projectName = 'cicd-demo'
+        projectName = 'cicd_demo'
         gatewayTag = "${harborURL}/${projectName}/gateway:${version}"
         usersmsTag = "${harborURL}/${projectName}/usersms:${version}"
     }
