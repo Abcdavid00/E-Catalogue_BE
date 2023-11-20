@@ -23,7 +23,7 @@ pipeline {
                       args:
                       - infinity
                     - name: dockerindocker
-                      image: docker
+                      image: docker:dind
                   '''
             defaultContainer 'dockerindocker'
         }
