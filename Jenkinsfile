@@ -69,7 +69,7 @@ pipeline {
                 sh 'docker build -t ${gatewayTag} ./Gateway'
 
                 echo 'Building users microservice...'
-                sh 'docker build -t ${usersms} ./UsersMS'
+                sh 'docker build -t ${usersmsTag} ./UsersMS'
             }
         }
         stage('Test') {
