@@ -92,7 +92,7 @@ pipeline {
         stage('Trigger manifest update') {
           steps {
               echo 'Triggering manifest update...'
-              build job: 'manifest-updater', parameters: [string(name: 'IMAGE_VERSION', value: ${version})]
+              build job: 'manifest-updater', parameters: [string(name: 'IMAGE_VERSION', value: env.version)]
           }
         }
         
