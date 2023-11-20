@@ -42,6 +42,7 @@ pipeline {
                 sh 'export projectName="library"'
 
                 sh 'export gatewayTag="${harborURL}/${projectName}/gateway:${version}"'
+                echo 'gatewayTag: ${gatewayTag}'
                 sh 'export usersmsTag="${harborURL}/${projectName}/usersms:${version}"'
             }
         }
@@ -50,6 +51,8 @@ pipeline {
                 echo 'Listing files...'
                 sh 'ls -al'
                 echo 'Building docker images...'
+
+                echo 'gatewayTag: ${gatewayTag}'
 
                 echo 'Building api-gateway...'
                 sh 'docker build -t ${gatewayTag} ./Gateway'
