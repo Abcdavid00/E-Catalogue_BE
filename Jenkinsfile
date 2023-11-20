@@ -37,13 +37,13 @@ pipeline {
         }
         stage('Define variable') {
             steps {
-                sh 'export version="${majorVersion}.${minorVersion}.${BUILD_NUMBER}"'
-                sh 'export harborURL="harbor.abcdavid.top"'
-                sh 'export projectName="library"'
+                export version="${majorVersion}.${minorVersion}.${BUILD_NUMBER}"
+                export harborURL="harbor.abcdavid.top"
+                export projectName="library"
 
-                sh 'export gatewayTag="${harborURL}/${projectName}/gateway:${version}"'
+                export gatewayTag="${harborURL}/${projectName}/gateway:${version}"
                 echo 'gatewayTag: ${gatewayTag}'
-                sh 'export usersmsTag="${harborURL}/${projectName}/usersms:${version}"'
+                export usersmsTag="${harborURL}/${projectName}/usersms:${version}"
             }
         }
         stage('Build') {
