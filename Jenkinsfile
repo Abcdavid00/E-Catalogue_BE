@@ -24,7 +24,8 @@ pipeline {
                       - infinity
                     - name: dockerindocker
                       image: docker:latest
-                      command: cat
+                      command:
+                      - cat
                       tty: true
                       volumeMounts:
                       - mountPath: /var/run/docker.sock
@@ -33,7 +34,7 @@ pipeline {
                     - name: docker-sock
                       hostPath:
                         path: /var/run/docker.sock   
-                            '''
+                  '''
             defaultContainer 'dockerindocker'
         }
     }
