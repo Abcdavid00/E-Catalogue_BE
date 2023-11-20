@@ -24,10 +24,6 @@ pipeline {
                       - infinity
                     - name: dockerindocker
                       image: docker
-                      command:
-                      - sleep
-                      args:
-                      - infinity
                   '''
             defaultContainer 'dockerindocker'
         }
