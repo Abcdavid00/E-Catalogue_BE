@@ -24,6 +24,8 @@ pipeline {
                       - infinity
                     - name: dockerindocker
                       image: docker:dind
+                      SecurityContext:
+                        Privileged: True
                   '''
             defaultContainer 'dockerindocker'
         }
