@@ -13,12 +13,12 @@ export class AppService {
 
   async getHello(): Promise<string> {
     const Message: String[] = [];
-    Message.push("Hello from Gateway!!!!!");
+    Message.push("Hello from Gateway!");
     Message.push(
       await firstValueFrom(
         this.UsersClient.send<string>({ cmd: 'Hi' }, {})
       )
     );
-    return Message.join('\n');
+    return Message.join('\t');
   }
 }

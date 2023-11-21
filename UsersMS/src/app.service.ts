@@ -7,7 +7,6 @@ export class AppService {
   }
 
   hi(): string {
-    const hostname = require('os').hostname();
-    return `Hello from UserMS( On ${hostname})!`;
+    return `Hello from UserMS!`;
   }
 }
