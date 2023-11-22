@@ -24,14 +24,6 @@ pipeline {
                       volumeMounts:
                       - mountPath: /var/run/docker.sock
                         name: docker-sock
-                    - name: dind2
-                      image: docker:latest
-                      command:
-                      - cat
-                      tty: true
-                      volumeMounts:
-                      - mountPath: /var/run/docker.sock
-                        name: docker-sock
                     volumes:
                     - name: docker-sock
                       hostPath:
@@ -65,22 +57,21 @@ pipeline {
                 sh 'ls -al'
                 echo 'Building docker images...'
 
-                container('dind') {
-                    echo 'Building api-gateway...'
-                    sh 'docker build -t ${gatewayTag} ./Gateway --platform linux/amd64'
+                parallel {
+                    stage('Build api-gateway') {
+                        container('dind') {
+                            echo 'Building api-gateway...'
+                            sh 'docker build -t ${gatewayTag} ./Gateway --platform linux/amd64'
+                        }
+                    }
+
+                    stage('Build users microservice') {
+                        container('dind2') {
+                            echo 'Building users microservice...'
+                            sh 'docker build -t ${usersmsTag} ./UsersMS --platform linux/amd64'
+                        }
+                    }
                 }
-
-                container('dind2') {
-                    echo 'Building users microservice...'
-                    sh 'docker build -t ${usersmsTag} ./UsersMS --platform linux/amd64'
-                }
-
-
-                // echo 'Building api-gateway...'
-                // sh 'docker build -t ${gatewayTag} ./Gateway --platform linux/amd64'
-
-                // echo 'Building users microservice...'
-                // sh 'docker build -t ${usersmsTag} ./UsersMS --platform linux/amd64'
             }
         }
 
