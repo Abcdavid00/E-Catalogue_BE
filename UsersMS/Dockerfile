@@ -55,7 +55,7 @@ FROM node:18-alpine AS prod
 
 ENV NODE_ENV production
 
-WORKDIR /appp
+WORKDIR /app
 
 ## Copy required file to run the production application
 COPY --from=base --chown=node:node /app/node_modules ./node_modules
