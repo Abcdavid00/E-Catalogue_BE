@@ -15,14 +15,15 @@ pipeline {
                   apiVersion: v1
                   kind: Pod
                   spec:
-                    containers:
-                    - name: shell
-                      image: ubuntu
+                    - name: dind
+                      image: docker:latest
                       command:
-                      - sleep
-                      args:
-                      - infinity
-                    - name: dockerindocker
+                      - cat
+                      tty: true
+                      volumeMounts:
+                      - mountPath: /var/run/docker.sock
+                        name: docker-sock
+                    - name: dind2
                       image: docker:latest
                       command:
                       - cat
@@ -35,7 +36,7 @@ pipeline {
                       hostPath:
                         path: /var/run/docker.sock   
                   '''
-            defaultContainer 'dockerindocker'
+            defaultContainer 'dind'
         }
     }
     stages {
@@ -63,13 +64,15 @@ pipeline {
                 sh 'ls -al'
                 echo 'Building docker images...'
 
-                echo 'gatewayTag: ${gatewayTag}'
+                container('dind') {
+                    echo 'Building api-gateway...'
+                    sh 'docker build -t ${gatewayTag} ./Gateway --platform linux/amd64'
+                }
 
-                echo 'Building api-gateway...'
-                sh 'docker build -t ${gatewayTag} ./Gateway --platform linux/amd64'
-
-                echo 'Building users microservice...'
-                sh 'docker build -t ${usersmsTag} ./UsersMS --platform linux/amd64'
+                container('dind2') {
+                    echo 'Building users microservice...'
+                    sh 'docker build -t ${usersmsTag} ./UsersMS --platform linux/amd64'
+                }
             }
         }
 
