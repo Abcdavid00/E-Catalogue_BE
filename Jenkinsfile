@@ -52,24 +52,22 @@ pipeline {
         //     }
         // }
         stage('Build') {
-            steps {
-                echo 'Listing files...'
-                sh 'ls -al'
-                echo 'Building docker images...'
+            echo 'Listing files...'
+            sh 'ls -al'
+            echo 'Building docker images...'
 
-                parallel {
-                    stage('Build api-gateway') {
-                        container('dind') {
-                            echo 'Building api-gateway...'
-                            sh 'docker build -t ${gatewayTag} ./Gateway --platform linux/amd64'
-                        }
+            parallel {
+                stage('Build api-gateway') {
+                    container('dind') {
+                        echo 'Building api-gateway...'
+                        sh 'docker build -t ${gatewayTag} ./Gateway --platform linux/amd64'
                     }
+                }
 
-                    stage('Build users microservice') {
-                        container('dind2') {
-                            echo 'Building users microservice...'
-                            sh 'docker build -t ${usersmsTag} ./UsersMS --platform linux/amd64'
-                        }
+                stage('Build users microservice') {
+                    container('dind2') {
+                        echo 'Building users microservice...'
+                        sh 'docker build -t ${usersmsTag} ./UsersMS --platform linux/amd64'
                     }
                 }
             }
