@@ -15,6 +15,7 @@ pipeline {
                   apiVersion: v1
                   kind: Pod
                   spec:
+                    containers:
                     - name: dind
                       image: docker:latest
                       command:
@@ -73,6 +74,13 @@ pipeline {
                     echo 'Building users microservice...'
                     sh 'docker build -t ${usersmsTag} ./UsersMS --platform linux/amd64'
                 }
+
+
+                // echo 'Building api-gateway...'
+                // sh 'docker build -t ${gatewayTag} ./Gateway --platform linux/amd64'
+
+                // echo 'Building users microservice...'
+                // sh 'docker build -t ${usersmsTag} ./UsersMS --platform linux/amd64'
             }
         }
 
