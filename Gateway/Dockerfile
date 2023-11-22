@@ -25,7 +25,7 @@ FROM node:18-alpine AS base
 
 ENV NODE_ENV production
 
-WORKDIR /app
+WORKDIR /appp
 
 RUN apk add --no-cache libc6-compat
 
