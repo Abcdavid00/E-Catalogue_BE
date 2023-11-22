@@ -52,12 +52,6 @@ pipeline {
         //     }
         // }
         stage('Build') {
-            steps {
-                echo 'Listing files...'
-                sh 'ls -al'
-                echo 'Building docker images...'
-            }
-
             parallel {
                 stage('Build api-gateway') {
                     steps {
