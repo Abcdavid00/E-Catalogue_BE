@@ -4,7 +4,7 @@ pipeline {
         minorVersion = '0'
         version = "${majorVersion}.${minorVersion}.${BUILD_NUMBER}"
         harborURL = 'harbor.abcdavid.top'
-        projectName = 'cicd_demo'
+        projectName = 'e_catalogue'
         gatewayTag = "${harborURL}/${projectName}/gateway:${version}"
         usersmsTag = "${harborURL}/${projectName}/usersms:${version}"
     }
@@ -76,12 +76,20 @@ pipeline {
         }
 
         stage('Push to Harbor') {
-            steps {
-                echo 'Pushing api-gateway image to Harbor...'
-                sh 'docker push ${gatewayTag}'
+            parallel {
+                stage('Push api-gateway image to Harbor') {
+                    steps {
+                        echo 'Pushing api-gateway image to Harbor...'
+                        sh 'docker push ${gatewayTag}'
+                    }
+                }
 
-                echo 'Pushing users microservice image to Harbor...'
-                sh 'docker push ${usersmsTag}'
+                stage('Push users microservice image to Harbor') {
+                    steps {
+                        echo 'Pushing users microservice image to Harbor...'
+                        sh 'docker push ${usersmsTag}'
+                    }
+                }
             }
         }
 
