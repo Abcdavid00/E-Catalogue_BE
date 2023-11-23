@@ -1,4 +1,3 @@
-import { registerAs } from "@nestjs/config";
 import { TypeOrmModuleOptions } from "@nestjs/typeorm";
 
 const DB_HOST = process.env.DB_HOST || 'localhost';
@@ -6,12 +5,8 @@ const DB_PORT = parseInt(process.env.DB_PORT, 10) || 3306;
 const DB_NAME = process.env.DB_NAME || 'users';
 const DB_USER = process.env.DB_USER || 'root';
 const DB_PASSWORD = process.env.DB_PASSWORD || 'password';
-const DB_SYNCHRONIZE = process.env.NODE_ENV === 'development';
-const DB_LOGGING = process.env.NODE_ENV === 'development';
 
-export const MY_SQL_CONFIG = 'mysqlConfig'
-
-export default registerAs(MY_SQL_CONFIG, () => ({
+const mysqlConfig: TypeOrmModuleOptions = {
     type: 'mysql',
     host: DB_HOST,
     port: DB_PORT,
@@ -19,7 +14,7 @@ export default registerAs(MY_SQL_CONFIG, () => ({
     password: DB_PASSWORD,
     database: DB_NAME,
     entities: [__dirname + '/../**/*.entity.{js,ts}'],
-    synchronize: DB_SYNCHRONIZE,
-    logging: DB_LOGGING,
-    migrations: [__dirname + '/../migrations/*.{js,ts}'],
-}))
+    synchronize: true,
+};
+
+export default mysqlConfig;

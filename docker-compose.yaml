@@ -26,41 +26,11 @@ services:
     environment:
       PORT: $USERSMS_PORT
       HEALTHCHECK_PORT: $USERSMS_HEALTHCHECK_PORT
-      DB_HOST: $USERSDB_HOST
-      DB_PORT: $USERSDB_PORT
-      DB_NAME: $USERSDB_DATABASE
-      DB_USER: $USERSDB_USER
-      DB_PASSWORD: $USERSDB_PASSWORD
     ports:
       - 3001:$USERSMS_HEALTHCHECK_PORT
     networks:
       - microservices-network
-      - usersdb-network
-    depends_on:
-      - usersdb
-
-  usersdb:
-    image: mysql:latest
-    hostname: $USERSDB_HOST
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: $USERSDB_ROOT_PASSWORD
-      MYSQL_DATABASE: $USERSDB_DATABASE
-      MYSQL_USER: $USERSDB_USER
-      MYSQL_PASSWORD: $USERSDB_PASSWORD
-    networks:
-      - usersdb-network
-
-  adminer:
-    image: adminer
-    restart: unless-stopped
-    ports:
-      - 8080:8080
-    networks:
-      - usersdb-network
 
 networks:
   microservices-network:
-    driver: bridge
-  usersdb-network:
     driver: bridge
