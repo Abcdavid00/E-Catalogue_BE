@@ -12,7 +12,7 @@ services:
       USERSMS_HOST: $USERSMS_HOST
       USERSMS_PORT: $USERSMS_PORT
     ports:
-      - $GATEWAY_PORT:$GATEWAY_PORT
+      - 3000:$GATEWAY_PORT
     networks:
       - microservices-network
 
@@ -25,6 +25,9 @@ services:
     restart: unless-stopped
     environment:
       PORT: $USERSMS_PORT
+      HEALTHCHECK_PORT: $USERSMS_HEALTHCHECK_PORT
+    ports:
+      - 3001:$USERSMS_HEALTHCHECK_PORT
     networks:
       - microservices-network
 
