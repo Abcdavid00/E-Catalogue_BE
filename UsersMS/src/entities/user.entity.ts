@@ -11,10 +11,10 @@ export class User {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column({ unique: true })
+    @Column('varchar', { length: 30, unique: true })
     email: string;
 
-    @Column()
+    @Column('varchar', { length: 200 })
     password: string;
 
     @Column({ 
