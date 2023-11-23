@@ -1,4 +1,4 @@
-import { TypeOrmModuleOptions } from "@nestjs/typeorm";
+import { DataSource, DataSourceOptions } from "typeorm";
 
 const DB_HOST = process.env.DB_HOST || 'localhost';
 const DB_PORT = parseInt(process.env.DB_PORT, 10) || 3306;
@@ -9,7 +9,7 @@ const DB_SYNCHRONIZE = process.env.NODE_ENV === 'development';
 const DB_LOGGING = process.env.NODE_ENV === 'development';
 const DB_RUN_MIGRATIONS = process.env.NODE_ENV === 'development';
 
-const mysqlConfig: TypeOrmModuleOptions = {
+export const mysqlConfig: DataSourceOptions = {
     type: 'mysql',
     host: DB_HOST,
     port: DB_PORT,
@@ -23,4 +23,6 @@ const mysqlConfig: TypeOrmModuleOptions = {
     migrationsRun: DB_RUN_MIGRATIONS,
 };
 
-export default mysqlConfig;
+const datasource = new DataSource(mysqlConfig)
+
+export default datasource;
