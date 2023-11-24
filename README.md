@@ -2,6 +2,10 @@
 
 ## Create TypeORM migration
 To create a TypeORM migration, start the develop docker compose:
-`yarn up:dev`
+```sh
+yarn up:dev
+```
 Then exec to the container and run
-`yarn mg {MigrationName}`
+```sh
+yarn mg {MigrationName}
+```
