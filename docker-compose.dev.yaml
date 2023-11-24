@@ -11,7 +11,7 @@ services:
       USERSMS_HOST: $USERSMS_HOST
       USERSMS_PORT: $USERSMS_PORT
     ports:
-      - $GATEWAY_PORT:$GATEWAY_PORT
+      - 3000:$GATEWAY_PORT
     volumes:
       - ./Gateway/src:/app/src
     networks:
@@ -25,11 +25,44 @@ services:
     restart: unless-stopped
     environment:
       PORT: $USERSMS_PORT
+      HEALTHCHECK_PORT: $USERSMS_HEALTHCHECK_PORT
+      DB_HOST: $USERSDB_HOST
+      DB_PORT: $USERSDB_PORT
+      DB_NAME: $USERSDB_DATABASE
+      DB_USER: $USERSDB_USER
+      DB_PASSWORD: $USERSDB_PASSWORD
+    ports:
+      - 3001:$USERSMS_HEALTHCHECK_PORT
     volumes:
       - ./UsersMS/src:/app/src
     networks:
       - microservices-network-dev
+      - usersdb-network-dev
+    depends_on:
+      - usersdb
+
+  usersdb:
+    image: mysql:latest
+    hostname: $USERSDB_HOST
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: $USERSDB_ROOT_PASSWORD
+      MYSQL_DATABASE: $USERSDB_DATABASE
+      MYSQL_USER: $USERSDB_USER
+      MYSQL_PASSWORD: $USERSDB_PASSWORD
+    networks:
+      - usersdb-network-dev
+
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+    networks:
+      - usersdb-network-dev
 
 networks:
   microservices-network-dev:
+    driver: bridge
+  usersdb-network-dev:
     driver: bridge
