@@ -33,6 +33,10 @@ COPY package.json yarn.lock ./
 
 RUN yarn --frozen-lockfile --ignore-scripts --production && yarn cache clean
 
+## Rebuild Bcrypt
+
+RUN yarn add bcrypt --force --build-from-source
+
 ## Remove unnecessary files from `node_modules` directory
 RUN ( wget -q -O /dev/stdout https://gobinaries.com/tj/node-prune | sh ) \
  && node-prune
