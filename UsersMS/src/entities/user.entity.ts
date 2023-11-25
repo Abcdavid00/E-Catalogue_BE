@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-enum UserRole {
+export enum UserRole {
     ADMIN = 'admin',
     SHOP_OWNER = 'shop_owner',
     CUSTOMER = 'customer',
@@ -10,6 +10,9 @@ enum UserRole {
 export class User {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Column('varchar', { length: 30, unique: true })
+    username: string;
 
     @Column('varchar', { length: 30, unique: true })
     email: string;
