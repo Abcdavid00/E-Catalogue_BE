@@ -18,8 +18,8 @@ export class AppController {
   }
 
   @MessagePattern({ cmd: 'isUsernameAvailable' })
-  async isUsernameAvailable(username: string): Promise<boolean> {
-    return this.appService.isUsernameAvailable(username);
+  async isUsernameAvailable(param: {username: string}): Promise<boolean> {
+    return this.appService.isUsernameAvailable(param.username);
   }
 
   @MessagePattern({ cmd: 'isEmailAvailable' })
@@ -28,8 +28,8 @@ export class AppController {
   }
 
   @MessagePattern({ cmd: 'createUser' })
-  async createUser(username: string, email: string, password: string): Promise<any> {
-    return this.appService.createUser(username, email, password);
+  async createUser(params: {username: string, email: string, password: string}): Promise<any> {
+    return this.appService.createUser(params.username, params.email, params.password);
   }
 
   @MessagePattern({ cmd: 'getUser' })
@@ -48,7 +48,7 @@ export class AppController {
   }
 
   @MessagePattern({ cmd: 'signIn' })
-  async signIn(username: string, password: string): Promise<any> {
-    return this.appService.signIn(username, password);
+  async signIn(params: {username: string, password: string}): Promise<any> {
+    return this.appService.signIn(params.username, params.password);
   }
 }
