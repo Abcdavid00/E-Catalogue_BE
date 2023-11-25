@@ -7,5 +7,5 @@ yarn up:dev
 ```
 Then exec to the container and run
 ```sh
-yarn mg {MigrationName}
+yarn mg ./src/migrations/{MigrationName}
 ```
