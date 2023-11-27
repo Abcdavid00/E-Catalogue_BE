@@ -38,6 +38,7 @@ services:
       - usersdb-network
     depends_on:
       - usersdb
+
   usersdb:
     image: mysql:latest
     hostname: $USERSDB_HOST
@@ -49,6 +50,31 @@ services:
       MYSQL_PASSWORD: $USERSDB_PASSWORD
     networks:
       - usersdb-network
+
+  tokenms:
+    build:
+      context: ./TokenMS
+      target: prod
+    hostname: $TOKENMS_HOST
+    restart: unless-stopped
+    environment:
+      PORT: $TOKENMS_PORT
+      HEALTHCHECK_PORT: $TOKENMS_HEALTHCHECK_PORT
+      USERSMS_HOST: $USERSMS_HOST
+      USERSMS_PORT: $USERSMS_PORT
+      # DB_HOST: $TOKENDB_HOST
+      # DB_PORT: $TOKENDB_PORT
+      # DB_NAME: $TOKENDB_DATABASE
+      # DB_USER: $TOKENDB_USER
+      # DB_PASSWORD: $TOKENDB_PASSWORD
+    ports:
+      - 3002:$TOKENMS_HEALTHCHECK_PORT
+    networks:
+      - microservices-network
+      # - tokendb-network-dev
+    # depends_on:
+    #   - tokendb
+
   adminer:
     image: adminer
     restart: unless-stopped
@@ -56,6 +82,7 @@ services:
       - 8080:8080
     networks:
       - usersdb-network
+      
 networks:
   microservices-network:
     driver: bridge
