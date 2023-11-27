@@ -13,7 +13,6 @@ export type User = {
     email: string;
     password: string;
     role: UserRole;
-
 }
 
 export class UserDto {
