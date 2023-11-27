@@ -7,6 +7,7 @@ pipeline {
         projectName = 'e_catalogue'
         gatewayTag = "${harborURL}/${projectName}/gateway:${version}"
         usersmsTag = "${harborURL}/${projectName}/usersms:${version}"
+        tokenmsTag = "${harborURL}/${projectName}/tokenms:${version}"
     }
 
     agent {
@@ -40,17 +41,7 @@ pipeline {
                 }
             }
         }
-        // stage('Define variable') {
-        //     steps {
-        //         export version="${majorVersion}.${minorVersion}.${BUILD_NUMBER}"
-        //         export harborURL="harbor.abcdavid.top"
-        //         export projectName="library"
 
-        //         export gatewayTag="${harborURL}/${projectName}/gateway:${version}"
-        //         echo 'gatewayTag: ${gatewayTag}'
-        //         export usersmsTag="${harborURL}/${projectName}/usersms:${version}"
-        //     }
-        // }
         stage('Build') {
             parallel {
                 stage('Build api-gateway') {
@@ -64,6 +55,13 @@ pipeline {
                     steps {
                         echo 'Building users microservice...'
                         sh 'docker build -t ${usersmsTag} ./UsersMS --platform linux/amd64'
+                    }
+                }
+
+                stage('Build token microservice') {
+                    steps {
+                        echo 'Building token microservice...'
+                        sh 'docker build -t ${tokenmsTag} ./TokenMS --platform linux/amd64'
                     }
                 }
             }
@@ -90,13 +88,20 @@ pipeline {
                         sh 'docker push ${usersmsTag}'
                     }
                 }
+
+                stage('Push token microservice image to Harbor') {
+                    steps {
+                        echo 'Pushing token microservice image to Harbor...'
+                        sh 'docker push ${tokenmsTag}'
+                    }
+                }
             }
         }
 
         stage('Trigger manifest update') {
           steps {
               echo 'Triggering manifest update...'
-              build job: 'manifest-updater', parameters: [string(name: 'IMAGE_VERSION', value: env.version)]
+              build job: 'E-catalogue Kubernetes manifests updater', parameters: [string(name: 'IMAGE_VERSION', value: env.version)]
           }
         }
         
