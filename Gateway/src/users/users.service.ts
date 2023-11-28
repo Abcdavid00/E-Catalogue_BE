@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { UsersMSName } from 'src/config/microservices.service';
+import { UsersMSName } from 'src/config/microservices.module';
 
 @Injectable()
 export class UsersService {

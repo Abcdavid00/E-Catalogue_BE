@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Inject, Param, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UsersMSName } from 'src/config/microservices.service';
+import { UsersMSName } from 'src/config/microservices.module';
 import { ClientProxy } from '@nestjs/microservices';
 import { UsernameDto } from './dto/username.dto';
 import { BooleanDto } from './dto/boolean.dto';
