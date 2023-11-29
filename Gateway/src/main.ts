@@ -13,8 +13,9 @@ async function bootstrap() {
     .setDescription('E-catalog API description')
     .setVersion('1.0')
     .addTag('e-catalog')
+    .addBearerAuth()
     .build();
-
+    
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api', app, document);
 
