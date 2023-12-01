@@ -13,7 +13,6 @@ export class UsersService {
     ) {}
 
     async isUsernameAvailable(username: string): Promise<boolean> {
-        console.log('Looking for username: ', username)
         try {
             const res: boolean =  await firstValueFrom(
                 this.UsersClient.send<boolean>({ cmd: 'isUsernameAvailable' }, {username})
@@ -25,7 +24,6 @@ export class UsersService {
     }
 
     async isEmailAvailable(email: string): Promise<boolean> {
-        console.log('Looking for email: ', email)
         try {
             const res: boolean =  await firstValueFrom(
                 this.UsersClient.send<boolean>({ cmd: 'isEmailAvailable' }, {email})
@@ -37,7 +35,6 @@ export class UsersService {
     }
 
     async createUser(username: string, email: string, password: string): Promise<User> {
-        console.log(`Creating user: Username: ${username}\tEmail: ${email}\tPassword: ${password}`)
         try {
             const res: User =  await firstValueFrom(
                 this.UsersClient.send<User>({ cmd: 'createUser' }, {username, email, password})
@@ -49,7 +46,6 @@ export class UsersService {
     }
 
     async getUser(id: number): Promise<User> {
-        console.log(`Getting user with id: ${id}`)
         try {
             const res: User =  await firstValueFrom(
                 this.UsersClient.send<User>({ cmd: 'getUser' }, id)
@@ -61,7 +57,6 @@ export class UsersService {
     }
 
     async findUserByUsername(username: string): Promise<User> {
-        console.log(`Getting user with username: ${username}`)
         try {
             const res: User =  await firstValueFrom(
                 this.UsersClient.send<User>({ cmd: 'findUserByUsername' }, username)
@@ -73,7 +68,6 @@ export class UsersService {
     }
 
     async findUserByEmail(email: string): Promise<User> {
-        console.log(`Getting user with email: ${email}`)
         try {
             const res: User =  await firstValueFrom(
                 this.UsersClient.send<User>({ cmd: 'findUserByEmail' }, email)
@@ -85,7 +79,6 @@ export class UsersService {
     }
 
     async signIn(username: string, password: string): Promise<User> {
-        console.log(`Signing in user with username: ${username}\tPassword: ${password}`)
         try {
             const res: User =  await firstValueFrom(
                 this.UsersClient.send<User>({ cmd: 'signIn' }, {username, password})
