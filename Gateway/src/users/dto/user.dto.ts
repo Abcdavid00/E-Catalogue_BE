@@ -13,7 +13,6 @@ export type User = {
     email: string;
     password: string;
     role: UserRole;
-
 }
 
 export class UserDto {
@@ -43,5 +42,12 @@ export class UserDto {
     })
     @IsEnum(UserRole)
     role: UserRole;
+
+    constructor(user: User) {
+        this.id = user.id;
+        this.username = user.username;
+        this.email = user.email;
+        this.role = user.role;
+    }
 
 }
