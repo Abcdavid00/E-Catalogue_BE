@@ -9,6 +9,7 @@ import clientsModule from 'src/config/microservices.module';
     UsersModule
   ],
   providers: [UsersService],
-  controllers: [UsersController]
+  controllers: [UsersController],
+  exports: [UsersService]
 })
 export class UsersModule {}
