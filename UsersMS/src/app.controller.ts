@@ -1,6 +1,7 @@
 import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
 import { MessagePattern } from '@nestjs/microservices';
+import { User } from './entities/user.entity';
 
 @Controller()
 export class AppController {
@@ -28,7 +29,7 @@ export class AppController {
   }
 
   @MessagePattern({ cmd: 'createUser' })
-  async createUser(params: {username: string, email: string, password: string}): Promise<any> {
+  async createUser(params: {username: string, email: string, password: string}): Promise<User> {
     return this.appService.createUser(params.username, params.email, params.password);
   }
 
