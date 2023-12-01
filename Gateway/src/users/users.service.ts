@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { UsersMSName } from 'src/config/microservices.service';
+import { UsersMSName } from 'src/config/microservices.module';
 import { User } from './dto/user.dto';
 
 @Injectable()

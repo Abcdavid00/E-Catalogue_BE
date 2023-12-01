@@ -1,6 +1,6 @@
 import { BadRequestException, Body, Catch, ConflictException, Controller, Get, Inject, Param, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UsersMSName } from 'src/config/microservices.service';
+import { UsersMSName } from 'src/config/microservices.module';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { ApiBadGatewayResponse, ApiBadRequestResponse, ApiBody, ApiDefaultResponse, ApiOkResponse, ApiParam } from '@nestjs/swagger';

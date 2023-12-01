@@ -7,7 +7,6 @@ pipeline {
         projectName = 'e_catalogue'
         gatewayTag = "${harborURL}/${projectName}/gateway:${version}"
         usersmsTag = "${harborURL}/${projectName}/usersms:${version}"
-        tokenmsTag = "${harborURL}/${projectName}/tokenms:${version}"
     }
 
     agent {
@@ -57,13 +56,6 @@ pipeline {
                         sh 'docker build -t ${usersmsTag} ./UsersMS --platform linux/amd64'
                     }
                 }
-
-                stage('Build token microservice') {
-                    steps {
-                        echo 'Building token microservice...'
-                        sh 'docker build -t ${tokenmsTag} ./TokenMS --platform linux/amd64'
-                    }
-                }
             }
         }
 
@@ -86,13 +78,6 @@ pipeline {
                     steps {
                         echo 'Pushing users microservice image to Harbor...'
                         sh 'docker push ${usersmsTag}'
-                    }
-                }
-
-                stage('Push token microservice image to Harbor') {
-                    steps {
-                        echo 'Pushing token microservice image to Harbor...'
-                        sh 'docker push ${tokenmsTag}'
                     }
                 }
             }
