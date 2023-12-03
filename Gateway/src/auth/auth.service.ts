@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
@@ -22,6 +22,19 @@ export class AuthService {
                 return null;
             }
             throw error;
+        }
+    }
+
+    async refresh(refreshToken: string) {
+        try {
+            const payload = this.jwtService.verify(refreshToken);
+            if (!payload.isRefreshToken) {
+                throw new BadRequestException('Invalid refresh token');
+            }
+            const user = await this.usersService.getUser(payload.sub);
+            return this.generateTokens(user);
+        } catch (error) {
+            throw new BadRequestException('Invalid refresh token');
         }
     }
 
