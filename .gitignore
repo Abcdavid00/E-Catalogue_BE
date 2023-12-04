@@ -25,9 +25,6 @@
 # Docker volumes
 DockerVolume
 
-# env file
-.env
-
 node_modules
 
 # Sandbox

@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards, Request, Get } from '@nestjs/common';
+import { Controller, Post, UseGuards, Request, Get, Body } from '@nestjs/common';
 import { LocalAuthGuard } from './guards/local.guard';
 import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -8,6 +8,7 @@ import { JwtAuthGuard } from './guards/jwt.guard';
 import { RefreshGuard } from './guards/refresh.guard';
 import { TokensDto } from './dto/tokens.dto';
 import { UserDto } from 'src/users/dto/user.dto';
+import { RefreshDto } from './dto/refresh.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -32,11 +33,10 @@ export class AuthController {
         return req.user;
     }
 
-    @UseGuards(RefreshGuard)
-    @Get('refresh')
-    @ApiBearerAuth()
+    @Post('refresh')
+    @ApiBody({ type: RefreshDto})
     @ApiOkResponse({ type: TokensDto })
-    async refresh(@Request() req): Promise<TokensDto> {
-        return this.authService.generateTokens(req.user);
+    async refresh(@Body() refreshDto: RefreshDto): Promise<TokensDto> {
+        return this.authService.refresh(refreshDto.refreshToken);
     }
 }
