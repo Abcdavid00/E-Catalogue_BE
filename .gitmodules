@@ -1,3 +1,0 @@
-[submodule "FileServer"]
-	path = FileServer
-	url = https://github.com/khanhnguyen02311/simple-go-file-server.git
