@@ -59,6 +59,14 @@ services:
       - 8080:8080
     networks:
       - usersdb-network
+  fileserver:
+    build: ./FileServer
+    ports: 
+      - 3456:${FILESERVER_PORT}
+    volumes:
+      - ./DockerVolume/files:/app/files
+    environment:
+      PORT: ${FILESERVER_PORT}
 networks:
   microservices-network:
     driver: bridge
