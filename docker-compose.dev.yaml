@@ -19,6 +19,7 @@ services:
       - ./Gateway/src:/app/src
     networks:
       - microservices-network-dev
+      - fileserver-network-dev
 
   usersms:
     build:
@@ -66,15 +67,22 @@ services:
 
   fileserver:
     build: ./FileServer
+    hostname: $FILESERVER_HOST
+    restart: unless-stopped
     ports: 
       - 3456:${FILESERVER_PORT}
     volumes:
       - ./DockerVolume/files:/app/files
     environment:
       PORT: ${FILESERVER_PORT}
+      MAX_FILE_SIZE: 100
+    networks:
+      - fileserver-network-dev
 
 networks:
   microservices-network-dev:
     driver: bridge
   usersdb-network-dev:
+    driver: bridge
+  fileserver-network-dev:
     driver: bridge
