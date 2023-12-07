@@ -17,6 +17,8 @@ RUN yarn --frozen-lockfile
 # Copy source code into app folder
 COPY . .
 
+RUN npm install --force --no-package-lockfile @img/sharp-linuxmusl-arm64
+
 CMD ["yarn", "start:dev"]
 #
 # 🏡 Production Base & Build ----------------------------------------------------
@@ -33,6 +35,9 @@ COPY package.json yarn.lock ./
 
 RUN yarn --frozen-lockfile --ignore-scripts --production && yarn cache clean
 
+# RUN yarn set version 3.2.0
+RUN npm install --force --no-package-lockfile @img/sharp-linuxmusl-x64
+
 ## Remove unnecessary files from `node_modules` directory
 RUN ( wget -q -O /dev/stdout https://gobinaries.com/tj/node-prune | sh ) \
  && node-prune
@@ -41,6 +46,8 @@ RUN ( wget -q -O /dev/stdout https://gobinaries.com/tj/node-prune | sh ) \
 FROM base AS build
 
 ENV NODE_ENV development
+
+COPY package.json yarn.lock ./
 
 RUN yarn --frozen-lockfile --ignore-scripts
 
@@ -59,7 +66,7 @@ WORKDIR /app
 
 ## Copy required file to run the production application
 COPY --from=base --chown=node:node /app/node_modules ./node_modules
-COPY --from=base --chown=node:node /app/*.json ./
+COPY --from=base --chown=node:node /app/package.json ./
 COPY --from=build --chown=node:node /app/dist ./dist/
 
 ## https://engineeringblog.yelp.com/2016/01/dumb-init-an-init-for-docker.html

@@ -27,7 +27,4 @@ DockerVolume
 
 node_modules
 
-# Sandbox
-TestBE
-TestMS
-docker-compose.sb.yaml
+*/.yarn
