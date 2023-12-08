@@ -25,6 +25,11 @@ pipeline {
                       volumeMounts:
                       - mountPath: /var/run/docker.sock
                         name: docker-sock
+                    - name: git
+                      image: bitnami/git:latest
+                      command:
+                      - sleep infinity
+                      tty: true
                     volumes:
                     - name: docker-sock
                       hostPath:
@@ -43,9 +48,11 @@ pipeline {
         }
 
         stage('Pull submodules') {
-            steps {
-                echo 'Pulling submodules...'
-                sh 'git submodule update --init --recursive'
+            container('git' ) {
+                steps {
+                    echo 'Pulling submodules...'
+                    sh 'git submodule update --init --recursive'
+                }
             }
         }
 
