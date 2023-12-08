@@ -15,12 +15,12 @@ services:
       USERSMS_HOST: $USERSMS_HOST
       USERSMS_PORT: $USERSMS_PORT
     ports:
-      - 3000:$GATEWAY_PORT
+      - $GATEWAY_PORT
     networks:
-      - microservices-network
-      - fileserver-network
+      - microservices-networks
+      - fileserver-networks
 
-  usersms:
+  users-ms:
     platform: linux/amd64
     build:
       context: ./UsersMS
@@ -36,15 +36,15 @@ services:
       DB_USER: $USERSDB_USER
       DB_PASSWORD: $USERSDB_PASSWORD
     ports:
-      - 3001:$USERSMS_HEALTHCHECK_PORT
+      - $USERSMS_HEALTHCHECK_PORT
     networks:
-      - microservices-network
-      - usersdb-network
+      - microservices-networks
+      - users-db-networks
     depends_on:
-      - usersdb
-  usersdb:
+      - users-db
+
+  users-db:
     image: mysql:latest
-    platform: linux/amd64
     hostname: $USERSDB_HOST
     restart: unless-stopped
     environment:
@@ -52,33 +52,77 @@ services:
       MYSQL_DATABASE: $USERSDB_DATABASE
       MYSQL_USER: $USERSDB_USER
       MYSQL_PASSWORD: $USERSDB_PASSWORD
+    volumes:
+      - ./DockerVolume/users-db:/var/lib/mysql
     networks:
-      - usersdb-network
+      - users-db-networks
+
+  userprofile-ms:
+    platform: linux/amd64
+    build:
+      context: ./UserProfileMS
+      target: prod
+    hostname: $USERPROFILEMS_HOST
+    restart: unless-stopped
+    environment:
+      PORT: $USERPROFILEMS_PORT
+      HEALTHCHECK_PORT: $USERPROFILEMS_HEALTHCHECK_PORT
+      DB_HOST: $USERPROFILEDB_HOST
+      DB_PORT: $USERPROFILEDB_PORT
+      DB_NAME: $USERPROFILEDB_DATABASE
+      DB_USER: $USERPROFILEDB_USER
+      DB_PASSWORD: $USERPROFILEDB_PASSWORD
+    ports:
+      - $USERPROFILEMS_HEALTHCHECK_PORT
+    networks:
+      - microservices-networks
+      - userprofile-db-networks
+    depends_on:
+      - userprofile-db
+
+  userprofile-db:
+    image: mysql:latest
+    hostname: $USERPROFILEDB_HOST
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: $USERPROFILEDB_ROOT_PASSWORD
+      MYSQL_DATABASE: $USERPROFILEDB_DATABASE
+      MYSQL_USER: $USERPROFILEDB_USER
+      MYSQL_PASSWORD: $USERPROFILEDB_PASSWORD
+    volumes:
+      - ./DockerVolume/userprofile-db:/var/lib/mysql
+    networks:
+      - userprofile-db-networks
+
   adminer:
     image: adminer
-    platform: linux/amd64
     restart: unless-stopped
     ports:
-      - 8080:8080
+      - 8080
     networks:
-      - usersdb-network
+      - users-db-networks
+      - userprofile-db-networks
+
   fileserver:
-    hostname: $FILESERVER_HOST
-    platform: linux/amd64
     build: ./FileServer
+    hostname: $FILESERVER_HOST
+    restart: unless-stopped
     ports: 
-      - 3456:${FILESERVER_PORT}
+      - ${FILESERVER_PORT}
     volumes:
       - ./DockerVolume/files:/app/files
     environment:
       PORT: ${FILESERVER_PORT}
       MAX_FILE_SIZE: 100
     networks:
-      - fileserver-network
+      - fileserver-networks
+
 networks:
-  microservices-network:
+  microservices-networks:
     driver: bridge
-  usersdb-network:
+  users-db-networks:
     driver: bridge
-  fileserver-network:
+  userprofile-db-networks:
+    driver: bridge
+  fileserver-networks:
     driver: bridge
