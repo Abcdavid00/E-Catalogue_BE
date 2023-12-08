@@ -43,6 +43,14 @@ pipeline {
         }
 
         stage('Build') {
+
+            stage('Pull submodules') {
+                steps {
+                    echo 'Pulling submodules...'
+                    sh 'git submodule update --init --recursive'
+                }
+            }
+
             parallel {
                 stage('Build api-gateway') {
                     steps {
