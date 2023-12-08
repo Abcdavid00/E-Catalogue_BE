@@ -48,8 +48,8 @@ pipeline {
         }
 
         stage('Pull submodules') {
-            container('git' ) {
-                steps {
+            steps {
+                container('git') {
                     echo 'Pulling submodules...'
                     sh 'git submodule update --init --recursive'
                 }
