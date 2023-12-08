@@ -25,11 +25,6 @@ pipeline {
                       volumeMounts:
                       - mountPath: /var/run/docker.sock
                         name: docker-sock
-                    - name: git
-                      image: bitnami/git:latest
-                      command:
-                      - sleep infinity
-                      tty: true
                     volumes:
                     - name: docker-sock
                       hostPath:
@@ -43,15 +38,6 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'harbor-account', passwordVariable: 'HARBOR_PASSWORD', usernameVariable: 'HARBOR_USERNAME')]) {
                     sh 'echo $HARBOR_PASSWORD | docker login https://harbor.abcdavid.top --username $HARBOR_USERNAME --password-stdin'
-                }
-            }
-        }
-
-        stage('Pull submodules') {
-            steps {
-                container('git') {
-                    echo 'Pulling submodules...'
-                    sh 'git submodule update --init --recursive'
                 }
             }
         }
