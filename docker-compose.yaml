@@ -18,6 +18,7 @@ services:
       - 3000:$GATEWAY_PORT
     networks:
       - microservices-network
+      - fileserver-network
 
   usersms:
     platform: linux/amd64
@@ -43,6 +44,7 @@ services:
       - usersdb
   usersdb:
     image: mysql:latest
+    platform: linux/amd64
     hostname: $USERSDB_HOST
     restart: unless-stopped
     environment:
@@ -54,13 +56,29 @@ services:
       - usersdb-network
   adminer:
     image: adminer
+    platform: linux/amd64
     restart: unless-stopped
     ports:
       - 8080:8080
     networks:
       - usersdb-network
+  fileserver:
+    hostname: $FILESERVER_HOST
+    platform: linux/amd64
+    build: ./FileServer
+    ports: 
+      - 3456:${FILESERVER_PORT}
+    volumes:
+      - ./DockerVolume/files:/app/files
+    environment:
+      PORT: ${FILESERVER_PORT}
+      MAX_FILE_SIZE: 100
+    networks:
+      - fileserver-network
 networks:
   microservices-network:
     driver: bridge
   usersdb-network:
+    driver: bridge
+  fileserver-network:
     driver: bridge
