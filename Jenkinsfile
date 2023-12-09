@@ -43,6 +43,7 @@ pipeline {
         }
 
         stage('Build') {
+
             parallel {
                 stage('Build api-gateway') {
                     steps {
