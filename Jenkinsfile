@@ -7,6 +7,7 @@ pipeline {
         projectName = 'e_catalogue'
         gatewayTag = "${harborURL}/${projectName}/gateway:${version}"
         usersmsTag = "${harborURL}/${projectName}/usersms:${version}"
+        userinfomsTag = "${harborURL}/${projectName}/userinfoms:${version}"
         fileserverTag = "${harborURL}/${projectName}/fileserver:${version}"
     }
 
@@ -59,6 +60,13 @@ pipeline {
                     }
                 }
 
+                stage('Build user info microservice') {
+                    steps {
+                        echo 'Building user info microservice...'
+                        sh 'docker build -t ${userinfomsTag} ./UserInfoMS --platform linux/amd64'
+                    }
+                }
+
                 stage('Build fileserver') {
                     steps {
                         echo 'Building fileserver...'
@@ -87,6 +95,13 @@ pipeline {
                     steps {
                         echo 'Pushing users microservice image to Harbor...'
                         sh 'docker push ${usersmsTag}'
+                    }
+                }
+
+                stage('Push user info microservice image to Harbor') {
+                    steps {
+                        echo 'Pushing user info microservice image to Harbor...'
+                        sh 'docker push ${userinfomsTag}'
                     }
                 }
 
