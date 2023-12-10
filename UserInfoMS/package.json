@@ -13,6 +13,7 @@
     "down": "cd .. && yarn down",
     "restart:dev": "cd .. && yarn restart:dev",
     "restart:prod": "cd .. && yarn restart:prod",
+    "mg": "npx typeorm migration:generate -d dist/config/mysql.module.js",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
