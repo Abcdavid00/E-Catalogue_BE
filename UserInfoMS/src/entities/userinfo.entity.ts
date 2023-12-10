@@ -12,21 +12,21 @@ export class UserInfo {
     id: number;
 
     @Column('nvarchar', { length: 50 })
-    fullname: string;
+    fullname?: string;
 
     @Column('varchar', { length: 10 })
-    phone: string;
+    phone?: string;
 
     @Column({
         type: 'enum',
         enum: Sex,
         default: Sex.UNKNOWN,
     })
-    sex: boolean;
+    sex?: boolean;
 
     @Column('date')
-    dob: Date;
+    dob?: Date;
 
     @Column('varchar', { length: 40 })
-    profile_image: string;
+    profile_image?: string;
 }
