@@ -14,13 +14,17 @@ services:
       PORT: $GATEWAY_PORT
       USERSMS_HOST: $USERSMS_HOST
       USERSMS_PORT: $USERSMS_PORT
+      FILESERVER_HOST: $FILESERVER_HOST
+      FILESERVER_PORT: $FILESERVER_PORT
+      USERINFOMS_HOST: $USERINFOMS_HOST
+      USERINFOMS_PORT: $USERINFOMS_PORT
     ports:
-      - 3000:$GATEWAY_PORT
+      - $GATEWAY_PORT
     networks:
-      - microservices-network
-      - fileserver-network
+      - microservices-networks
+      - fileserver-networks
 
-  usersms:
+  users-ms:
     platform: linux/amd64
     build:
       context: ./UsersMS
@@ -36,15 +40,15 @@ services:
       DB_USER: $USERSDB_USER
       DB_PASSWORD: $USERSDB_PASSWORD
     ports:
-      - 3001:$USERSMS_HEALTHCHECK_PORT
+      - $USERSMS_HEALTHCHECK_PORT:$USERSMS_HEALTHCHECK_PORT
     networks:
-      - microservices-network
-      - usersdb-network
+      - microservices-networks
+      - users-db-networks
     depends_on:
-      - usersdb
-  usersdb:
+      - users-db
+
+  users-db:
     image: mysql:latest
-    platform: linux/amd64
     hostname: $USERSDB_HOST
     restart: unless-stopped
     environment:
@@ -52,33 +56,78 @@ services:
       MYSQL_DATABASE: $USERSDB_DATABASE
       MYSQL_USER: $USERSDB_USER
       MYSQL_PASSWORD: $USERSDB_PASSWORD
+    volumes:
+      - ./DockerVolume/users-db:/var/lib/mysql
     networks:
-      - usersdb-network
+      - users-db-networks
+
+  userinfo-ms:
+    platform: linux/amd64
+    build:
+      context: ./UserInfoMS
+      target: prod
+    hostname: $USERINFOMS_HOST
+    restart: unless-stopped
+    environment:
+      PORT: $USERINFOMS_PORT
+      HEALTHCHECK_PORT: $USERINFOMS_HEALTHCHECK_PORT
+      DB_HOST: $USERINFODB_HOST
+      DB_PORT: $USERINFODB_PORT
+      DB_NAME: $USERINFODB_DATABASE
+      DB_USER: $USERINFODB_USER
+      DB_PASSWORD: $USERINFODB_PASSWORD
+    ports:
+      - $USERINFOMS_HEALTHCHECK_PORT:$USERINFOMS_HEALTHCHECK_PORT
+    networks:
+      - microservices-networks
+      - userinfo-db-networks
+    depends_on:
+      - userinfo-db
+
+
+  userinfo-db:
+    image: mysql:latest
+    hostname: $USERINFODB_HOST
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: $USERINFODB_ROOT_PASSWORD
+      MYSQL_DATABASE: $USERINFODB_DATABASE
+      MYSQL_USER: $USERINFODB_USER
+      MYSQL_PASSWORD: $USERINFODB_PASSWORD
+    # volumes:
+    #   - ./DockerVolume/userinfo-db:/var/lib/mysql
+    networks:
+      - userinfo-db-networks
+
   adminer:
     image: adminer
-    platform: linux/amd64
     restart: unless-stopped
     ports:
-      - 8080:8080
+      - 8080
     networks:
-      - usersdb-network
+      - users-db-networks
+      - userinfo-db-networks
+
   fileserver:
-    hostname: $FILESERVER_HOST
-    platform: linux/amd64
     build: ./FileServer
+    hostname: $FILESERVER_HOST
+    restart: unless-stopped
     ports: 
-      - 3456:${FILESERVER_PORT}
+      - ${FILESERVER_PORT}:${FILESERVER_PORT}
     volumes:
       - ./DockerVolume/files:/app/files
     environment:
       PORT: ${FILESERVER_PORT}
       MAX_FILE_SIZE: 100
     networks:
-      - fileserver-network
+      - fileserver-networks
+
 networks:
-  microservices-network:
+  microservices-networks:
     driver: bridge
-  usersdb-network:
+  users-db-networks:
     driver: bridge
-  fileserver-network:
+  userinfo-db-networks:
+    driver: bridge
+  fileserver-networks:
     driver: bridge
