@@ -7,6 +7,7 @@ pipeline {
         projectName = 'e_catalogue'
         gatewayTag = "${harborURL}/${projectName}/gateway:${version}"
         usersmsTag = "${harborURL}/${projectName}/usersms:${version}"
+        fileserverTag = "${harborURL}/${projectName}/fileserver:${version}"
     }
 
     agent {
@@ -42,6 +43,7 @@ pipeline {
         }
 
         stage('Build') {
+
             parallel {
                 stage('Build api-gateway') {
                     steps {
@@ -54,6 +56,13 @@ pipeline {
                     steps {
                         echo 'Building users microservice...'
                         sh 'docker build -t ${usersmsTag} ./UsersMS --platform linux/amd64'
+                    }
+                }
+
+                stage('Build fileserver') {
+                    steps {
+                        echo 'Building fileserver...'
+                        sh 'docker build -t ${fileserverTag} ./FileServer --platform linux/amd64'
                     }
                 }
             }
@@ -78,6 +87,13 @@ pipeline {
                     steps {
                         echo 'Pushing users microservice image to Harbor...'
                         sh 'docker push ${usersmsTag}'
+                    }
+                }
+
+                stage('Push fileserver image to Harbor') {
+                    steps {
+                        echo 'Pushing fileserver image to Harbor...'
+                        sh 'docker push ${fileserverTag}'
                     }
                 }
             }

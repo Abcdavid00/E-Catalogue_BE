@@ -13,13 +13,11 @@ export class LocalStrategy extends PassportStrategy(Strategy, localSN) {
         super(
             {
                 usernameField: 'username',
-                // passwordField: 'password'
             }
         );
     }
 
     async validate(username: string, password: string): Promise<any> {
-        console.log("Validating user...");
         const user = await this.AuthService.validateUser(username, password);
         if (!user) {
             throw new UnauthorizedException();
