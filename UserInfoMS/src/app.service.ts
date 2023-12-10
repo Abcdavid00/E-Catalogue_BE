@@ -21,7 +21,7 @@ export class AppService {
       where: { id },
     });
     if (!userInfo) {
-      throw new RpcException('User not found');
+      throw new RpcException('User info not found');
     }
     return userInfo;
   }
@@ -31,13 +31,17 @@ export class AppService {
       where: { id },
     });
     if (!existingUserInfo) {
-      throw new RpcException('User not found');
+      userInfo.id = id;
+      return this.userInfoRepository.save(userInfo);
+    }
+    userInfo = {
+      ...userInfo,
+      id: existingUserInfo.id,
+      profile_image: existingUserInfo.profile_image,
     }
     existingUserInfo = {
       ...existingUserInfo,
       ...userInfo,
-      id: existingUserInfo.id,
-      profile_image: existingUserInfo.profile_image,
     }
     return this.userInfoRepository.save(userInfo);
   }
@@ -47,7 +51,7 @@ export class AppService {
       where: { id },
     });
     if (!existingUserInfo) {
-      throw new RpcException('User not found');
+      throw new RpcException('User info not found');
     }
     existingUserInfo = {
       ...existingUserInfo,

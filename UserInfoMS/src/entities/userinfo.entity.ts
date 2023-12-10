@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 
 export enum Sex {
     MALE = 'male',
@@ -8,7 +8,7 @@ export enum Sex {
 
 @Entity()
 export class UserInfo {
-    @PrimaryGeneratedColumn()
+    @PrimaryColumn('int', { unique: true, nullable: false })
     id: number;
 
     @Column('nvarchar', { length: 50 })
@@ -24,9 +24,9 @@ export class UserInfo {
     })
     sex?: boolean;
 
-    @Column('date')
+    @Column('date', { nullable: true })
     dob?: Date;
 
-    @Column('varchar', { length: 40 })
+    @Column('varchar', { length: 40, nullable: true })
     profile_image?: string;
 }
