@@ -13,7 +13,7 @@ export class AppService {
   ) {}
 
   getHello(): string {
-    return 'Hello from UserInfoMS!';
+    return 'UserInfoMS Online!';
   }
 
   async getUserInfo(id: number): Promise<UserInfo> {

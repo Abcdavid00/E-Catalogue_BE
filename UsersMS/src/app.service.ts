@@ -14,11 +14,7 @@ export class AppService {
   ) {}
 
   getHello(): string {
-    return 'Hello from UsersMS!';
-  }
-
-  hi(): string {
-    return `Hello from UserMS!`;
+    return 'UsersMS Online!';
   }
 
   userWithoutPassword(user: User): User {

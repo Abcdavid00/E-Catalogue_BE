@@ -21,7 +21,7 @@ services:
       PRODUCTMS_HOST: $PRODUCTMS_HOST
       PRODUCTMS_PORT: $PRODUCTMS_PORT
     ports:
-      - $GATEWAY_PORT
+      - $GATEWAY_PORT:$GATEWAY_PORT
     networks:
       - microservices-networks
       - fileserver-networks
@@ -142,7 +142,7 @@ services:
     image: adminer
     restart: unless-stopped
     ports:
-      - 8080
+      - 8080:8080
     networks:
       - users-db-networks
       - userinfo-db-networks
