@@ -101,6 +101,45 @@ services:
     networks:
       - userinfo-db-networks
 
+  
+  product-ms:
+    build:
+      context: ./ProductMS
+      target: dev
+    hostname: $PRODUCTMS_HOST
+    restart: unless-stopped
+    environment:
+      PORT: $PRODUCTMS_PORT
+      HEALTHCHECK_PORT: $PRODUCTMS_HEALTHCHECK_PORT
+      DB_HOST: $PRODUCTDB_HOST
+      DB_PORT: $PRODUCTDB_PORT
+      DB_NAME: $PRODUCTDB_DATABASE
+      DB_USER: $PRODUCTDB_USER
+      DB_PASSWORD: $PRODUCTDB_PASSWORD
+    ports:
+      - $PRODUCTMS_HEALTHCHECK_PORT:$PRODUCTMS_HEALTHCHECK_PORT
+    volumes:
+      - ./ProductMS/src:/app/src
+    networks:
+      - microservices-networks
+      - product-db-networks
+    depends_on:
+      - product-db
+
+  product-db:
+    image: mysql:latest
+    hostname: $PRODUCTDB_HOST
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: $PRODUCTDB_ROOT_PASSWORD
+      MYSQL_DATABASE: $PRODUCTDB_DATABASE
+      MYSQL_USER: $PRODUCTDB_USER
+      MYSQL_PASSWORD: $PRODUCTDB_PASSWORD
+    # volumes:
+    #   - ./DockerVolume/product-db:/var/lib/mysql
+    networks:
+      - product-db-networks
+
   adminer:
     image: adminer
     restart: unless-stopped
@@ -130,6 +169,8 @@ networks:
   users-db-networks:
     driver: bridge
   userinfo-db-networks:
+    driver: bridge
+  product-db-networks:
     driver: bridge
   fileserver-networks:
     driver: bridge
