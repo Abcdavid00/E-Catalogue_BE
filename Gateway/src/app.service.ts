@@ -18,20 +18,28 @@ export class AppService {
   async getHello(): Promise<string> {
     const Message: String[] = [];
     Message.push("Hello from Gateway!");
-    const res = await Promise.all([
-      firstValueFrom(
-        this.UsersClient.send<string>({ cmd: 'Hi' }, {})
-      ),
-      firstValueFrom(
-        this.UserInfoClient.send<string>({ cmd: 'Hi' }, {})
-      ),
-      firstValueFrom(
-        this.ProductClient.send<string>({ cmd: 'Hi' }, {})
-      )
-    ])
-    for (const r of res) {
-      Message.push(r);
+
+    const clients = [
+      { name: 'UsersMS', client: this.UsersClient },
+      { name: 'UserInfoMS', client: this.UserInfoClient },
+      { name: 'ProductMS', client: this.ProductClient },
+    ];
+
+    const promises = clients.map(({ name, client }) =>
+      firstValueFrom(client.send<string>({ cmd: 'Hi' }, {}))
+        .then(() => ({ name, status: 'Online' }))
+        .catch((error) => {
+          console.log(`${name} is offline: ${error.message}`);
+          return { name, status: 'Offline' };
+        })
+    );
+
+    const res = await Promise.all(promises);
+
+    for (const { name, status } of res) {
+      Message.push(`<span style="color:${status === 'Offline' ? 'red' : 'green' }">${name} is ${status}!</span>`);
     }
+
     return "<h2>" + Message.join('<br>') + "</h2>";
   }
 }
