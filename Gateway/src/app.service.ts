@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { UserInfoMSName, UsersMSName } from './config/microservices.module';
+import { ProductMSName, UserInfoMSName, UsersMSName } from './config/microservices.module';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable, firstValueFrom } from 'rxjs';
 
@@ -11,6 +11,8 @@ export class AppService {
     private readonly UsersClient: ClientProxy,
     @Inject(UserInfoMSName)
     private readonly UserInfoClient: ClientProxy,
+    @Inject(ProductMSName)
+    private readonly ProductClient: ClientProxy
   ) {}
 
   async getHello(): Promise<string> {
@@ -23,6 +25,9 @@ export class AppService {
       firstValueFrom(
         this.UserInfoClient.send<string>({ cmd: 'Hi' }, {})
       ),
+      firstValueFrom(
+        this.ProductClient.send<string>({ cmd: 'Hi' }, {})
+      )
     ])
     for (const r of res) {
       Message.push(r);
