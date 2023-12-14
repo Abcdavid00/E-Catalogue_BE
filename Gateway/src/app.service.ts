@@ -32,6 +32,6 @@ export class AppService {
     for (const r of res) {
       Message.push(r);
     }
-    return Message.join('\n');
+    return "<h2>" + Message.join('<br>') + "</h2>";
   }
 }
