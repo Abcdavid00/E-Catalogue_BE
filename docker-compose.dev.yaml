@@ -150,6 +150,7 @@ services:
     networks:
       - users-db-networks
       - userinfo-db-networks
+      - product-db-networks
 
   fileserver:
     build: ./FileServer
