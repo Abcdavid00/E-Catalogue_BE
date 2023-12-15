@@ -1,7 +1,9 @@
-import { Column, Entity, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Category } from "./category.entity";
 import { Style } from "./style.entity";
 import { Brand } from "./brand.entity";
+import { ProductVariant } from "./product-variant.entity";
+import { ProductImage } from "./product-image.entity";
 
 @Entity()
 export class Product {
@@ -27,4 +29,10 @@ export class Product {
 
     @Column('varchar', { length: 40, nullable: true })
     image: string;
+
+    @OneToMany(() => ProductVariant, variant => variant.product)
+    variants: ProductVariant[];
+
+    @OneToMany(() => ProductImage, image => image.product)
+    images: ProductImage[];
 }
