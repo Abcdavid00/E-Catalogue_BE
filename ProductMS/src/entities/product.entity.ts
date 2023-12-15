@@ -24,4 +24,7 @@ export class Product {
 
     @Column('nvarchar', { length: 5000, nullable: true })
     description?: string;
+
+    @Column('varchar', { length: 40, nullable: true })
+    image: string;
 }
