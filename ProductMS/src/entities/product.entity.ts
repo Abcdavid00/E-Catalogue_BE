@@ -1,6 +1,5 @@
 import { Column, Entity, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Category } from "./category.entity";
-import { Style } from "./style.entity";
 import { Brand } from "./brand.entity";
 import { ProductVariant } from "./product-variant.entity";
 import { ProductImage } from "./product-image.entity";
@@ -13,10 +12,6 @@ export class Product {
 
     @ManyToOne(() => Category, category => category.id, { nullable: false })
     category: number;
-
-    @ManyToMany(() => Style, style => style.id)
-    @JoinTable()
-    styles: Style[];
 
     @ManyToOne(() => Brand, brand => brand.id, { nullable: true })
     brand: number;
