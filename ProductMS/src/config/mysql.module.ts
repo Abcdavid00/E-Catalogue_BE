@@ -15,7 +15,7 @@ export const mysqlConfig: DataSourceOptions = {
     entities: [__dirname + '/../**/*.entity.{js,ts}'],
     synchronize: false,
     logging: true,
-    migrations: [__dirname + '/../migrations/**/*.{js,ts}'],
+    migrations: [__dirname + '/../**/migrations/**/*.{js,ts}'],
     migrationsRun: true,
 };
 
