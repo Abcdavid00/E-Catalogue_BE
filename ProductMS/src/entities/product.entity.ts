@@ -11,10 +11,10 @@ export class Product {
     id: number;
 
     @ManyToOne(() => Category, category => category.id, { nullable: false })
-    category: number;
+    category: Category;
 
     @ManyToOne(() => Brand, brand => brand.id, { nullable: true })
-    brand: number;
+    brand: Brand;
 
     @Column('nvarchar', { length: 50 , nullable: false})
     name: string;

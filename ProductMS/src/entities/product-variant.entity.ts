@@ -1,13 +1,14 @@
-import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
+import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Product } from "./product.entity";
 
 @Entity()
 export class ProductVariant {
-    @PrimaryColumn()
+    @PrimaryGeneratedColumn()
+    id: number;
+    
     @ManyToOne(() => Product, product => product.id, { nullable: false })
-    product: number;
+    product: Product;
 
-    @PrimaryColumn()
     @Column('nvarchar', { length: 100, nullable: true })
     name?: string;
 
