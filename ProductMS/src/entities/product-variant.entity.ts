@@ -6,7 +6,7 @@ export class ProductVariant {
     @PrimaryGeneratedColumn()
     id: number;
     
-    @ManyToOne(() => Product, product => product.id, { nullable: false })
+    @ManyToOne(() => Product, product => product.id, { nullable: false, onDelete: 'CASCADE'})
     product: Product;
 
     @Column('nvarchar', { length: 100, nullable: true })

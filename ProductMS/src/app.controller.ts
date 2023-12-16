@@ -53,6 +53,11 @@ export class AppController {
     return this.appService.getProductById(param.id);
   }
 
+  @MessagePattern({ cmd: 'RemoveProductById' })
+  removeProductById(param: {id: number}): Promise<any> {
+    return this.appService.removeProductById(param.id);
+  }
+
   @MessagePattern({ cmd: 'CreateProductVariant' })
   createProductVariant(param: {
     product: number,

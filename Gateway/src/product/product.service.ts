@@ -93,6 +93,13 @@ export class ProductService {
         })
     }
 
+    async removeProductById(id: number): Promise<any> {
+        return this.send({
+            cmd: 'RemoveProductById',
+            data: { id }
+        })
+    }
+
     async createProductVariant(param: {
         product: number,
         name: string,

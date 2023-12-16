@@ -127,6 +127,18 @@ export class AppService {
     return product;
   }
 
+  async removeProductById(id: number): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: {
+        id: id
+      }
+    });
+    if (!product) {
+      throw new RpcException('Product not found');
+    }
+    return await this.productRepository.remove(product);
+  }
+
   async createProductVariant(param: {
     product: number,
     name?: string,

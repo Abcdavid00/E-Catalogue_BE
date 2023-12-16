@@ -137,8 +137,8 @@ services:
       MYSQL_DATABASE: $PRODUCTDB_DATABASE
       MYSQL_USER: $PRODUCTDB_USER
       MYSQL_PASSWORD: $PRODUCTDB_PASSWORD
-    volumes:
-      - ./DockerVolume/product-db:/var/lib/mysql
+    # volumes:
+    #   - ./DockerVolume/product-db:/var/lib/mysql
     networks:
       - product-db-networks
 

@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Body, UploadedFile, UseInterceptors, Param } from '@nestjs/common';
+import { Controller, Post, Get, Body, UploadedFile, UseInterceptors, Param, Delete } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { ApiParam, ApiBody, ApiConsumes, ApiOkResponse } from '@nestjs/swagger';
 import { CategoriesDto } from './dto/category.dto';
@@ -85,6 +85,13 @@ export class ProductController {
     @ApiOkResponse({ type: ProductDto })
     async getProductById(@Param('id') id: number): Promise<any> {
         return this.productService.getProductById(id);
+    }
+
+    @Delete(':id')
+    @ApiParam({ name: 'id', type: Number })
+    @ApiOkResponse({ type: ProductDto })
+    async removeProductById(@Param('id') id: number): Promise<any> {
+        return this.productService.removeProductById(id);
     }
 
     @Post('variant')
