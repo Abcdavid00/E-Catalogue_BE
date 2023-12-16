@@ -126,4 +126,63 @@ export class AppService {
     }
     return product;
   }
+
+  async createProductVariant(param: {
+    product: number,
+    name?: string,
+    image?: string,
+    price: number,
+    quantity: number
+  }): Promise<ProductVariant> {
+    const product = await this.productRepository.findOne({
+      where: {
+        id: param.product
+      }
+    });
+    if (!product) {
+      throw new RpcException('Product not found');
+    }
+    const variant: ProductVariant = this.productVariantRepository.create({
+      product: product,
+      name: param.name,
+      image: param.image,
+      price: param.price,
+      quantity: param.quantity
+    });
+    return await this.productVariantRepository.save(variant);
+  }
+
+  async updateProductVariant(param: {
+    id: number,
+    name?: string,
+    image?: string,
+    price?: number,
+    quantity?: number
+  }): Promise<ProductVariant> {
+    const variant = await this.productVariantRepository.findOne({
+      where: {
+        id: param.id
+      }
+    });
+    if (!variant) {
+      throw new RpcException('Variant not found');
+    }
+    variant.name = param.name || variant.name;
+    variant.image = param.image || variant.image;
+    variant.price = param.price || variant.price;
+    variant.quantity = param.quantity || variant.quantity;
+    return await this.productVariantRepository.save(variant);
+  }
+
+  async deleteProductVariant(id: number): Promise<ProductVariant> {
+    const variant = await this.productVariantRepository.findOne({
+      where: {
+        id: id
+      }
+    });
+    if (!variant) {
+      throw new RpcException('Variant not found');
+    }
+    return await this.productVariantRepository.remove(variant);
+  }
 }

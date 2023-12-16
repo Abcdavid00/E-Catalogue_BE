@@ -86,4 +86,67 @@ export class ProductController {
     async getProductById(@Param('id') id: number): Promise<any> {
         return this.productService.getProductById(id);
     }
+
+    @Post('variant')
+    @ApiConsumes('multipart/form-data')
+    @UseInterceptors(FileInterceptor('image'))
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            product: { type: 'number', nullable: false},
+            name: { type: 'string', nullable: true},
+            price: { type: 'number', nullable: false},
+            quantity: { type: 'number', nullable: false},
+            image: {
+                type: 'string',
+                format: 'binary',
+                nullable: true
+            }
+        }
+    }})
+    async createProductVariant(@Body() param: {
+        product: number,
+        name: string,
+        price: number,
+        quantity: number,
+    }, @UploadedFile() image: Express.Multer.File): Promise<any> {
+        return this.productService.createProductVariant({
+            product: param.product,
+            name: param.name,
+            price: param.price,
+            quantity: param.quantity,
+            image: image
+        });
+    }
+
+    @Post('variant/:id')
+    @ApiParam({ name: 'id', type: Number })
+    @ApiConsumes('multipart/form-data')
+    @UseInterceptors(FileInterceptor('image'))
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            name: { type: 'string', nullable: true},
+            price: { type: 'number', nullable: true},
+            quantity: { type: 'number', nullable: true},
+            image: {
+                type: 'string',
+                format: 'binary',
+                nullable: true
+            }
+        }
+    }})
+    async updateProductVariantById(@Param('id') id: number, @Body() param: {
+        name?: string,
+        price?: number,
+        quantity?: number,
+    }, @UploadedFile() image: Express.Multer.File): Promise<any> {
+        return this.productService.updateProductVariant({
+            id: id,
+            name: param.name,
+            price: param.price,
+            quantity: param.quantity,
+            image: image
+        });
+    }
 }

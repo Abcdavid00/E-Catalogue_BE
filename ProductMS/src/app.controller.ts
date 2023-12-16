@@ -52,4 +52,26 @@ export class AppController {
   getProductById(param: {id: number}): Promise<any> {
     return this.appService.getProductById(param.id);
   }
+
+  @MessagePattern({ cmd: 'CreateProductVariant' })
+  createProductVariant(param: {
+    product: number,
+    name: string,
+    price: number,
+    quantity: number,
+    image: string
+  }): Promise<any> {
+    return this.appService.createProductVariant(param);
+  }
+
+  @MessagePattern({ cmd: 'UpdateProductVariantById' })
+  updateProductVariantById(param: {
+    id: number,
+    name?: string,
+    price?: number,
+    quantity?: number,
+    image?: string
+  }): Promise<any> {
+    return this.appService.updateProductVariant(param);
+  }
 }

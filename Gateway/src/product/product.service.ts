@@ -92,4 +92,51 @@ export class ProductService {
             data: { id }
         })
     }
+
+    async createProductVariant(param: {
+        product: number,
+        name: string,
+        price: number,
+        quantity: number,
+        image: Express.Multer.File
+    }): Promise<any> {
+        if (!param.image) {
+            throw new BadRequestException('Image is required');
+        }
+        const imageId = await this.fileServerService.uploadImage(param.image);
+        return this.send({
+            cmd: 'CreateProductVariant',
+            data: {
+                product: param.product,
+                name: param.name,
+                price: param.price,
+                quantity: param.quantity,
+                image: imageId
+            }
+        })
+    }
+
+    async updateProductVariant(param: {
+        id: number,
+        name?: string,
+        price?: number,
+        quantity?: number,
+        image?: Express.Multer.File
+    }): Promise<any> {
+        let image: string = null;
+        if (param.image) {
+            const imageId = await this.fileServerService.uploadImage(param.image);
+            image = imageId;
+        }
+        return this.send({
+            cmd: 'UpdateProductVariantById',
+            data: {
+                id: param.id,
+                name: param.name,
+                price: param.price,
+                quantity: param.quantity,
+                image
+            }
+        })
+    }
 }
