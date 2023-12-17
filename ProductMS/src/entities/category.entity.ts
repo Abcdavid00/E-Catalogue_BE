@@ -1,15 +1,16 @@
-import { Column, Entity, JoinTable, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, JoinTable, ManyToOne, OneToMany, PrimaryColumn, PrimaryGeneratedColumn, Tree, TreeChildren, TreeParent } from "typeorm";
 import { Product } from "./product.entity";
 
 @Entity()
+@Tree("closure-table")
 export class Category {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @ManyToOne(() => Category, category => category.id, { nullable: true })
-    parent?: number;
+    @TreeParent()
+    parent?: Category;
 
-    @OneToMany(() => Category, category => category.id)
+    @TreeChildren()
     children: Category[];
     
     @OneToMany(() => Product, product => product.category)
