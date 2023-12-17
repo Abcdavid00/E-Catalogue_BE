@@ -28,7 +28,6 @@ export class ProductService {
             throw new BadRequestException(error.message);
         }
     }
-
     async createCategory(param: {
         name: string,
         description?: string,
@@ -100,49 +99,57 @@ export class ProductService {
         })
     }
 
-    async createProductVariant(param: {
+    async setProductVariant(param: {
         product: number,
-        name: string,
+        size: string,
+        color: string,
         price: number,
         quantity: number,
         image: Express.Multer.File
     }): Promise<any> {
-        if (!param.image) {
-            throw new BadRequestException('Image is required');
+        let image: string = null;
+        if (param.image) {
+            image = await this.fileServerService.uploadImage(param.image);
         }
-        const imageId = await this.fileServerService.uploadImage(param.image);
         return this.send({
-            cmd: 'CreateProductVariant',
+            cmd: 'SetProductVariant',
             data: {
                 product: param.product,
-                name: param.name,
+                size: param.size,
+                color: param.color,
                 price: param.price,
                 quantity: param.quantity,
-                image: imageId
+                image
             }
         })
     }
 
-    async updateProductVariant(param: {
-        id: number,
-        name?: string,
-        price?: number,
-        quantity?: number,
-        image?: Express.Multer.File
+    async getProductVariant(param: {
+        productId: number,
+        size: string,
+        color: string
     }): Promise<any> {
-        let image: string = null;
-        if (param.image) {
-            const imageId = await this.fileServerService.uploadImage(param.image);
-            image = imageId;
-        }
         return this.send({
-            cmd: 'UpdateProductVariantById',
+            cmd: 'GetProductVariant',
             data: {
-                id: param.id,
-                name: param.name,
-                price: param.price,
-                quantity: param.quantity,
-                image
+                productId: param.productId,
+                size: param.size,
+                color: param.color
+            }
+        })
+    }
+
+    async removeProductVariant(param: {
+        productId: number,
+        size: string,
+        color: string
+    }): Promise<any> {
+        return this.send({
+            cmd: 'RemoveProductVariant',
+            data: {
+                productId: param.productId,
+                size: param.size,
+                color: param.color
             }
         })
     }

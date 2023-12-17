@@ -8,6 +8,8 @@ import { ProductImage } from './entities/product-image.entity';
 import { ProductVariant } from './entities/product-variant.entity';
 import { RpcException } from '@nestjs/microservices';
 import { mysqlConfig } from './config/mysql.module';
+import { ParseSize, Size } from './entities/size.enum';
+import { Color, ParseColor } from './entities/color.enum';
 
 @Injectable()
 export class AppService {
@@ -139,13 +141,21 @@ export class AppService {
     return await this.productRepository.remove(product);
   }
 
-  async createProductVariant(param: {
+  async setProductVariant(param: {
     product: number,
-    name?: string,
+    size: string,
+    color: string,
     image?: string,
-    price: number,
-    quantity: number
+    price?: number,
+    quantity?: number
   }): Promise<ProductVariant> {
+    let size: Size, color: Color;
+    try {
+      size = ParseSize(param.size);
+      color = ParseColor(param.color);
+    } catch (e) {
+      throw new RpcException(e.message);
+    }
     const product = await this.productRepository.findOne({
       where: {
         id: param.product
@@ -154,42 +164,93 @@ export class AppService {
     if (!product) {
       throw new RpcException('Product not found');
     }
-    const variant: ProductVariant = this.productVariantRepository.create({
+    const variant = await this.productVariantRepository.findOne({
+      where: {
+        product: product,
+        size,
+        color
+      }
+    });
+    if (variant) {
+      variant.image = param.image || variant.image;
+      variant.price = param.price || variant.price;
+      variant.quantity = param.quantity || variant.quantity;
+      return await this.productVariantRepository.save(variant);
+    }
+    if (!param.image) {
+      throw new RpcException('Image is required for new variant');
+    }
+    if (!param.price) {
+      throw new RpcException('Price is required for new variant');
+    }
+    if (!param.quantity) {
+      throw new RpcException('Quantity is required for new variant');
+    }
+    const newVariant = this.productVariantRepository.create({
       product: product,
-      name: param.name,
+      size,
+      color,
       image: param.image,
       price: param.price,
       quantity: param.quantity
     });
-    return await this.productVariantRepository.save(variant);
+    return await this.productVariantRepository.save(newVariant);
   }
 
-  async updateProductVariant(param: {
-    id: number,
-    name?: string,
-    image?: string,
-    price?: number,
-    quantity?: number
+  async getProductVariant(param: {
+    productId: number,
+    size: string,
+    color: string
   }): Promise<ProductVariant> {
+    let size: Size, color: Color;
+    try {
+      size = ParseSize(param.size);
+      color = ParseColor(param.color);
+    } catch (e) {
+      throw new RpcException(e.message);
+    }
+    const product = await this.productRepository.findOne({
+      where: {
+        id: param.productId
+      }
+    });
+    if (!product) {
+      throw new RpcException('Product not found');
+    }
     const variant = await this.productVariantRepository.findOne({
       where: {
-        id: param.id
+        product: product,
+        size,
+        color
       }
     });
     if (!variant) {
       throw new RpcException('Variant not found');
     }
-    variant.name = param.name || variant.name;
-    variant.image = param.image || variant.image;
-    variant.price = param.price || variant.price;
-    variant.quantity = param.quantity || variant.quantity;
-    return await this.productVariantRepository.save(variant);
+    return variant;
   }
 
-  async deleteProductVariant(id: number): Promise<ProductVariant> {
+  async removeProductVariant(param: {productId: number, size: string, color: string}): Promise<ProductVariant> {
+    let size: Size, color: Color;
+    try {
+      size = ParseSize(param.size);
+      color = ParseColor(param.color);
+    } catch (e) {
+      throw new RpcException(e.message);
+    }
+    const product = await this.productRepository.findOne({
+      where: {
+        id: param.productId
+      }
+    });
+    if (!product) {
+      throw new RpcException('Product not found');
+    }
     const variant = await this.productVariantRepository.findOne({
       where: {
-        id: id
+        product: product,
+        size,
+        color
       }
     });
     if (!variant) {
@@ -197,4 +258,65 @@ export class AppService {
     }
     return await this.productVariantRepository.remove(variant);
   }
+
+  // async createProductVariant(param: {
+  //   product: number,
+  //   size: Size,
+  //   color: Color,
+  //   image?: string,
+  //   price: number,
+  //   quantity: number
+  // }): Promise<ProductVariant> {
+  //   const product = await this.productRepository.findOne({
+  //     where: {
+  //       id: param.product
+  //     }
+  //   });
+  //   if (!product) {
+  //     throw new RpcException('Product not found');
+  //   }
+  //   const variant: ProductVariant = this.productVariantRepository.create({
+  //     product: product,
+  //     size: param.size,
+  //     color: param.color,
+  //     image: param.image,
+  //     price: param.price,
+  //     quantity: param.quantity
+  //   });
+  //   return await this.productVariantRepository.save(variant);
+  // }
+
+  // async updateProductVariant(param: {
+  //   id: number,
+  //   name?: string,
+  //   image?: string,
+  //   price?: number,
+  //   quantity?: number
+  // }): Promise<ProductVariant> {
+  //   const variant = await this.productVariantRepository.findOne({
+  //     where: {
+  //       id: param.id
+  //     }
+  //   });
+  //   if (!variant) {
+  //     throw new RpcException('Variant not found');
+  //   }
+  //   variant.name = param.name || variant.name;
+  //   variant.image = param.image || variant.image;
+  //   variant.price = param.price || variant.price;
+  //   variant.quantity = param.quantity || variant.quantity;
+  //   return await this.productVariantRepository.save(variant);
+  // }
+
+  // async removeProductVariant(id: number): Promise<ProductVariant> {
+  //   const variant = await this.productVariantRepository.findOne({
+  //     where: {
+  //       id: id
+  //     }
+  //   });
+  //   if (!variant) {
+  //     throw new RpcException('Variant not found');
+  //   }
+  //   return await this.productVariantRepository.remove(variant);
+  // }
 }

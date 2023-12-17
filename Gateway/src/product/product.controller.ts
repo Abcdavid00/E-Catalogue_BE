@@ -94,46 +94,12 @@ export class ProductController {
         return this.productService.removeProductById(id);
     }
 
-    @Post('variant')
+    @Post('variant/:product/:size/:color')
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('image'))
     @ApiBody({ schema: {
         type: 'object',
         properties: {
-            product: { type: 'number', nullable: false},
-            name: { type: 'string', nullable: true},
-            price: { type: 'number', nullable: false},
-            quantity: { type: 'number', nullable: false},
-            image: {
-                type: 'string',
-                format: 'binary',
-                nullable: true
-            }
-        }
-    }})
-    async createProductVariant(@Body() param: {
-        product: number,
-        name: string,
-        price: number,
-        quantity: number,
-    }, @UploadedFile() image: Express.Multer.File): Promise<any> {
-        return this.productService.createProductVariant({
-            product: param.product,
-            name: param.name,
-            price: param.price,
-            quantity: param.quantity,
-            image: image
-        });
-    }
-
-    @Post('variant/:id')
-    @ApiParam({ name: 'id', type: Number })
-    @ApiConsumes('multipart/form-data')
-    @UseInterceptors(FileInterceptor('image'))
-    @ApiBody({ schema: {
-        type: 'object',
-        properties: {
-            name: { type: 'string', nullable: true},
             price: { type: 'number', nullable: true},
             quantity: { type: 'number', nullable: true},
             image: {
@@ -143,17 +109,46 @@ export class ProductController {
             }
         }
     }})
-    async updateProductVariantById(@Param('id') id: number, @Body() param: {
-        name?: string,
+    @ApiParam({ name: 'product', type: Number })
+    @ApiParam({ name: 'size', type: String })
+    @ApiParam({ name: 'color', type: String })
+    async setProductVariant(@Param('product') product: number, @Param('size') size: string, @Param('color') color: string, @Body() param: {
         price?: number,
         quantity?: number,
     }, @UploadedFile() image: Express.Multer.File): Promise<any> {
-        return this.productService.updateProductVariant({
-            id: id,
-            name: param.name,
+        return this.productService.setProductVariant({
+            product: product,
+            size: size,
+            color: color,
             price: param.price,
             quantity: param.quantity,
             image: image
+        });
+    }
+
+    @Get('variant/:productId/:size/:color')
+    @ApiParam({ name: 'productId', type: Number })
+    @ApiParam({ name: 'size', type: String })
+    @ApiParam({ name: 'color', type: String })
+    // @ApiOkResponse({ type: ProductDto })
+    async getProductVariant(@Param('productId') productId: number, @Param('size') size: string, @Param('color') color: string): Promise<any> {
+        return this.productService.getProductVariant({
+            productId: productId,
+            size: size,
+            color: color
+        });
+    }
+
+    @Delete('variant/:productId/:size/:color')
+    @ApiParam({ name: 'productId', type: Number })
+    @ApiParam({ name: 'size', type: String })
+    @ApiParam({ name: 'color', type: String })
+    // @ApiOkResponse({ type: ProductDto })
+    async removeProductVariant(@Param('productId') productId: number, @Param('size') size: string, @Param('color') color: string): Promise<any> {
+        return this.productService.removeProductVariant({
+            productId: productId,
+            size: size,
+            color: color
         });
     }
 }

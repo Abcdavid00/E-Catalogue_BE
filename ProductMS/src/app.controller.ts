@@ -3,6 +3,9 @@ import { AppService } from './app.service';
 import { MessagePattern } from '@nestjs/microservices';
 import { Category } from './entities/category.entity';
 import { Product } from './entities/product.entity';
+import { ProductVariant } from './entities/product-variant.entity';
+import { Size } from './entities/size.enum';
+import { Color } from './entities/color.enum';
 
 @Controller()
 export class AppController {
@@ -58,25 +61,25 @@ export class AppController {
     return this.appService.removeProductById(param.id);
   }
 
-  @MessagePattern({ cmd: 'CreateProductVariant' })
-  createProductVariant(param: {
+  @MessagePattern({ cmd: 'SetProductVariant' })
+  setProductVariant(param: {
     product: number,
-    name: string,
-    price: number,
-    quantity: number,
-    image: string
-  }): Promise<any> {
-    return this.appService.createProductVariant(param);
-  }
-
-  @MessagePattern({ cmd: 'UpdateProductVariantById' })
-  updateProductVariantById(param: {
-    id: number,
-    name?: string,
+    size: string,
+    color: string,
+    image?: string,
     price?: number,
     quantity?: number,
-    image?: string
-  }): Promise<any> {
-    return this.appService.updateProductVariant(param);
+  }): Promise<ProductVariant> {
+    return this.appService.setProductVariant(param);
+  }
+
+  @MessagePattern({ cmd: 'GetProductVariant' })
+  getProductVariant(param: {productId: number, size: string, color: string}): Promise<ProductVariant> {
+    return this.appService.getProductVariant(param);
+  }
+
+  @MessagePattern({ cmd: 'RemoveProductVariant' })
+  removeProductVariant(param: {productId: number, size: string, color: string}): Promise<ProductVariant> {
+    return this.appService.removeProductVariant(param);
   }
 }
