@@ -8,6 +8,7 @@ pipeline {
         gatewayTag = "${harborURL}/${projectName}/gateway:${version}"
         usersmsTag = "${harborURL}/${projectName}/usersms:${version}"
         userinfomsTag = "${harborURL}/${projectName}/userinfoms:${version}"
+        productmsTag = "${harborURL}/${projectName}/productms:${version}"
         fileserverTag = "${harborURL}/${projectName}/fileserver:${version}"
     }
 
@@ -67,6 +68,13 @@ pipeline {
                     }
                 }
 
+                stage('Build product microservice') {
+                    steps {
+                        echo 'Building product microservice...'
+                        sh 'docker build -t ${productmsTag} ./ProductMS --platform linux/amd64'
+                    }
+                }
+
                 stage('Build fileserver') {
                     steps {
                         echo 'Building fileserver...'
@@ -102,6 +110,13 @@ pipeline {
                     steps {
                         echo 'Pushing user info microservice image to Harbor...'
                         sh 'docker push ${userinfomsTag}'
+                    }
+                }
+
+                stage('Push product microservice image to Harbor') {
+                    steps {
+                        echo 'Pushing product microservice image to Harbor...'
+                        sh 'docker push ${productmsTag}'
                     }
                 }
 
