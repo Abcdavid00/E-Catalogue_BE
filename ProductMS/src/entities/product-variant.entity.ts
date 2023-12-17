@@ -1,5 +1,7 @@
 import { Column, Entity, ManyToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
 import { Product } from "./product.entity";
+import { Size } from "./size.enum";
+import { Color } from "./color.enum";
 
 @Entity()
 export class ProductVariant {
@@ -9,8 +11,11 @@ export class ProductVariant {
     @ManyToOne(() => Product, product => product.id, { nullable: false, onDelete: 'CASCADE'})
     product: Product;
 
-    @Column('nvarchar', { length: 100, nullable: true })
-    name?: string;
+    @Column({ type: 'enum', enum: Size, nullable: false })
+    size: Size;
+
+    @Column({ type: 'enum', enum: Color, nullable: false})
+    color: Color;
 
     @Column('varchar', { length: 40, nullable: true })
     image?: string;
