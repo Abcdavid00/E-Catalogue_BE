@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Catch, ConflictException, Controller, Get, Inject, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Catch, ConflictException, Controller, Get, Inject, Param, Post, Put, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersMSName } from 'src/config/microservices.module';
 import { ClientProxy } from '@nestjs/microservices';
@@ -79,12 +79,42 @@ export class UsersController {
         return this.UsersService.findUserByEmail(email);
     }
 
-    // @Post('signin')
-    // @ApiBody({ type: SignInDto })
-    // @ApiOkResponse({ type: UserDto })
-    // async signIn(@Body() user: SignInDto): Promise<UserDto> {
-    //     return this.UsersService.signIn(user.username, user.password);
-    // }
+    @Put('password')
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            oldPassword: {
+                type: 'string',
+            },
+            newPassword: {
+                type: 'string',
+            }
+        }
+    }})
+    @ApiOkResponse({ type: UserDto })
+    async changePassword(@Request() req, @Body() body: { oldPassword: string, newPassword: string }): Promise<UserDto> {
+        return this.UsersService.changePassword(req.user.id, body.oldPassword, body.newPassword);
+    }
 
+    @Put('email')
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            newEmail: {
+                type: 'string',
+            }
+        }
+    }})
+    @ApiOkResponse({ type: UserDto })
+    async changeEmail(@Request() req, @Body() body: { newEmail: string }): Promise<UserDto> {
+        return this.UsersService.changeEmail(req.user.id, body.newEmail);
+    }
+
+    @Post('signin')
+    @ApiBody({ type: SignInDto })
+    @ApiOkResponse({ type: UserDto })
+    async signIn(@Body() body: SignInDto): Promise<UserDto> {
+        return this.UsersService.signIn(body.username, body.password);
+    }
 
 }

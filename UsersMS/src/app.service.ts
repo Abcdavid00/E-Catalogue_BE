@@ -157,4 +157,71 @@ export class AppService {
 
     return this.userWithoutPassword(user);
   }
+
+  async changePassword(id: number, oldPassword: string, newPassword: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: id
+      }
+    });
+
+    if (!user) {
+      throw new RpcException('User not found');
+    }
+
+    const isPasswordCorrect = await compare(oldPassword, user.password);
+
+    if (!isPasswordCorrect) {
+      throw new RpcException('Old password is incorrect');
+    }
+
+    const hashedPassword = await hash(newPassword, 10);
+
+    user.password = hashedPassword;
+
+    return this.userWithoutPassword(await this.userRepository.save(user));
+  }
+
+  async changeEmail(id: number, newEmail: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: id
+      }
+    });
+
+    if (!user) {
+      throw new RpcException('User not found');
+    }
+
+    const isEmailAvailable = await this.isEmailAvailable(newEmail);
+    if (!isEmailAvailable) {
+      throw new RpcException('Email is not available');
+    }
+
+    user.email = newEmail;
+
+    return this.userWithoutPassword(await this.userRepository.save(user));
+  }
+
+  async changeUsername(id: number, newUsername: string): Promise<User> {
+    const user = await this.userRepository.findOne({
+      where: {
+        id: id
+      }
+    });
+
+    if (!user) {
+      throw new RpcException('User not found');
+    }
+
+    const isUsernameAvailable = await this.isUsernameAvailable(newUsername);
+    if (!isUsernameAvailable) {
+      throw new RpcException('Username is not available');
+    }
+
+    user.username = newUsername;
+
+    return this.userWithoutPassword(await this.userRepository.save(user));
+  }
+  
 }

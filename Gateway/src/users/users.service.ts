@@ -99,4 +99,37 @@ export class UsersService {
             throw new BadRequestException(error.message);
         }
     }
+
+    async changePassword(id: number, oldPassword: string, newPassword: string): Promise<User> {
+        try {
+            const res: User =  await firstValueFrom(
+                this.UsersClient.send<User>({ cmd: 'changePassword' }, {id, oldPassword, newPassword})
+            )
+            return res;
+        } catch (error) {
+            throw new BadRequestException(error.message);
+        }
+    }
+
+    async changeEmail(id: number, newEmail: string): Promise<User> {
+        try {
+            const res: User =  await firstValueFrom(
+                this.UsersClient.send<User>({ cmd: 'changeEmail' }, {id, newEmail})
+            )
+            return res;
+        } catch (error) {
+            throw new BadRequestException(error.message);
+        }
+    }
+
+    async changeUsername(id: number, newUsername: string): Promise<User> {
+        try {
+            const res: User =  await firstValueFrom(
+                this.UsersClient.send<User>({ cmd: 'changeUsername' }, {id, newUsername})
+            )
+            return res;
+        } catch (error) {
+            throw new BadRequestException(error.message);
+        }
+    }
 }
