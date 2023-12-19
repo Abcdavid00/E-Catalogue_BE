@@ -4,7 +4,7 @@ import { UsersMSName } from 'src/config/microservices.module';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { ApiBadGatewayResponse, ApiBadRequestResponse, ApiBody, ApiDefaultResponse, ApiOkResponse, ApiParam } from '@nestjs/swagger';
-import { User, UserDto } from './dto/user.dto';
+import { User, UserDto, UserRole } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SignInDto } from './dto/sign-in.dto';
 
@@ -57,7 +57,8 @@ export class UsersController {
                 type: 'string',
             },
             role: {
-                type: 'string',
+                type: 'enum',
+                enum: [UserRole]
             },
             id: {
                 type: 'number',
