@@ -120,14 +120,28 @@ export class UsersController {
     @ApiBody({ schema: {
         type: 'object',
         properties: {
-            newEmail: {
+            email: {
                 type: 'string',
             }
         }
     }})
     @ApiOkResponse({ type: UserDto })
-    async changeEmail(@Request() req, @Body() body: { newEmail: string }): Promise<UserDto> {
-        return this.UsersService.changeEmail(req.user.id, body.newEmail);
+    async changeEmail(@Request() req, @Body() body: { email: string }): Promise<UserDto> {
+        return this.UsersService.changeEmail(req.user.id, body.email);
+    }
+
+    @Put('username')
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            username: {
+                type: 'string',
+            }
+        }
+    }})
+    @ApiOkResponse({ type: UserDto })
+    async changeUsername(@Request() req, @Body() body: { username: string }): Promise<UserDto> {
+        return this.UsersService.changeUsername(req.user.id, body.username);
     }
 
 }
