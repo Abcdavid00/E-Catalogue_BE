@@ -1,12 +1,13 @@
-import { BadRequestException, Body, Catch, ConflictException, Controller, Get, Inject, Param, Post, Put, Request } from '@nestjs/common';
+import { BadRequestException, Body, Catch, ConflictException, Controller, Get, Inject, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersMSName } from 'src/config/microservices.module';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { ApiBadGatewayResponse, ApiBadRequestResponse, ApiBody, ApiDefaultResponse, ApiOkResponse, ApiParam } from '@nestjs/swagger';
+import { ApiBadGatewayResponse, ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiDefaultResponse, ApiOkResponse, ApiParam } from '@nestjs/swagger';
 import { User, UserDto, UserRole } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SignInDto } from './dto/sign-in.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 const INIT_ADMIN_SECRET = process.env.INIT_ADMIN_SECRET;
 
@@ -100,6 +101,8 @@ export class UsersController {
     }
 
     @Put('password')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
     @ApiBody({ schema: {
         type: 'object',
         properties: {
@@ -117,6 +120,8 @@ export class UsersController {
     }
 
     @Put('email')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
     @ApiBody({ schema: {
         type: 'object',
         properties: {
@@ -131,6 +136,8 @@ export class UsersController {
     }
 
     @Put('username')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
     @ApiBody({ schema: {
         type: 'object',
         properties: {
