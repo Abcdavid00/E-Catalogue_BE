@@ -69,7 +69,7 @@ export class UsersController {
         }
     } })
     async initAdmin(@Body() body: { secret: string }): Promise<UserDto> {
-        if (!body.secret) {
+        if (!INIT_ADMIN_SECRET) {
             throw new BadRequestException('Init admin is disabled');
         }
         if (body.secret !== INIT_ADMIN_SECRET) {
