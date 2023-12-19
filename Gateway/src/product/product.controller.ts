@@ -1,9 +1,13 @@
-import { Controller, Post, Get, Body, UploadedFile, UseInterceptors, Param, Delete } from '@nestjs/common';
+import { Controller, Post, Get, Body, UploadedFile, UseInterceptors, Param, Delete, UseGuards, Request } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { ApiParam, ApiBody, ApiConsumes, ApiOkResponse } from '@nestjs/swagger';
+import { ApiParam, ApiBody, ApiConsumes, ApiOkResponse, ApiProperty, ApiTags, ApiBearerAuth, ApiCreatedResponse } from '@nestjs/swagger';
 import { CategoriesDto } from './dto/category.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProductDto } from './dto/product.dto';
+import { UserRole } from 'src/users/dto/user.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
 
 @Controller('product')
 export class ProductController {
@@ -12,6 +16,7 @@ export class ProductController {
     ) { }
 
     @Post('category')
+    @Roles(UserRole.ADMIN)
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('image'))
     @ApiBody({ schema: {
@@ -28,6 +33,16 @@ export class ProductController {
         }
     }
     })
+    @ApiCreatedResponse({ schema: {
+        type: 'object',
+        properties: {
+            id: { type: 'number' },
+            name: { type: 'string' },
+            description: { type: 'string' },
+            parent: { type: 'number' },
+            image: { type: 'string' },
+        }
+    } })
     async createCategory(@Body() param: {
         name: string,
         description?: string,
@@ -51,6 +66,7 @@ export class ProductController {
     }
 
     @Post()
+    @Roles(UserRole.ADMIN)
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('image'))
     @ApiBody({ schema: {
@@ -88,6 +104,7 @@ export class ProductController {
     }
 
     @Delete(':id')
+    @Roles(UserRole.ADMIN)
     @ApiParam({ name: 'id', type: Number })
     @ApiOkResponse({ type: ProductDto })
     async removeProductById(@Param('id') id: number): Promise<any> {
@@ -95,6 +112,7 @@ export class ProductController {
     }
 
     @Post('variant/:product/:size/:color')
+    @Roles(UserRole.ADMIN)
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('image'))
     @ApiBody({ schema: {
@@ -140,6 +158,7 @@ export class ProductController {
     }
 
     @Delete('variant/:productId/:size/:color')
+    @Roles(UserRole.ADMIN)
     @ApiParam({ name: 'productId', type: Number })
     @ApiParam({ name: 'size', type: String })
     @ApiParam({ name: 'color', type: String })
