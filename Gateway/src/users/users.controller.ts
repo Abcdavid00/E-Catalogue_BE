@@ -8,6 +8,8 @@ import { User, UserDto } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SignInDto } from './dto/sign-in.dto';
 
+const INIT_ADMIN_SECRET = process.env.INIT_ADMIN_SECRET;
+
 @Controller('users')
 export class UsersController {
 
@@ -34,6 +36,26 @@ export class UsersController {
     @ApiOkResponse({ type: UserDto })
     async createUser(@Body() user: CreateUserDto): Promise<UserDto> {
         return this.UsersService.createUser(user.username, user.email, user.password);
+    }
+
+    @Post('initadmin')
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            secret: {
+                type: 'string',
+            }
+        }
+    }})
+    @ApiOkResponse({ type: UserDto })
+    async initAdmin(@Body() body: { secret: string }): Promise<UserDto> {
+        if (!body.secret) {
+            throw new BadRequestException('Init admin is disabled');
+        }
+        if (body.secret !== INIT_ADMIN_SECRET) {
+            throw new BadRequestException('Invalid secret');
+        }
+        return this.UsersService.initAdmin();
     }
 
     @Get(':id')

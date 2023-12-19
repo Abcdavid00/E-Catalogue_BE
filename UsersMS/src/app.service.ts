@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { User, parseUserRole } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { hash, compare } from 'bcrypt';
 import { RpcException } from '@nestjs/microservices';
@@ -42,28 +42,59 @@ export class AppService {
     return user === undefined || user === null;
   }
 
-  async createUser(username: string, email: string, password: string): Promise<User> {
-    const [isUsernameAvailable, isEmailAvailable, hashedPassword] = await Promise.all([
-      this.isUsernameAvailable(username),
-      this.isEmailAvailable(email),
-      hash(password, 10),
-    ]);
-
-    if (!isUsernameAvailable) {
-      throw new RpcException('Username is not available');
+  async createUser(username: string, email: string, password: string, role: string): Promise<User> {
+    try {
+      const [isUsernameAvailable, isEmailAvailable, hashedPassword] = await Promise.all([
+        this.isUsernameAvailable(username),
+        this.isEmailAvailable(email),
+        hash(password, 10),
+      ]);
+  
+      if (!isUsernameAvailable) {
+        throw new RpcException('Username is not available');
+      }
+  
+      if (!isEmailAvailable) {
+        throw new RpcException('Email is not available');
+      }
+  
+      const userRole = parseUserRole(role)
+  
+      const user = await this.userRepository.create({
+        username,
+        email,
+        password: hashedPassword,
+        role: userRole,
+      });
+  
+      return this.userWithoutPassword(await this.userRepository.save(user));
+    } catch (error) {
+      throw new RpcException(error);
     }
+  }
 
-    if (!isEmailAvailable) {
-      throw new RpcException('Email is not available');
+  generatePassword(length: number): string {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * characters.length));
     }
+    return result;
+  }
 
-    const user = await this.userRepository.create({
-      username,
-      email,
-      password: hashedPassword,
+  async initAdmin(): Promise<User> {
+    const username = 'admin';
+    const email = 'admin';
+    const password = this.generatePassword(32);
+    const role = parseUserRole('admin');
+
+    // Remove all existing admin users
+    await this.userRepository.delete({
+      role: role
     });
 
-    return this.userWithoutPassword(await this.userRepository.save(user));
+    // Create new admin user
+    return this.createUser(username, email, password, role);
   }
 
   async getUser(id: number): Promise<User> {

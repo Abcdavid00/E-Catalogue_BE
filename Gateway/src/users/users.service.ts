@@ -45,6 +45,17 @@ export class UsersService {
         }
     }
 
+    async initAdmin(): Promise<User> {
+        try {
+            const res: User =  await firstValueFrom(
+                this.UsersClient.send<User>({ cmd: 'initAdmin' }, {})
+            )
+            return res;
+        } catch (error) {
+            throw new BadRequestException(error.message);
+        }
+    }
+
     async getUser(id: number): Promise<User> {
         try {
             const res: User =  await firstValueFrom(

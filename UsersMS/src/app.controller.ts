@@ -28,8 +28,13 @@ export class AppController {
   }
 
   @MessagePattern({ cmd: 'createUser' })
-  async createUser(params: {username: string, email: string, password: string}): Promise<User> {
-    return this.appService.createUser(params.username, params.email, params.password);
+  async createUser(params: {username: string, email: string, password: string, role: string}): Promise<User> {
+    return this.appService.createUser(params.username, params.email, params.password, params.role);
+  }
+
+  @MessagePattern({ cmd: 'initAdmin' })
+  async initAdmin(): Promise<User> {
+    return this.appService.initAdmin();
   }
 
   @MessagePattern({ cmd: 'getUser' })
