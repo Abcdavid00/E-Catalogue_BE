@@ -7,6 +7,8 @@ import { AuthModule } from './auth/auth.module';
 import clientsModule from './config/microservices.module'
 import { HttpModule } from '@nestjs/axios';
 import { FileServerModule } from './file-server/file-server.module';
+import { UserInfoMsModule } from './user-info-ms/user-info-ms.module';
+import { ProductModule } from './product/product.module';
 
 @Module({
   imports: [
@@ -15,6 +17,8 @@ import { FileServerModule } from './file-server/file-server.module';
     AuthModule,
     HttpModule,
     FileServerModule,
+    UserInfoMsModule,
+    ProductModule,
   ],
   controllers: [AppController],
   providers: [AppService],

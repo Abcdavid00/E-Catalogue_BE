@@ -14,8 +14,7 @@ export class AppController {
 
   @MessagePattern({ cmd: 'Hi' })
   ping(_: any): string {
-
-    return this.appService.hi();
+    return this.appService.getHello();
   }
 
   @MessagePattern({ cmd: 'isUsernameAvailable' })

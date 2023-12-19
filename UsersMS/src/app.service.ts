@@ -14,11 +14,12 @@ export class AppService {
   ) {}
 
   getHello(): string {
-    return 'Hello from UsersMS!';
+    return 'UsersMS Online!';
   }
 
-  hi(): string {
-    return `Hello from UserMS!`;
+  userWithoutPassword(user: User): User {
+    const { password: _, ...userWithoutPassword } = user;
+    return userWithoutPassword;
   }
 
   userWithoutPassword(user: User): User {
