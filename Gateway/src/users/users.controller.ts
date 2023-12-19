@@ -129,11 +129,4 @@ export class UsersController {
         return this.UsersService.changeEmail(req.user.id, body.newEmail);
     }
 
-    @Post('signin')
-    @ApiBody({ type: SignInDto })
-    @ApiOkResponse({ type: UserDto })
-    async signIn(@Body() body: SignInDto): Promise<UserDto> {
-        return this.UsersService.signIn(body.username, body.password);
-    }
-
 }
