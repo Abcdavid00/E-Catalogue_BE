@@ -1,12 +1,14 @@
-import { BadRequestException, Body, Catch, ConflictException, Controller, Get, Inject, Param, Post } from '@nestjs/common';
+import { BadRequestException, Body, Catch, ConflictException, Controller, Get, Inject, Param, Post, Put, Request } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { UsersMSName } from 'src/config/microservices.module';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { ApiBadGatewayResponse, ApiBadRequestResponse, ApiBody, ApiDefaultResponse, ApiOkResponse, ApiParam } from '@nestjs/swagger';
-import { User, UserDto } from './dto/user.dto';
+import { User, UserDto, UserRole } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SignInDto } from './dto/sign-in.dto';
+
+const INIT_ADMIN_SECRET = process.env.INIT_ADMIN_SECRET;
 
 @Controller('users')
 export class UsersController {
@@ -36,6 +38,46 @@ export class UsersController {
         return this.UsersService.createUser(user.username, user.email, user.password);
     }
 
+    @Post('initadmin')
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            secret: {
+                type: 'string',
+            }
+        }
+    }})
+    @ApiOkResponse({ schema: {
+        type: 'object',
+        properties: {
+            username: {
+                type: 'string',
+            },
+            email: {
+                type: 'string',
+            },
+            role: {
+                type: 'enum',
+                enum: [UserRole]
+            },
+            id: {
+                type: 'number',
+            },
+            password: {
+                type: 'string',
+            }
+        }
+    } })
+    async initAdmin(@Body() body: { secret: string }): Promise<UserDto> {
+        if (!body.secret) {
+            throw new BadRequestException('Init admin is disabled');
+        }
+        if (body.secret !== INIT_ADMIN_SECRET) {
+            throw new BadRequestException('Invalid secret');
+        }
+        return this.UsersService.initAdmin();
+    }
+
     @Get(':id')
     @ApiParam({ type: Number, name: 'id', description: "User's Id"})
     @ApiOkResponse({ type: UserDto })
@@ -57,12 +99,35 @@ export class UsersController {
         return this.UsersService.findUserByEmail(email);
     }
 
-    // @Post('signin')
-    // @ApiBody({ type: SignInDto })
-    // @ApiOkResponse({ type: UserDto })
-    // async signIn(@Body() user: SignInDto): Promise<UserDto> {
-    //     return this.UsersService.signIn(user.username, user.password);
-    // }
+    @Put('password')
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            oldPassword: {
+                type: 'string',
+            },
+            newPassword: {
+                type: 'string',
+            }
+        }
+    }})
+    @ApiOkResponse({ type: UserDto })
+    async changePassword(@Request() req, @Body() body: { oldPassword: string, newPassword: string }): Promise<UserDto> {
+        return this.UsersService.changePassword(req.user.id, body.oldPassword, body.newPassword);
+    }
 
+    @Put('email')
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            newEmail: {
+                type: 'string',
+            }
+        }
+    }})
+    @ApiOkResponse({ type: UserDto })
+    async changeEmail(@Request() req, @Body() body: { newEmail: string }): Promise<UserDto> {
+        return this.UsersService.changeEmail(req.user.id, body.newEmail);
+    }
 
 }

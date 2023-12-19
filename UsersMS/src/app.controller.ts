@@ -28,8 +28,13 @@ export class AppController {
   }
 
   @MessagePattern({ cmd: 'createUser' })
-  async createUser(params: {username: string, email: string, password: string}): Promise<User> {
-    return this.appService.createUser(params.username, params.email, params.password);
+  async createUser(params: {username: string, email: string, password: string, role: string}): Promise<User> {
+    return this.appService.createUser(params.username, params.email, params.password, params.role);
+  }
+
+  @MessagePattern({ cmd: 'initAdmin' })
+  async initAdmin(): Promise<User> {
+    return this.appService.initAdmin();
   }
 
   @MessagePattern({ cmd: 'getUser' })
@@ -50,5 +55,20 @@ export class AppController {
   @MessagePattern({ cmd: 'signIn' })
   async signIn(params: {username: string, password: string}): Promise<any> {
     return this.appService.signIn(params.username, params.password);
+  }
+
+  @MessagePattern({ cmd: 'changePassword' })
+  async changePassword(params: {id: number, oldPassword: string, newPassword: string}): Promise<any> {
+    return this.appService.changePassword(params.id, params.oldPassword, params.newPassword);
+  }
+
+  @MessagePattern({ cmd: 'changeEmail' })
+  async changeEmail(params: {id: number, newEmail: string}): Promise<any> {
+    return this.appService.changeEmail(params.id, params.newEmail);
+  }
+
+  @MessagePattern({ cmd: 'changeUsername' })
+  async changeUsername(params: {id: number, newUsername: string}): Promise<any> {
+    return this.appService.changeUsername(params.id, params.newUsername);
   }
 }

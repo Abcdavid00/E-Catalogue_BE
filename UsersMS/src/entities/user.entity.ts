@@ -6,6 +6,14 @@ export enum UserRole {
     CUSTOMER = 'customer',
 }
 
+export function parseUserRole(role: string): UserRole {
+    const roleEnum: UserRole = UserRole[role.toUpperCase() as keyof typeof UserRole];
+    if (!roleEnum) {
+        throw new Error('Invalid user role');
+    }
+    return roleEnum;
+}
+
 @Entity()
 export class User {
     @PrimaryGeneratedColumn()
