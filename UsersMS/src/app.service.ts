@@ -93,8 +93,14 @@ export class AppService {
       role: role
     });
 
-    // Create new admin user
-    return this.createUser(username, email, password, role);
+    const admin = await this.createUser(username, email, password, role);
+    if (!admin) {
+      throw new RpcException('Failed to create admin user');
+    }
+    return {
+      ...admin,
+      password: password
+    }
   }
 
   async getUser(id: number): Promise<User> {

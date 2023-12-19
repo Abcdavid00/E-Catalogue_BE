@@ -47,7 +47,26 @@ export class UsersController {
             }
         }
     }})
-    @ApiOkResponse({ type: UserDto })
+    @ApiOkResponse({ schema: {
+        type: 'object',
+        properties: {
+            username: {
+                type: 'string',
+            },
+            email: {
+                type: 'string',
+            },
+            role: {
+                type: 'string',
+            },
+            id: {
+                type: 'number',
+            },
+            password: {
+                type: 'string',
+            }
+        }
+    } })
     async initAdmin(@Body() body: { secret: string }): Promise<UserDto> {
         if (!body.secret) {
             throw new BadRequestException('Init admin is disabled');
