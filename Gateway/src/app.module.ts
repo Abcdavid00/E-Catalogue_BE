@@ -9,6 +9,7 @@ import { HttpModule } from '@nestjs/axios';
 import { FileServerModule } from './file-server/file-server.module';
 import { UserInfoMsModule } from './user-info-ms/user-info-ms.module';
 import { ProductModule } from './product/product.module';
+import { RolesGuard } from './auth/guards/roles.guard';
 
 @Module({
   imports: [
@@ -21,6 +22,12 @@ import { ProductModule } from './product/product.module';
     ProductModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    // {
+    //   provide: 'APP_GUARD',
+    //   useClass: RolesGuard
+    // }
+  ],
 })
 export class AppModule {}
