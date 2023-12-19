@@ -17,7 +17,7 @@ RUN yarn --frozen-lockfile
 # Copy source code into app folder
 COPY . .
 
-RUN npm install --force --no-package-lockfile @img/sharp-linuxmusl-arm64
+RUN npm install --force --no-package-lockfile @img/sharp-linuxmusl-arm64@0.33.0
 
 CMD ["yarn", "start:dev"]
 #
@@ -36,7 +36,7 @@ COPY package.json yarn.lock ./
 RUN yarn --frozen-lockfile --ignore-scripts --production && yarn cache clean
 
 # RUN yarn set version 3.2.0
-RUN npm install --force --no-package-lockfile @img/sharp-linuxmusl-x64
+RUN npm install --force --no-package-lockfile @img/sharp-linuxmusl-x64@0.33.0
 
 ## Remove unnecessary files from `node_modules` directory
 RUN ( wget -q -O /dev/stdout https://gobinaries.com/tj/node-prune | sh ) \
