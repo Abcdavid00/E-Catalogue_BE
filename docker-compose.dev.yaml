@@ -166,20 +166,6 @@ services:
     networks:
       - fileserver-networks
 
-  fileserver:
-    build: ./FileServer
-    hostname: $FILESERVER_HOST
-    restart: unless-stopped
-    ports: 
-      - 3456:${FILESERVER_PORT}
-    volumes:
-      - ./DockerVolume/files:/app/files
-    environment:
-      PORT: ${FILESERVER_PORT}
-      MAX_FILE_SIZE: 100
-    networks:
-      - fileserver-network-dev
-
 networks:
   microservices-networks:
     driver: bridge

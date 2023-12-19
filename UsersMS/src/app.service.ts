@@ -22,11 +22,6 @@ export class AppService {
     return userWithoutPassword;
   }
 
-  userWithoutPassword(user: User): User {
-    const { password: _, ...userWithoutPassword } = user;
-    return userWithoutPassword;
-  }
-
   async isUsernameAvailable(username: string): Promise<boolean> {
     const user = await this.userRepository.findOne({
       where: {
