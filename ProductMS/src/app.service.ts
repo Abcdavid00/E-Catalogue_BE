@@ -92,6 +92,38 @@ export class AppService {
     return cat;
   }
 
+  async editCategory(param: {
+    id: number,
+    name?: string,
+    description?: string,
+    parent?: number,
+    image?: string
+  }): Promise<Category> {
+    const cat = await this.categoryTreeRepository.findOne({
+      where: {
+        id: param.id
+      }
+    });
+    if (!cat) {
+      throw new RpcException('Category not found');
+    }
+    cat.name = param.name || cat.name;
+    cat.description = param.description || cat.description;
+    if (param.parent) {
+      const parent = await this.categoryTreeRepository.findOne({
+        where: {
+          id: param.parent
+        }
+      });
+      if (!parent) {
+        throw new RpcException('Parent category not found');
+      }
+      cat.parent = parent;
+    }
+    cat.image = param.image || cat.image;
+    return await this.categoryTreeRepository.save(cat);
+  }
+
   async registerStore(param: {
     id: number,
     name: string,
@@ -104,7 +136,7 @@ export class AppService {
       id: param.id,
       name: param.name,
       description: param.description,
-      address: param.address,
+      address: param.address || 0,
       logo_image: param.logo,
       cover_image: param.cover,
       approved: false
@@ -116,6 +148,9 @@ export class AppService {
     const store = await this.storeRepository.findOne({
       where: {
         id: id
+      },
+      relations: {
+        products: true
       }
     });
     if (!store) {
@@ -129,6 +164,14 @@ export class AppService {
     return await this.storeRepository.find({
       where: {
         approved: false
+      }
+    });
+  }
+
+  async getAllApprovedStores(): Promise<Store[]> {
+    return await this.storeRepository.find({
+      where: {
+        approved: true
       }
     });
   }
@@ -199,9 +242,9 @@ export class AppService {
     return product;
   }
 
-  async productInStore(param: {
-    productId: number,
-    storeId: number
+  async storeHas(param: {
+    storeId: number,
+    productId: number
   }): Promise<boolean> {
     const product = await this.productRepository.findOne({
       where: {
@@ -215,6 +258,38 @@ export class AppService {
       throw new RpcException('Product not found');
     }
     return product.store.id === param.storeId;
+  }
+
+  async editProduct(param: {
+    id: number,
+    name?: string,
+    description?: string,
+    category?: number,
+    image?: string
+  }): Promise<Product> {
+    const product = await this.productRepository.findOne({
+      where: {
+        id: param.id
+      }
+    });
+    if (!product) {
+      throw new RpcException('Product not found');
+    }
+    product.name = param.name || product.name;
+    product.description = param.description || product.description;
+    if (param.category) {
+      const category = await this.categoryTreeRepository.findOne({
+        where: {
+          id: param.category
+        }
+      });
+      if (!category) {
+        throw new RpcException('Category not found');
+      }
+      product.category = category;
+    }
+    product.image = param.image || product.image;
+    return await this.productRepository.save(product);
   }
 
   async removeProductById(id: number,): Promise<Product> {

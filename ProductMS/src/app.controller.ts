@@ -40,6 +40,17 @@ export class AppController {
     return this.appService.getCategoryById(param.id);
   }
 
+  @MessagePattern({ cmd: 'EditCategory' })
+  editCategory(param: {
+    id: number,
+    name?: string,
+    description?: string,
+    parent?: number,
+    image?: string
+  }): Promise<Category> {
+    return this.appService.editCategory(param);
+  }
+
   @MessagePattern({ cmd: 'RegisterStore' })
   registerStore(param: {
     id: number,
@@ -62,9 +73,19 @@ export class AppController {
     return this.appService.getAllUnapprovedStores();
   }
 
+  @MessagePattern({ cmd: 'GetAllApprovedStores' })
+  getAllApprovedStores(): Promise<Store[]> {
+    return this.appService.getAllApprovedStores();
+  }
+
   @MessagePattern({ cmd: 'ApproveStore' })
   approveStore(param: {id: number}): Promise<Store> {
     return this.appService.approveStore(param.id);
+  }
+
+  @MessagePattern({ cmd: 'StoreHas' })
+  storeHas(param: {storeId: number, productId: number}): Promise<boolean> {
+    return this.appService.storeHas(param);
   }
 
   @MessagePattern({ cmd: 'CreateProduct' })
@@ -83,6 +104,17 @@ export class AppController {
     return this.appService.getProductById(param.id);
   }
 
+  @MessagePattern({ cmd: 'EditProduct' })
+  editProduct(param: {
+    id: number,
+    name?: string,
+    description?: string,
+    category?: number,
+    image?: string
+  }): Promise<Product> {
+    return this.appService.editProduct(param);
+  }
+
   @MessagePattern({ cmd: 'RemoveProductById' })
   removeProductById(param: {id: number}): Promise<any> {
     return this.appService.removeProductById(param.id);
@@ -99,7 +131,6 @@ export class AppController {
   }): Promise<ProductVariant> {
     return this.appService.setProductVariant(param);
   }
-
   @MessagePattern({ cmd: 'GetProductVariant' })
   getProductVariant(param: {productId: number, size: string, color: string}): Promise<ProductVariant> {
     return this.appService.getProductVariant(param);

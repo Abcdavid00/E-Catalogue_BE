@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
+import { Product } from "./product.entity";
 
 @Entity()
 export class Store {
@@ -19,6 +20,9 @@ export class Store {
 
     @Column('varchar', { length: 40, nullable: true })
     cover_image?: string;
+
+    @OneToMany(() => Product, product => product.store)
+    products?: Product[];
 
     @Column('boolean', { default: false })
     approved?: boolean;

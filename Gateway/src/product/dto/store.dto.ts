@@ -1,6 +1,6 @@
 import { ApiProperty } from "@nestjs/swagger";
 
-export class StoreDto {
+export class StoresDto {
     @ApiProperty({
         description: "Id of the store",
     })
@@ -30,4 +30,8 @@ export class StoreDto {
         description: "Whether the store is approved or not",
     })
     approved?: boolean;
+}
+
+export class StoreDto {
+    
 }
