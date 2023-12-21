@@ -1,13 +1,14 @@
-import { Controller, Post, Get, Body, UploadedFile, UseInterceptors, Param, Delete, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Get, Body, UploadedFile, UseInterceptors, Param, Delete, UseGuards, Request, UploadedFiles } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { ApiParam, ApiBody, ApiConsumes, ApiOkResponse, ApiProperty, ApiTags, ApiBearerAuth, ApiCreatedResponse } from '@nestjs/swagger';
 import { CategoriesDto } from './dto/category.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { ProductDto } from './dto/product.dto';
 import { UserRole } from 'src/users/dto/user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
+import { StoreDto } from './dto/store.dto';
 
 @Controller('product')
 export class ProductController {
@@ -64,9 +65,80 @@ export class ProductController {
     async getCategoryById(@Param('id') id: number): Promise<any> {
         return this.productService.getCategoryById(id);
     }
+    
+    @Post('store')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiConsumes('multipart/form-data')
+    @UseInterceptors(FileFieldsInterceptor([
+        { name: 'logo', maxCount: 1 },
+        { name: 'cover', maxCount: 1 }
+    ]))
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            name: { type: 'string', nullable: false},
+            description: { type: 'string', nullable: true},
+            address: { type: 'number', nullable: true},
+            logo: {
+                type: 'string',
+                format: 'binary',
+                nullable: true
+            },
+            cover: {
+                type: 'string',
+                format: 'binary',
+                nullable: true
+            }
+        }
+    }})
+    async registerStore(@Body() param: {
+        name: string,
+        description?: string,
+        address?: number,
+    }, @UploadedFiles() files: {
+        logo?: Express.Multer.File[],
+        cover?: Express.Multer.File[]
+    }, @Request() req): Promise<any> {
+        const id = req.user.id;
+        return this.productService.registerStore({
+            id: id,
+            name: param.name,
+            description: param.description,
+            address: param.address,
+            logo: files.logo[0] || null,
+            cover: files.cover[0] || null
+        });
+    }
+
+    @Get('unapproved-store')
+    @Roles(UserRole.ADMIN)
+    @ApiOkResponse({ type: [CategoriesDto] })
+    async getAllUnapprovedStores(): Promise<StoreDto[]> {
+        console.log('get all unapproved stores')
+        return this.productService.getAllUnapprovedStores();
+    }
+
+    @Get('store/:id')
+    @ApiParam({ name: 'id', type: Number })
+    @ApiOkResponse({ type: CategoriesDto })
+    async getStoreById(@Param('id') id: number): Promise<StoreDto> {
+        console.log('get store: ' + id)
+        return this.productService.getStoreById(id);
+    }
+
+    @Post('store/approve/:id')
+    @Roles(UserRole.ADMIN)
+    @ApiParam({ name: 'id', type: Number })
+    @ApiOkResponse({ type: CategoriesDto })
+    async approveStore(@Param('id') id: number): Promise<StoreDto> {
+        console.log('approve store: ' + id)
+        return this.productService.approveStore(id);
+    }
 
     @Post()
-    @Roles(UserRole.ADMIN)
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('image'))
     @ApiBody({ schema: {
@@ -87,10 +159,12 @@ export class ProductController {
         name: string,
         description?: string,
         category: number,
-    }, @UploadedFile() image: Express.Multer.File): Promise<ProductDto> {
+    }, @UploadedFile() image: Express.Multer.File, @Request() req): Promise<ProductDto> {
+        const id = req.user.id;
         return this.productService.createProduct({
             name: param.name,
             description: param.description,
+            store: id,
             category: param.category,
             image: image
         });

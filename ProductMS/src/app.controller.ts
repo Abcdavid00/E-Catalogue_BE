@@ -4,6 +4,7 @@ import { MessagePattern } from '@nestjs/microservices';
 import { Category } from './entities/category.entity';
 import { Product } from './entities/product.entity';
 import { ProductVariant } from './entities/product-variant.entity';
+import { Store } from './entities/store.entity';
 
 @Controller()
 export class AppController {
@@ -39,10 +40,38 @@ export class AppController {
     return this.appService.getCategoryById(param.id);
   }
 
+  @MessagePattern({ cmd: 'RegisterStore' })
+  registerStore(param: {
+    id: number,
+    name: string,
+    description?: string,
+    address?: number,
+    logo?: string,
+    cover?: string
+  }): Promise<Store> {
+    return this.appService.registerStore(param);
+  }
+
+  @MessagePattern({ cmd: 'GetStoreById' })
+  getStoreById(param: {id: number}): Promise<Store> {
+    return this.appService.getStoreById(param.id);
+  }
+
+  @MessagePattern({ cmd: 'GetAllUnapprovedStores' })
+  getAllUnapprovedStores(): Promise<Store[]> {
+    return this.appService.getAllUnapprovedStores();
+  }
+
+  @MessagePattern({ cmd: 'ApproveStore' })
+  approveStore(param: {id: number}): Promise<Store> {
+    return this.appService.approveStore(param.id);
+  }
+
   @MessagePattern({ cmd: 'CreateProduct' })
   createProduct(param: {
     name: string,
     description?: string,
+    store: number,
     category: number,
     image: string
   }): Promise<Product> {

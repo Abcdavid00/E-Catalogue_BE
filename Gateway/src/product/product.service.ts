@@ -4,6 +4,8 @@ import { firstValueFrom } from 'rxjs';
 import { ProductMSName } from 'src/config/microservices.module';
 import { FileServerService } from 'src/file-server/file-server.service';
 import { ProductDto } from './dto/product.dto';
+import { StoreDto } from './dto/store.dto';
+import { CategoriesDto } from './dto/category.dto';
 
 type File = Express.Multer.File
 
@@ -32,7 +34,7 @@ export class ProductService {
         name: string,
         description?: string,
         parent?: number,
-    }, image: File): Promise<any> {
+    }, image: File): Promise<CategoriesDto> {
         let imageId = null;
         if (image) {
             imageId = await this.fileServerService.uploadImage(image as File);
@@ -50,16 +52,63 @@ export class ProductService {
         })
     }
 
-    async getAllCategories(): Promise<any> {
+    async getAllCategories(): Promise<CategoriesDto> {
         return this.send({
             cmd: 'GetAllCategories',
             data: {}
         })
     }
 
-    async getCategoryById(id: number): Promise<any> {
+    async getCategoryById(id: number): Promise<CategoriesDto> {
         return this.send({
             cmd: 'GetCategoryById',
+            data: { id }
+        })
+    }
+
+    async registerStore(param: {
+        id: number,
+        name: string,
+        description?: string,
+        address?: number,
+        logo?: Express.Multer.File,
+        cover?: Express.Multer.File
+    }): Promise<StoreDto> {
+        const [ logo, cover ] = await Promise.all([
+            param.logo ? this.fileServerService.uploadImage(param.logo) : null,
+            param.logo ? this.fileServerService.uploadImage(param.cover) : null
+        ])
+        return this.send({
+            cmd: 'RegisterStore',
+            data: {
+                id: param.id,
+                name: param.name,
+                description: param.description,
+                address: param.address,
+                logo,
+                cover
+            }
+        })
+    }
+
+    async getStoreById(id: number): Promise<StoreDto> {
+        return this.send({
+            cmd: 'GetStoreById',
+            data: { id }
+        })
+    }
+
+    async getAllUnapprovedStores(): Promise<StoreDto[]> {
+        console.log('getting all unapproved stores')
+        return this.send({
+            cmd: 'GetAllUnapprovedStores',
+            data: {}
+        })
+    }
+
+    async approveStore(id: number): Promise<StoreDto> {
+        return this.send({
+            cmd: 'ApproveStore',
             data: { id }
         })
     }
@@ -67,6 +116,7 @@ export class ProductService {
     async createProduct(param: {
         name: string,
         description?: string,
+        store: number,
         category: number,
         image: Express.Multer.File
     }): Promise<ProductDto> {
