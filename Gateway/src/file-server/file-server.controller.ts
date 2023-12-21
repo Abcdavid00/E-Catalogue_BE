@@ -1,6 +1,6 @@
 import { Controller, Get, Param, Post, Res, StreamableFile, UploadedFile, UseInterceptors, UsePipes } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiConsumes, ApiOkResponse, ApiBody } from '@nestjs/swagger';
+import { ApiConsumes, ApiOkResponse, ApiBody, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { PNGPipe } from 'src/pipes/transform-image.pipe';
 import { FileServerService } from './file-server.service';
 
@@ -12,6 +12,8 @@ export class FileServerController {
     ) {}
 
     @Post('upload')
+    @ApiOperation({ summary: 'Upload image' })
+    @ApiTags('File Server')
     @UseInterceptors(FileInterceptor('file'))
     @ApiConsumes('multipart/form-data')
     @ApiOkResponse({ type: String })
@@ -56,6 +58,8 @@ export class FileServerController {
     }
   
     @Get('get/:id')
+    @ApiOperation({ summary: 'Get image' })
+    @ApiTags('File Server')
     @ApiOkResponse({ type: StreamableFile })
     async getImage(@Res({ passthrough: true }) res, @Param('id') id: string) {
       const image = await this.fileServerService.getImage(id)

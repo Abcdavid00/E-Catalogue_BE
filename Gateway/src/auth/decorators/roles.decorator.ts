@@ -12,5 +12,4 @@ export const Roles = (...roles: UserRole[]) => applyDecorators(
     UseGuards(JwtAuthGuard, RolesGuard),
     ApiBearerAuth(),
     ApiUnauthorizedResponse({ description: 'Unauthorized' }),
-    ...roles.map(role => ApiTags(role + ' required'))
 );

@@ -3,12 +3,16 @@ import { Category } from "./category.entity";
 import { Brand } from "./brand.entity";
 import { ProductVariant } from "./product-variant.entity";
 import { ProductImage } from "./product-image.entity";
+import { Store } from "./store.entity";
 
 @Entity()
 export class Product {
 
     @PrimaryGeneratedColumn()
     id: number;
+
+    @ManyToOne(() => Store, store => store.id, { nullable: false })
+    store: Store;
 
     @ManyToOne(() => Category, category => category.id, { nullable: false })
     category: Category;

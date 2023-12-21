@@ -3,7 +3,7 @@ import { UsersService } from './users.service';
 import { UsersMSName } from 'src/config/microservices.module';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import { ApiBadGatewayResponse, ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiDefaultResponse, ApiOkResponse, ApiParam } from '@nestjs/swagger';
+import { ApiBadGatewayResponse, ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiDefaultResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
 import { User, UserDto, UserRole } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { SignInDto } from './dto/sign-in.dto';
@@ -19,6 +19,8 @@ export class UsersController {
     ) {}
 
     @Get('username_availability/:username')
+    @ApiOperation({ summary: 'Check if username is available' })
+    @ApiTags('Users')
     @ApiParam({ type: String, name: "username", description: "User's Username" })
     @ApiOkResponse({ type: Boolean, description: 'Returns true if username is available' })
     async isUsernameAvailable(@Param('username') username: string): Promise<Boolean> {
@@ -26,6 +28,8 @@ export class UsersController {
     }
 
     @Get('email_availability/:email')
+    @ApiOperation({ summary: 'Check if email is available' })
+    @ApiTags('Users')
     @ApiParam({ type: String, name: "email", description: "User's Email" })
     @ApiOkResponse({ type: Boolean, description: 'Returns true if email is available' })
     async isEmailAvailable(@Param('email') email: string): Promise<Boolean> {
@@ -33,6 +37,8 @@ export class UsersController {
     }
 
     @Post('createuser')
+    @ApiOperation({ summary: 'Create user' })
+    @ApiTags('Users')
     @ApiBody({ type: CreateUserDto })
     @ApiOkResponse({ type: UserDto })
     async createUser(@Body() user: CreateUserDto): Promise<UserDto> {
@@ -40,6 +46,8 @@ export class UsersController {
     }
 
     @Post('initadmin')
+    @ApiOperation({ summary: 'Init admin' })
+    @ApiTags('ADMINS')
     @ApiBody({ schema: {
         type: 'object',
         properties: {
@@ -80,6 +88,8 @@ export class UsersController {
     }
 
     @Get(':id')
+    @ApiOperation({ summary: 'Get user by ID' })
+    @ApiTags('Users')
     @ApiParam({ type: Number, name: 'id', description: "User's Id"})
     @ApiOkResponse({ type: UserDto })
     async getUser(@Param('id') id: number): Promise<UserDto> {
@@ -87,6 +97,8 @@ export class UsersController {
     }
 
     @Get('username/:username')
+    @ApiOperation({ summary: 'Get user by username' })
+    @ApiTags('Users')
     @ApiParam({ type: String, name: "username", description: "User's Username" })
     @ApiOkResponse({ type: UserDto })
     async findUserByUsername(@Param('username') username: string): Promise<UserDto> {
@@ -94,6 +106,8 @@ export class UsersController {
     }
 
     @Get('email/:email')
+    @ApiOperation({ summary: 'Get user by email' })
+    @ApiTags('Users')
     @ApiParam({ type: String, name: "email", description: "User's Email" })
     @ApiOkResponse({ type: UserDto })
     async findUserByEmail(@Param('email') email: string): Promise<UserDto> {
@@ -101,6 +115,8 @@ export class UsersController {
     }
 
     @Put('password')
+    @ApiOperation({ summary: 'Change password (User required)' })
+    @ApiTags('Users')
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiBody({ schema: {
@@ -120,6 +136,8 @@ export class UsersController {
     }
 
     @Put('email')
+    @ApiOperation({ summary: 'Change email (User required)' })
+    @ApiTags('Users')
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiBody({ schema: {
@@ -136,6 +154,8 @@ export class UsersController {
     }
 
     @Put('username')
+    @ApiOperation({ summary: 'Change username (User required)' })
+    @ApiTags('Users')
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth()
     @ApiBody({ schema: {

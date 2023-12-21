@@ -8,6 +8,7 @@ import { Category } from './entities/category.entity';
 import { Brand } from './entities/brand.entity';
 import { ProductVariant } from './entities/product-variant.entity';
 import { ProductImage } from './entities/product-image.entity';
+import { Store } from './entities/store.entity';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ProductImage } from './entities/product-image.entity';
     TypeOrmModule.forFeature([
       Product,
       Category,
+      Store,
       Brand,
       ProductVariant,
       ProductImage

@@ -4,6 +4,8 @@ import { firstValueFrom } from 'rxjs';
 import { ProductMSName } from 'src/config/microservices.module';
 import { FileServerService } from 'src/file-server/file-server.service';
 import { ProductDto } from './dto/product.dto';
+import { StoreDto } from './dto/store.dto';
+import { CategoriesDto } from './dto/category.dto';
 
 type File = Express.Multer.File
 
@@ -32,7 +34,7 @@ export class ProductService {
         name: string,
         description?: string,
         parent?: number,
-    }, image: File): Promise<any> {
+    }, image: File): Promise<CategoriesDto> {
         let imageId = null;
         if (image) {
             imageId = await this.fileServerService.uploadImage(image as File);
@@ -50,23 +52,111 @@ export class ProductService {
         })
     }
 
-    async getAllCategories(): Promise<any> {
+    async getAllCategories(): Promise<CategoriesDto> {
         return this.send({
             cmd: 'GetAllCategories',
             data: {}
         })
     }
 
-    async getCategoryById(id: number): Promise<any> {
+    async getCategoryById(id: number): Promise<CategoriesDto> {
         return this.send({
             cmd: 'GetCategoryById',
             data: { id }
         })
     }
 
+    async editCategory(param: {
+        id: number,
+        name?: string,
+        description?: string,
+        parent?: number,
+        image?: Express.Multer.File
+    }): Promise<CategoriesDto> {
+        const [ image ] = await Promise.all([
+            param.image ? this.fileServerService.uploadImage(param.image) : null
+        ])
+        return this.send({
+            cmd: 'EditCategory',
+            data: {
+                id: param.id,
+                name: param.name,
+                description: param.description,
+                parent: param.parent,
+                image
+            }
+        })
+    }
+
+    async registerStore(param: {
+        id: number,
+        name: string,
+        description?: string,
+        address?: number,
+        logo?: Express.Multer.File,
+        cover?: Express.Multer.File
+    }): Promise<StoreDto> {
+        console.log("Registering store:/n" + JSON.stringify(param, null, 2))
+        const [ logo, cover ] = await Promise.all([
+            param.logo ? this.fileServerService.uploadImage(param.logo) : Promise.resolve(null),
+            param.cover ? this.fileServerService.uploadImage(param.cover) : Promise.resolve(null)
+        ])
+        return this.send({
+            cmd: 'RegisterStore',
+            data: {
+                id: param.id,
+                name: param.name,
+                description: param.description,
+                address: param.address,
+                logo,
+                cover
+            }
+        })
+    }
+
+    async getStoreById(id: number): Promise<StoreDto> {
+        return this.send({
+            cmd: 'GetStoreById',
+            data: { id }
+        })
+    }
+
+    async getAllUnapprovedStores(): Promise<StoreDto[]> {
+        console.log('getting all unapproved stores')
+        return this.send({
+            cmd: 'GetAllUnapprovedStores',
+            data: {}
+        })
+    }
+
+    async getAllApprovedStores(): Promise<StoreDto[]> {
+        return this.send({
+            cmd: 'GetAllApprovedStores',
+            data: {}
+        })
+    }
+
+    async approveStore(id: number): Promise<StoreDto> {
+        return this.send({
+            cmd: 'ApproveStore',
+            data: { id }
+        })
+    }
+
+    async storeHas(param: {
+        storeId: number,
+        productId: number
+    }): Promise<boolean> {
+        return this.send({
+            cmd: 'StoreHas',
+            data: param
+        })
+    }
+
     async createProduct(param: {
         name: string,
         description?: string,
+        store: number,
         category: number,
         image: Express.Multer.File
     }): Promise<ProductDto> {
@@ -89,6 +179,28 @@ export class ProductService {
         return this.send({
             cmd: 'GetProductById',
             data: { id }
+        })
+    }
+
+    async editProduct(param: {
+        id: number,
+        name?: string,
+        description?: string,
+        category?: number,
+        image?: Express.Multer.File
+    }): Promise<ProductDto> {
+        const [ image ] = await Promise.all([
+            param.image ? this.fileServerService.uploadImage(param.image) : null
+        ])
+        return this.send({
+            cmd: 'EditProduct',
+            data: {
+                id: param.id,
+                name: param.name,
+                description: param.description,
+                category: param.category,
+                image
+            }
         })
     }
 
