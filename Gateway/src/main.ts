@@ -13,7 +13,7 @@ async function bootstrap() {
     .setTitle('E-catalog API')
     .setDescription('E-catalog API description')
     .setVersion('1.0')
-    .addTag('e-catalog')
+    .addServer('https://e-catalogue.abcdavid.top')
     .addBearerAuth()
     .build();
     
