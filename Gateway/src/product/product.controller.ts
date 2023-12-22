@@ -155,7 +155,7 @@ export class ProductController {
         });
     }
 
-    @Get('unapproved-store')
+    @Get('store/unapproved')
     @Roles(UserRole.ADMIN)
     @ApiOperation({ summary: 'Get all unapproved stores (admin required)' })
     @ApiTags('Store', 'Admin')
@@ -164,7 +164,7 @@ export class ProductController {
         return this.productService.getAllUnapprovedStores();
     }
 
-    @Get('store')
+    @Get('store/all')
     @ApiOperation({ summary: 'Get all stores' })
     @ApiTags('Store')
     @ApiOkResponse({ type: [CategoriesDto] })
@@ -172,13 +172,12 @@ export class ProductController {
         return this.productService.getAllApprovedStores();
     }
 
-    @Get('store/')
+    @Get('store')
     @ApiOperation({ summary: 'Get store by id' })
     @ApiTags('Store')
     @ApiQuery({ name: 'id', type: Number })
     @ApiOkResponse({ type: CategoriesDto })
     async getStoreById(@Query('id') id: number): Promise<StoreDto> {
-        console.log('get store: ' + id)
         return this.productService.getStoreById(id);
     }
 
