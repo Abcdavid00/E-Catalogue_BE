@@ -172,7 +172,7 @@ export class ProductController {
         return this.productService.getAllApprovedStores();
     }
 
-    @Get('store')
+    @Get('store/id')
     @ApiOperation({ summary: 'Get store by id' })
     @ApiTags('Store')
     @ApiQuery({ name: 'id', type: Number })
