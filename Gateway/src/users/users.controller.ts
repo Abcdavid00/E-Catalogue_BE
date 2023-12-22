@@ -1,12 +1,8 @@
-import { BadRequestException, Body, Catch, ConflictException, Controller, Get, Inject, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
 import { UsersService } from './users.service';
-import { UsersMSName } from 'src/config/microservices.module';
-import { ClientProxy } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
-import { ApiBadGatewayResponse, ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiDefaultResponse, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
-import { User, UserDto, UserRole } from './dto/user.dto';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { UserDto, UserRole } from './dto/user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
-import { SignInDto } from './dto/sign-in.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 const INIT_ADMIN_SECRET = process.env.INIT_ADMIN_SECRET;
@@ -18,21 +14,21 @@ export class UsersController {
         private readonly UsersService: UsersService
     ) {}
 
-    @Get('username_availability/:username')
+    @Get('username_availability')
     @ApiOperation({ summary: 'Check if username is available' })
     @ApiTags('Users')
-    @ApiParam({ type: String, name: "username", description: "User's Username" })
+    @ApiQuery({ type: String, name: "username", description: "User's Username" })
     @ApiOkResponse({ type: Boolean, description: 'Returns true if username is available' })
-    async isUsernameAvailable(@Param('username') username: string): Promise<Boolean> {
+    async isUsernameAvailable(@Query('username') username: string): Promise<Boolean> {
         return this.UsersService.isUsernameAvailable(username);
     }
 
-    @Get('email_availability/:email')
+    @Get('email_availability')
     @ApiOperation({ summary: 'Check if email is available' })
     @ApiTags('Users')
-    @ApiParam({ type: String, name: "email", description: "User's Email" })
+    @ApiQuery({ type: String, name: "email", description: "User's Email" })
     @ApiOkResponse({ type: Boolean, description: 'Returns true if email is available' })
-    async isEmailAvailable(@Param('email') email: string): Promise<Boolean> {
+    async isEmailAvailable(@Query('email') email: string): Promise<Boolean> {
         return this.UsersService.isEmailAvailable(email);
     }
 
@@ -87,30 +83,30 @@ export class UsersController {
         return this.UsersService.initAdmin();
     }
 
-    @Get(':id')
+    @Get()
     @ApiOperation({ summary: 'Get user by ID' })
     @ApiTags('Users')
-    @ApiParam({ type: Number, name: 'id', description: "User's Id"})
+    @ApiQuery({ type: Number, name: 'id', description: "User's Id"})
     @ApiOkResponse({ type: UserDto })
-    async getUser(@Param('id') id: number): Promise<UserDto> {
+    async getUser(@Query('id') id: number): Promise<UserDto> {
         return this.UsersService.getUser(id);
     }
 
-    @Get('username/:username')
+    @Get('username')
     @ApiOperation({ summary: 'Get user by username' })
     @ApiTags('Users')
-    @ApiParam({ type: String, name: "username", description: "User's Username" })
+    @ApiQuery({ type: String, name: "username", description: "User's Username" })
     @ApiOkResponse({ type: UserDto })
-    async findUserByUsername(@Param('username') username: string): Promise<UserDto> {
+    async findUserByUsername(@Query('username') username: string): Promise<UserDto> {
         return this.UsersService.findUserByUsername(username);
     }
 
-    @Get('email/:email')
+    @Get('email')
     @ApiOperation({ summary: 'Get user by email' })
     @ApiTags('Users')
-    @ApiParam({ type: String, name: "email", description: "User's Email" })
+    @ApiQuery({ type: String, name: "email", description: "User's Email" })
     @ApiOkResponse({ type: UserDto })
-    async findUserByEmail(@Param('email') email: string): Promise<UserDto> {
+    async findUserByEmail(@Query('email') email: string): Promise<UserDto> {
         return this.UsersService.findUserByEmail(email);
     }
 

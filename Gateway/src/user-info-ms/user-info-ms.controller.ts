@@ -1,7 +1,7 @@
-import { Controller, Get, Inject, Param, Post, UseGuards, Request, Body, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Inject, Param, Post, UseGuards, Request, Body, UploadedFile, UseInterceptors, Query } from '@nestjs/common';
 import { UserInfoMsService } from './user-info-ms.service';
 import { UserInfo, UserInfoDto } from './dto/user-info.dto';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -11,12 +11,12 @@ export class UserInfoMsController {
         private readonly userInfoMsService: UserInfoMsService
     ) {}
 
-    @Get(':id')
+    @Get()
     @ApiOperation({ summary: 'Get user info' })
     @ApiTags('User Info')
-    @ApiParam({ name: 'id', type: Number })
+    @ApiQuery({ name: 'id', type: Number })
     @ApiOkResponse({ type: UserInfoDto })
-    async getUserInfo(@Param('id' )id: number): Promise<UserInfo> {
+    async getUserInfo(@Query('id' )id: number): Promise<UserInfo> {
         return this.userInfoMsService.getUserInfo(id);
     }
 

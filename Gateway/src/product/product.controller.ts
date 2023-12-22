@@ -1,6 +1,6 @@
-import { Controller, Post, Get, Body, UploadedFile, UseInterceptors, Param, Delete, UseGuards, Request, UploadedFiles, UnauthorizedException, Put } from '@nestjs/common';
+import { Controller, Post, Get, Body, UploadedFile, UseInterceptors, Param, Delete, UseGuards, Request, UploadedFiles, UnauthorizedException, Put, Query } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { ApiParam, ApiBody, ApiConsumes, ApiOkResponse, ApiProperty, ApiTags, ApiBearerAuth, ApiCreatedResponse, ApiOperation } from '@nestjs/swagger';
+import { ApiParam, ApiBody, ApiConsumes, ApiOkResponse, ApiProperty, ApiTags, ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { CategoriesDto } from './dto/category.dto';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { ProductDto } from './dto/product.dto';
@@ -63,20 +63,20 @@ export class ProductController {
         return this.productService.getAllCategories();
     }
 
-    @Get('category/:id')
+    @Get('category')
     @ApiOperation({ summary: 'Get category by id' })
     @ApiTags('Category')
-    @ApiParam({ name: 'id', type: Number })
+    @ApiQuery({ name: 'id', type: Number })
     @ApiOkResponse({ type: CategoriesDto })
-    async getCategoryById(@Param('id') id: number): Promise<any> {
+    async getCategoryById(@Query('id') id: number): Promise<any> {
         return this.productService.getCategoryById(id);
     }
 
-    @Put('category/:id')
+    @Put('category')
     @Roles(UserRole.ADMIN)
     @ApiOperation({ summary: 'Edit a category (admin required)' })
     @ApiTags('Category', 'Admin')
-    @ApiParam({ name: 'id', type: Number })
+    @ApiQuery({ name: 'id', type: Number })
     @ApiConsumes('multipart/form-data')
     @UseInterceptors(FileInterceptor('image'))
     @ApiBody({ schema: {
@@ -94,7 +94,7 @@ export class ProductController {
     }
     })
     @ApiOkResponse({ type: CategoriesDto })
-    async editCategory(@Param('id') id: number, @Body() param: {
+    async editCategory(@Query('id') id: number, @Body() param: {
         name?: string,
         description?: string,
         parent?: number,
@@ -172,23 +172,23 @@ export class ProductController {
         return this.productService.getAllApprovedStores();
     }
 
-    @Get('store/:id')
+    @Get('store/')
     @ApiOperation({ summary: 'Get store by id' })
     @ApiTags('Store')
-    @ApiParam({ name: 'id', type: Number })
+    @ApiQuery({ name: 'id', type: Number })
     @ApiOkResponse({ type: CategoriesDto })
-    async getStoreById(@Param('id') id: number): Promise<StoreDto> {
+    async getStoreById(@Query('id') id: number): Promise<StoreDto> {
         console.log('get store: ' + id)
         return this.productService.getStoreById(id);
     }
 
-    @Post('store/approve/:id')
+    @Post('store/approve/')
     @Roles(UserRole.ADMIN)
     @ApiOperation({ summary: 'Approve a store (admin required)' })
     @ApiTags('Store', 'Admin')
-    @ApiParam({ name: 'id', type: Number })
+    @ApiQuery({ name: 'id', type: Number })
     @ApiOkResponse({ type: CategoriesDto })
-    async approveStore(@Param('id') id: number): Promise<StoreDto> {
+    async approveStore(@Query('id') id: number): Promise<StoreDto> {
         console.log('approve store: ' + id)
         return this.productService.approveStore(id);
     }
@@ -229,16 +229,16 @@ export class ProductController {
         });
     }
 
-    @Get(':id')
+    @Get('')
     @ApiOperation({ summary: 'Get product by id' })
     @ApiTags('Product')
-    @ApiParam({ name: 'id', type: Number })
+    @ApiQuery({ name: 'id', type: Number })
     @ApiOkResponse({ type: ProductDto })
-    async getProductById(@Param('id') id: number): Promise<any> {
+    async getProductById(@Query('id') id: number): Promise<any> {
         return this.productService.getProductById(id);
     }
 
-    @Put(':id')
+    @Put('')
     @ApiOperation({ summary: 'Edit a product (store owner required)' })
     @ApiTags('Product', 'Store owner')
     @ApiBearerAuth()
@@ -258,9 +258,9 @@ export class ProductController {
             }
         }
     }})
-    @ApiParam({ name: 'id', type: Number })
+    @ApiQuery({ name: 'id', type: Number })
     @ApiOkResponse({ type: ProductDto })
-    async editProduct(@Request() req, @Param('id') id: number, @Body() param: {
+    async editProduct(@Request() req, @Query('id') id: number, @Body() param: {
         name?: string,
         description?: string,
         category?: number,
@@ -281,14 +281,14 @@ export class ProductController {
         });
     }
 
-    @Delete(':id')
+    @Delete('')
     @ApiOperation({ summary: 'Remove a product (store owner required)' })
     @ApiTags('Product', 'Store owner')
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
-    @ApiParam({ name: 'id', type: Number })
+    @ApiQuery({ name: 'id', type: Number })
     @ApiOkResponse({ type: ProductDto })
-    async removeProductById(@Request() req, @Param('id') id: number): Promise<any> {
+    async removeProductById(@Request() req, @Query('id') id: number): Promise<any> {
         const storeId = req.user.id;
         if (!(await this.productService.storeHas({
             storeId: storeId,
@@ -299,7 +299,7 @@ export class ProductController {
         return this.productService.removeProductById(id);
     }
 
-    @Post('variant/:product/:size/:color')
+    @Post('variant')
     @ApiOperation({ summary: 'Set a product variant (store owner required)' })
     @ApiTags('Product', 'Store owner')
     @ApiBearerAuth()
@@ -318,10 +318,10 @@ export class ProductController {
             }
         }
     }})
-    @ApiParam({ name: 'product', type: Number })
-    @ApiParam({ name: 'size', type: String })
-    @ApiParam({ name: 'color', type: String })
-    async setProductVariant(@Request() req, @Param('product') product: number, @Param('size') size: string, @Param('color') color: string, @Body() param: {
+    @ApiQuery({ name: 'product', type: Number })
+    @ApiQuery({ name: 'size', type: String })
+    @ApiQuery({ name: 'color', type: String })
+    async setProductVariant(@Request() req, @Query('product') product: number, @Query('size') size: string, @Query('color') color: string, @Body() param: {
         price?: number,
         quantity?: number,
     }, @UploadedFile() image: Express.Multer.File): Promise<any> {
@@ -342,14 +342,13 @@ export class ProductController {
         });
     }
 
-    @Get('variant/:productId/:size/:color')
+    @Get('variant')
     @ApiOperation({ summary: 'Get a product variant' })
     @ApiTags('Product')
-    @ApiParam({ name: 'productId', type: Number })
-    @ApiParam({ name: 'size', type: String })
-    @ApiParam({ name: 'color', type: String })
-    // @ApiOkResponse({ type: ProductDto })
-    async getProductVariant(@Param('productId') productId: number, @Param('size') size: string, @Param('color') color: string): Promise<any> {
+    @ApiQuery({ name: 'productId', type: Number })
+    @ApiQuery({ name: 'size', type: String })
+    @ApiQuery({ name: 'color', type: String })
+    async getProductVariant(@Query('productId') productId: number, @Query('size') size: string, @Query('color') color: string): Promise<any> {
         return this.productService.getProductVariant({
             productId: productId,
             size: size,
@@ -357,16 +356,15 @@ export class ProductController {
         });
     }
 
-    @Delete('variant/:productId/:size/:color')
+    @Delete('variant')
     @ApiOperation({ summary: 'Remove a product variant (store owner required)' })
     @ApiTags('Product', 'Store owner')
     @ApiBearerAuth()
     @UseGuards(JwtAuthGuard)
-    @ApiParam({ name: 'productId', type: Number })
-    @ApiParam({ name: 'size', type: String })
-    @ApiParam({ name: 'color', type: String })
-    // @ApiOkResponse({ type: ProductDto })
-    async removeProductVariant(@Request() req, @Param('productId') productId: number, @Param('size') size: string, @Param('color') color: string): Promise<any> {
+    @ApiQuery({ name: 'productId', type: Number })
+    @ApiQuery({ name: 'size', type: String })
+    @ApiQuery({ name: 'color', type: String })
+    async removeProductVariant(@Request() req, @Query('productId') productId: number, @Query('size') size: string, @Query('color') color: string): Promise<any> {
         const storeId = req.user.id;
         if (!(await this.productService.storeHas({
             storeId: storeId,
