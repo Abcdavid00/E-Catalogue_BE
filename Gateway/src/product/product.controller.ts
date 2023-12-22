@@ -55,7 +55,7 @@ export class ProductController {
         return this.productService.createCategory(param, image);
     }
 
-    @Get('category')
+    @Get('category/all')
     @ApiOperation({ summary: 'Get all categories' })
     @ApiTags('Category')
     @ApiOkResponse({ type: [CategoriesDto] })
@@ -172,7 +172,7 @@ export class ProductController {
         return this.productService.getAllApprovedStores();
     }
 
-    @Get('store/id')
+    @Get('store')
     @ApiOperation({ summary: 'Get store by id' })
     @ApiTags('Store')
     @ApiQuery({ name: 'id', type: Number })
