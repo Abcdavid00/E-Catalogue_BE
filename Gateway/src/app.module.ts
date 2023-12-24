@@ -9,6 +9,7 @@ import { HttpModule } from '@nestjs/axios';
 import { FileServerModule } from './file-server/file-server.module';
 import { UserInfoMsModule } from './user-info-ms/user-info-ms.module';
 import { ProductModule } from './product/product.module';
+import { ContactModule } from './contact/contact.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ProductModule } from './product/product.module';
     FileServerModule,
     UserInfoMsModule,
     ProductModule,
+    ContactModule,
   ],
   controllers: [AppController],
   providers: [AppService],

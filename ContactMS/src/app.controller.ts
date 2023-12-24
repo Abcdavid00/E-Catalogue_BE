@@ -15,4 +15,55 @@ export class AppController {
   ping(_: any): string {
     return this.appService.getHello();
   }
+
+  @MessagePattern({ cmd: 'CreateAddress' })
+  createAddress(param: {
+    province: string,
+    city: string,
+    district: string,
+    details: string
+  }): Promise<any> {
+    return this.appService.createAddress(param);
+  }
+
+  @MessagePattern({ cmd: 'UpdateAddress' })
+  updateAddress(param: {
+    id: number,
+    province?: string,
+    city?: string,
+    district?: string,
+    details?: string
+  }) {
+    return this.appService.updateAddress(param);
+  }
+
+  @MessagePattern({ cmd: 'GetAddress' })
+  getAddress(param: {
+    id: number,
+  }): Promise<any> {
+    return this.appService.getAddress(param);
+  }
+
+  @MessagePattern({ cmd: 'CreateContact' })
+  createContact(param: {
+    phone: string,
+    addressId: number
+  }): Promise<any> {
+    return this.appService.createContact(param);
+  }
+
+  @MessagePattern({ cmd: 'UpdateContact' })
+  updateContact(param: {
+    id: number,
+    phone: string,
+  }) {
+    return this.appService.updateContact(param);
+  }
+
+  @MessagePattern({ cmd: 'GetContact' })
+  getContact(param: {
+    id: number,
+  }): Promise<any> {
+    return this.appService.getContact(param);
+  }
 }

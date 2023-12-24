@@ -5,15 +5,15 @@ export class Address {
     @PrimaryGeneratedColumn()
     id: number;
 
-    @Column('nvarchar', { length: 50, nullable: false })
+    @Column('varchar', { length: 50, nullable: false })
     province: string;
 
-    @Column('nvarchar', { length: 50, nullable: false })
+    @Column('varchar', { length: 50, nullable: false })
     city: string;
 
-    @Column('nvarchar', { length: 50, nullable: false })
+    @Column('varchar', { length: 50, nullable: false })
     district: string;
 
-    @Column('nvarchar', { length: 500, nullable: false })
+    @Column('nvarchar', { length: 500, nullable: true })
     details: string;
 }
