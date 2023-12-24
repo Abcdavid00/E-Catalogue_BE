@@ -12,14 +12,17 @@ services:
       JWT_EXPIRES_IN: $JWT_EXPIRES_IN
       JWT_REFRESH_EXPIRES_IN: $JWT_REFRESH_EXPIRES_IN
       PORT: $GATEWAY_PORT
+      SERVER: $GATEWAY_HOST
       USERSMS_HOST: $USERSMS_HOST
       USERSMS_PORT: $USERSMS_PORT
-      FILESERVER_HOST: $FILESERVER_HOST
-      FILESERVER_PORT: $FILESERVER_PORT
       USERINFOMS_HOST: $USERINFOMS_HOST
       USERINFOMS_PORT: $USERINFOMS_PORT
       PRODUCTMS_HOST: $PRODUCTMS_HOST
       PRODUCTMS_PORT: $PRODUCTMS_PORT
+      CONTACTMS_HOST: $CONTACTMS_HOST
+      CONTACTMS_PORT: $CONTACTMS_PORT
+      FILESERVER_HOST: $FILESERVER_HOST
+      FILESERVER_PORT: $FILESERVER_PORT
     ports:
       - $GATEWAY_PORT:$GATEWAY_PORT
     volumes:
@@ -28,43 +31,43 @@ services:
       - microservices-networks
       - fileserver-networks
 
-  users-ms:
-    build:
-      context: ./UsersMS
-      target: dev
-    hostname: $USERSMS_HOST
-    restart: unless-stopped
-    environment:
-      PORT: $USERSMS_PORT
-      HEALTHCHECK_PORT: $USERSMS_HEALTHCHECK_PORT
-      DB_HOST: $USERSDB_HOST
-      DB_PORT: $USERSDB_PORT
-      DB_NAME: $USERSDB_DATABASE
-      DB_USER: $USERSDB_USER
-      DB_PASSWORD: $USERSDB_PASSWORD
-    ports:
-      - $USERSMS_HEALTHCHECK_PORT:$USERSMS_HEALTHCHECK_PORT
-    volumes:
-      - ./UsersMS/src:/app/src
-    networks:
-      - microservices-networks
-      - users-db-networks
-    depends_on:
-      - users-db
+  # users-ms:
+  #   build:
+  #     context: ./UsersMS
+  #     target: dev
+  #   hostname: $USERSMS_HOST
+  #   restart: unless-stopped
+  #   environment:
+  #     PORT: $USERSMS_PORT
+  #     HEALTHCHECK_PORT: $USERSMS_HEALTHCHECK_PORT
+  #     DB_HOST: $USERSDB_HOST
+  #     DB_PORT: $USERSDB_PORT
+  #     DB_NAME: $USERSDB_DATABASE
+  #     DB_USER: $USERSDB_USER
+  #     DB_PASSWORD: $USERSDB_PASSWORD
+  #   ports:
+  #     - $USERSMS_HEALTHCHECK_PORT:$USERSMS_HEALTHCHECK_PORT
+  #   volumes:
+  #     - ./UsersMS/src:/app/src
+  #   networks:
+  #     - microservices-networks
+  #     - users-db-networks
+  #   depends_on:
+  #     - users-db
 
-  users-db:
-    image: mysql:latest
-    hostname: $USERSDB_HOST
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: $USERSDB_ROOT_PASSWORD
-      MYSQL_DATABASE: $USERSDB_DATABASE
-      MYSQL_USER: $USERSDB_USER
-      MYSQL_PASSWORD: $USERSDB_PASSWORD
-    # volumes:
-    #   - ./DockerVolume/users-db:/var/lib/mysql
-    networks:
-      - users-db-networks
+  # users-db:
+  #   image: mysql:latest
+  #   hostname: $USERSDB_HOST
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: $USERSDB_ROOT_PASSWORD
+  #     MYSQL_DATABASE: $USERSDB_DATABASE
+  #     MYSQL_USER: $USERSDB_USER
+  #     MYSQL_PASSWORD: $USERSDB_PASSWORD
+  #   # volumes:
+  #   #   - ./DockerVolume/users-db:/var/lib/mysql
+  #   networks:
+  #     - users-db-networks
 
   userinfo-ms:
     build:
@@ -103,45 +106,82 @@ services:
     #   - ./DockerVolume/userinfo-db:/var/lib/mysql
     networks:
       - userinfo-db-networks
-
   
-  product-ms:
+  # product-ms:
+  #   build:
+  #     context: ./ProductMS
+  #     target: dev
+  #   hostname: $PRODUCTMS_HOST
+  #   restart: unless-stopped
+  #   environment:
+  #     PORT: $PRODUCTMS_PORT
+  #     HEALTHCHECK_PORT: $PRODUCTMS_HEALTHCHECK_PORT
+  #     DB_HOST: $PRODUCTDB_HOST
+  #     DB_PORT: $PRODUCTDB_PORT
+  #     DB_NAME: $PRODUCTDB_DATABASE
+  #     DB_USER: $PRODUCTDB_USER
+  #     DB_PASSWORD: $PRODUCTDB_PASSWORD
+  #   ports:
+  #     - $PRODUCTMS_HEALTHCHECK_PORT:$PRODUCTMS_HEALTHCHECK_PORT
+  #   volumes:
+  #     - ./ProductMS/src:/app/src
+  #   networks:
+  #     - microservices-networks
+  #     - product-db-networks
+  #   depends_on:
+  #     - product-db
+
+  # product-db:
+  #   image: mysql:latest
+  #   hostname: $PRODUCTDB_HOST
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: $PRODUCTDB_ROOT_PASSWORD
+  #     MYSQL_DATABASE: $PRODUCTDB_DATABASE
+  #     MYSQL_USER: $PRODUCTDB_USER
+  #     MYSQL_PASSWORD: $PRODUCTDB_PASSWORD
+  #   # volumes:
+  #   #   - ./DockerVolume/product-db:/var/lib/mysql
+  #   networks:
+  #     - product-db-networks
+
+  contact-ms:
     build:
-      context: ./ProductMS
+      context: ./ContactMS
       target: dev
-    hostname: $PRODUCTMS_HOST
+    hostname: $CONTACTMS_HOST
     restart: unless-stopped
     environment:
-      PORT: $PRODUCTMS_PORT
-      HEALTHCHECK_PORT: $PRODUCTMS_HEALTHCHECK_PORT
-      DB_HOST: $PRODUCTDB_HOST
-      DB_PORT: $PRODUCTDB_PORT
-      DB_NAME: $PRODUCTDB_DATABASE
-      DB_USER: $PRODUCTDB_USER
-      DB_PASSWORD: $PRODUCTDB_PASSWORD
+      PORT: $CONTACTMS_PORT
+      HEALTHCHECK_PORT: $CONTACTMS_HEALTHCHECK_PORT
+      DB_HOST: $CONTACTDB_HOST
+      DB_PORT: $CONTACTDB_PORT
+      DB_NAME: $CONTACTDB_DATABASE
+      DB_USER: $CONTACTDB_USER
+      DB_PASSWORD: $CONTACTDB_PASSWORD
     ports:
-      - $PRODUCTMS_HEALTHCHECK_PORT:$PRODUCTMS_HEALTHCHECK_PORT
+      - $CONTACTMS_HEALTHCHECK_PORT:$CONTACTMS_HEALTHCHECK_PORT
     volumes:
-      - ./ProductMS/src:/app/src
+      - ./ContactMS/src:/app/src
     networks:
       - microservices-networks
-      - product-db-networks
+      - contact-db-networks
     depends_on:
-      - product-db
+      - contact-db
 
-  product-db:
+  contact-db:
     image: mysql:latest
-    hostname: $PRODUCTDB_HOST
+    hostname: $CONTACTDB_HOST
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: $PRODUCTDB_ROOT_PASSWORD
-      MYSQL_DATABASE: $PRODUCTDB_DATABASE
-      MYSQL_USER: $PRODUCTDB_USER
-      MYSQL_PASSWORD: $PRODUCTDB_PASSWORD
+      MYSQL_ROOT_PASSWORD: $CONTACTDB_ROOT_PASSWORD
+      MYSQL_DATABASE: $CONTACTDB_DATABASE
+      MYSQL_USER: $CONTACTDB_USER
+      MYSQL_PASSWORD: $CONTACTDB_PASSWORD
     # volumes:
-    #   - ./DockerVolume/product-db:/var/lib/mysql
+    #   - ./DockerVolume/contact-db:/var/lib/mysql
     networks:
-      - product-db-networks
+      - contact-db-networks
 
   adminer:
     image: adminer
@@ -152,20 +192,21 @@ services:
       - users-db-networks
       - userinfo-db-networks
       - product-db-networks
+      - contact-db-networks
 
-  fileserver:
-    build: ./FileServer
-    hostname: $FILESERVER_HOST
-    restart: unless-stopped
-    ports: 
-      - ${FILESERVER_PORT}:${FILESERVER_PORT}
-    volumes:
-      - ./DockerVolume/files:/app/files
-    environment:
-      PORT: ${FILESERVER_PORT}
-      MAX_FILE_SIZE: 100
-    networks:
-      - fileserver-networks
+  # fileserver:
+  #   build: ./FileServer
+  #   hostname: $FILESERVER_HOST
+  #   restart: unless-stopped
+  #   ports: 
+  #     - ${FILESERVER_PORT}:${FILESERVER_PORT}
+  #   volumes:
+  #     - ./DockerVolume/files:/app/files
+  #   environment:
+  #     PORT: ${FILESERVER_PORT}
+  #     MAX_FILE_SIZE: 100
+  #   networks:
+  #     - fileserver-networks
 
 networks:
   microservices-networks:
@@ -177,4 +218,6 @@ networks:
   product-db-networks:
     driver: bridge
   fileserver-networks:
+    driver: bridge
+  contact-db-networks:
     driver: bridge

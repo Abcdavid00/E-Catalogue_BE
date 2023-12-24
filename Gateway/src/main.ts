@@ -4,7 +4,9 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import * as fs from 'fs';
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT;
+
+const SERVER = process.env.SERVER;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -13,7 +15,7 @@ async function bootstrap() {
     .setTitle('E-catalog API')
     .setDescription('E-catalog API description')
     .setVersion('1.0')
-    .addServer('https://e-catalogue.abcdavid.top')
+    .addServer(SERVER)
     .addBearerAuth()
     .build();
     

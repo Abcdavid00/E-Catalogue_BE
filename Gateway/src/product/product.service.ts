@@ -27,7 +27,7 @@ export class ProductService {
             )
             return res;
         } catch (error) {
-            throw new BadRequestException(error.message);
+            throw new BadRequestException('ProductMS: ' + error.message);
         }
     }
     async createCategory(param: {

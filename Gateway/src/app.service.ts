@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { ProductMSName, UserInfoMSName, UsersMSName } from './config/microservices.module';
+import { ContactMSName, ProductMSName, UserInfoMSName, UsersMSName } from './config/microservices.module';
 import { ClientProxy } from '@nestjs/microservices';
 import { Observable, firstValueFrom } from 'rxjs';
 
@@ -12,7 +12,9 @@ export class AppService {
     @Inject(UserInfoMSName)
     private readonly UserInfoClient: ClientProxy,
     @Inject(ProductMSName)
-    private readonly ProductClient: ClientProxy
+    private readonly ProductClient: ClientProxy,
+    @Inject(ContactMSName)
+    private readonly ContactClient: ClientProxy,
   ) {}
 
   async getHello(): Promise<string> {
@@ -23,6 +25,7 @@ export class AppService {
       { name: 'UsersMS', client: this.UsersClient },
       { name: 'UserInfoMS', client: this.UserInfoClient },
       { name: 'ProductMS', client: this.ProductClient },
+      { name: 'ContactMS', client: this.ContactClient },
     ];
 
     const promises = clients.map(({ name, client }) =>
