@@ -9,6 +9,7 @@ pipeline {
         usersmsTag = "${harborURL}/${projectName}/usersms:${version}"
         userinfomsTag = "${harborURL}/${projectName}/userinfoms:${version}"
         productmsTag = "${harborURL}/${projectName}/productms:${version}"
+        contactmsTag = "${harborURL}/${projectName}/contactms:${version}"
         fileserverTag = "${harborURL}/${projectName}/fileserver:${version}"
     }
 
@@ -74,6 +75,13 @@ pipeline {
                         sh 'docker build -t ${productmsTag} ./ProductMS --platform linux/amd64'
                     }
                 }
+                
+                stage('Build contact microservice') {
+                    steps {
+                        echo 'Building contact microservice...'
+                        sh 'docker build -t ${contactmsTag} ./ContactMS --platform linux/amd64'
+                    }
+                }
 
                 stage('Build fileserver') {
                     steps {
@@ -117,6 +125,13 @@ pipeline {
                     steps {
                         echo 'Pushing product microservice image to Harbor...'
                         sh 'docker push ${productmsTag}'
+                    }
+                }
+
+                stage('Push contact microservice image to Harbor') {
+                    steps {
+                        echo 'Pushing contact microservice image to Harbor...'
+                        sh 'docker push ${contactmsTag}'
                     }
                 }
 
