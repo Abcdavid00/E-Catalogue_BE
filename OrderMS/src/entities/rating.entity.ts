@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryColumn, PrimaryGeneratedColumn, Timestamp } from "typeorm";
 import { Order } from "./order.entity";
 
 @Entity()
@@ -18,4 +18,7 @@ export class Rating {
 
     @Column('nvarchar', { length: 500, nullable: true })
     comment?: string;
+
+    @CreateDateColumn()
+    created_at: Timestamp;
 }
