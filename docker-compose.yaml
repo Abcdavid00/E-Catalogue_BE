@@ -21,6 +21,8 @@ services:
       PRODUCTMS_PORT: $PRODUCTMS_PORT
       CONTACTMS_HOST: $CONTACTMS_HOST
       CONTACTMS_PORT: $CONTACTMS_PORT
+      ORDERMS_HOST: $ORDERMS_HOST
+      ORDERMS_PORT: $ORDERMS_PORT
       FILESERVER_HOST: $FILESERVER_HOST
       FILESERVER_PORT: $FILESERVER_PORT
     ports:
@@ -178,6 +180,43 @@ services:
     networks:
       - contact-db-networks
 
+  order-ms:
+    build:
+      context: ./OrderMS
+      target: prod
+    platform: linux/amd64
+    hostname: $ORDERMS_HOST
+    restart: unless-stopped
+    environment:
+      PORT: $ORDERMS_PORT
+      HEALTHCHECK_PORT: $ORDERMS_HEALTHCHECK_PORT
+      DB_HOST: $ORDERDB_HOST
+      DB_PORT: $ORDERDB_PORT
+      DB_NAME: $ORDERDB_DATABASE
+      DB_USER: $ORDERDB_USER
+      DB_PASSWORD: $ORDERDB_PASSWORD
+    ports:
+      - $ORDERMS_HEALTHCHECK_PORT:$ORDERMS_HEALTHCHECK_PORT
+    networks:
+      - microservices-networks
+      - order-db-networks
+    depends_on:
+      - order-db
+
+  order-db:
+    image: mysql:latest
+    hostname: $ORDERDB_HOST
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: $ORDERDB_ROOT_PASSWORD
+      MYSQL_DATABASE: $ORDERDB_DATABASE
+      MYSQL_USER: $ORDERDB_USER
+      MYSQL_PASSWORD: $ORDERDB_PASSWORD
+    # volumes:
+    #   - ./DockerVolume/order-db:/var/lib/mysql
+    networks:
+      - order-db-networks
+
   adminer:
     image: adminer
     restart: unless-stopped
@@ -212,6 +251,8 @@ networks:
   product-db-networks:
     driver: bridge
   contact-db-networks:
+    driver: bridge
+  order-db-networks:
     driver: bridge
   fileserver-networks:
     driver: bridge

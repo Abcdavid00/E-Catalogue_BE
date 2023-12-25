@@ -8,6 +8,12 @@
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "up:dev": "cd .. && yarn up:dev",
+    "up:prod": "cd .. && yarn up:prod",
+    "down": "cd .. && yarn down",
+    "restart:dev": "cd .. && yarn restart:dev",
+    "restart:prod": "cd .. && yarn restart:prod",
+    "mg": "npx typeorm migration:generate -d dist/config/mysql.module.js",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -22,9 +28,13 @@
   "dependencies": {
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
+    "@nestjs/microservices": "^10.3.0",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/typeorm": "^10.0.1",
+    "mysql2": "^3.6.5",
     "reflect-metadata": "^0.1.13",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "typeorm": "^0.3.17"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
