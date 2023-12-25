@@ -233,6 +233,7 @@ services:
       - userinfo-db-networks
       - product-db-networks
       - contact-db-networks
+      - order-db-networks
 
   # fileserver:
   #   build: ./FileServer
