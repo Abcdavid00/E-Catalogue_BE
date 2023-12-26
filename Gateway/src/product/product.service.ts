@@ -210,6 +210,20 @@ export class ProductService {
         })
     }
 
+    async addImageToProduct(param: {
+        product: number,
+        images: Express.Multer.File[]
+    }): Promise<ProductDto> {
+        const images = await Promise.all(param.images.map(image => this.fileServerService.uploadImage(image)))
+        return this.send({
+            cmd: 'AddImageToProduct',
+            data: {
+                product: param.product,
+                images
+            }
+        })
+    }
+
     async removeProductById(id: number): Promise<any> {
         return this.send({
             cmd: 'RemoveProductById',

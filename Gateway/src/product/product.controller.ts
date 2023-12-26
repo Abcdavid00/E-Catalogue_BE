@@ -2,7 +2,7 @@ import { Controller, Post, Get, Body, UploadedFile, UseInterceptors, Param, Dele
 import { ProductService } from './product.service';
 import { ApiParam, ApiBody, ApiConsumes, ApiOkResponse, ApiProperty, ApiTags, ApiBearerAuth, ApiCreatedResponse, ApiOperation, ApiQuery } from '@nestjs/swagger';
 import { CategoriesDto } from './dto/category.dto';
-import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
+import { FileFieldsInterceptor, FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 import { ProductDto } from './dto/product.dto';
 import { UserRole } from 'src/users/dto/user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
@@ -277,6 +277,42 @@ export class ProductController {
             description: param.description,
             category: param.category,
             image: image
+        });
+    }
+
+    @Post('image')
+    @ApiOperation({ summary: 'Add images to a product (store owner required)' })
+    @ApiTags('Product', 'Store owner')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @ApiConsumes('multipart/form-data')
+    @UseInterceptors(FilesInterceptor('images'))
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            images: {
+                type: 'array',
+                items: {
+                    type: 'string',
+                    format: 'binary',
+                },
+            }
+        }
+    }})
+    @ApiQuery({ name: 'id', type: Number })
+    @ApiOkResponse({ type: ProductDto })
+    async addImageToProduct(@Request() req, @Query('id') id: number, @UploadedFiles() images: Array<Express.Multer.File>): Promise<any> {
+        console.log("Images: " + images)
+        const storeId = req.user.id;
+        if (!(await this.productService.storeHas({
+            storeId: storeId,
+            productId: id
+        }))) {
+            throw new UnauthorizedException('This product is not in your store');
+        }
+        return this.productService.addImageToProduct({
+            product: id,
+            images: images
         });
     }
 

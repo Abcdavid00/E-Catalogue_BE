@@ -292,6 +292,39 @@ export class AppService {
     return await this.productRepository.save(product);
   }
 
+  async addImageToProduct(param: {
+    product: number,
+    images: string[]
+  }): Promise<Product> {
+    console.log("Adding images to product", param.product);
+    const product = await this.productRepository.findOne({
+      where: {
+        id: param.product
+      }
+    });
+    if (!product) {
+      throw new RpcException('Product not found');
+    }
+    console.log("Adding images to product", param.images);
+    await Promise.all(param.images.map(async (image) => {
+      const img = this.productImageRepository.create({
+        product: product,
+        image: image
+      });
+      await this.productImageRepository.save(img);
+    }));
+    return await this.productRepository.findOne({
+      where: {
+        id: param.product
+      },
+      relations: [
+        'category',
+        'variants',
+        'images'
+      ]
+    });
+  }
+
   async removeProductById(id: number,): Promise<Product> {
     const product = await this.productRepository.findOne({
       where: {

@@ -115,6 +115,14 @@ export class AppController {
     return this.appService.editProduct(param);
   }
 
+  @MessagePattern({ cmd: 'AddImageToProduct' })
+  addImageToProduct(param: {
+    product: number,
+    images: string[]
+  }): Promise<Product> {
+    return this.appService.addImageToProduct(param);
+  }
+
   @MessagePattern({ cmd: 'RemoveProductById' })
   removeProductById(param: {id: number}): Promise<any> {
     return this.appService.removeProductById(param.id);
