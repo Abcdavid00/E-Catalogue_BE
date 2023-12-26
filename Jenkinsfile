@@ -10,6 +10,7 @@ pipeline {
         userinfomsTag = "${harborURL}/${projectName}/userinfoms:${version}"
         productmsTag = "${harborURL}/${projectName}/productms:${version}"
         contactmsTag = "${harborURL}/${projectName}/contactms:${version}"
+        ordermsTag = "${harborURL}/${projectName}/orderms:${version}"
         fileserverTag = "${harborURL}/${projectName}/fileserver:${version}"
     }
 
@@ -83,6 +84,13 @@ pipeline {
                     }
                 }
 
+                stage('Build order microservice') {
+                    steps {
+                        echo 'Building order microservice...'
+                        sh 'docker build -t ${ordermsTag} ./OrderMS --platform linux/amd64'
+                    }
+                }
+
                 stage('Build fileserver') {
                     steps {
                         echo 'Building fileserver...'
@@ -132,6 +140,13 @@ pipeline {
                     steps {
                         echo 'Pushing contact microservice image to Harbor...'
                         sh 'docker push ${contactmsTag}'
+                    }
+                }
+
+                stage('Push order microservice image to Harbor') {
+                    steps {
+                        echo 'Pushing order microservice image to Harbor...'
+                        sh 'docker push ${ordermsTag}'
                     }
                 }
 

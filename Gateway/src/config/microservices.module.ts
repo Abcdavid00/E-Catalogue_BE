@@ -17,6 +17,10 @@ export const ContactMSName = "CONTACTMS"
 const ContactMSHost = process.env.CONTACTMS_HOST
 const ContactMSPort = parseInt(process.env.CONTACTMS_PORT, 10)
 
+export const OrderMSName = "ORDERMS"
+const OrderMSHost = process.env.ORDERMS_HOST
+const OrderMSPort = parseInt(process.env.ORDERMS_PORT, 10)
+
 const clientsModule: DynamicModule = ClientsModule.register([
     {
         name: UsersMSName,
@@ -48,6 +52,14 @@ const clientsModule: DynamicModule = ClientsModule.register([
         options: {
             host: ContactMSHost,
             port: ContactMSPort
+        }
+    },
+    {
+        name: OrderMSName,
+        transport: Transport.TCP,
+        options: {
+            host: OrderMSHost,
+            port: OrderMSPort
         }
     }
 ])

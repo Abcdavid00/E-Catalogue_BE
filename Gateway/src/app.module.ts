@@ -10,6 +10,7 @@ import { FileServerModule } from './file-server/file-server.module';
 import { UserInfoMsModule } from './user-info-ms/user-info-ms.module';
 import { ProductModule } from './product/product.module';
 import { ContactModule } from './contact/contact.module';
+import { OrderModule } from './order/order.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { ContactModule } from './contact/contact.module';
     UserInfoMsModule,
     ProductModule,
     ContactModule,
+    OrderModule,
   ],
   controllers: [AppController],
   providers: [AppService],
