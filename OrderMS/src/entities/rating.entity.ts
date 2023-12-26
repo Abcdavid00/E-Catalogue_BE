@@ -3,7 +3,7 @@ import { Order } from "./order.entity";
 
 @Entity()
 export class Rating {
-    @PrimaryColumn('int', { unique: true, nullable: false })
+    @PrimaryGeneratedColumn()
     id: number;
 
     @ManyToOne(() => Order)

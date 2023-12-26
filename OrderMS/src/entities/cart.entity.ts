@@ -1,4 +1,4 @@
-import { Entity, ManyToMany, PrimaryColumn } from "typeorm";
+import { Entity, JoinTable, ManyToMany, PrimaryColumn } from "typeorm";
 import { Item } from './item.entity';
 
 @Entity()
@@ -7,5 +7,6 @@ export class Cart {
     id: number;
 
     @ManyToMany(() => Item)
+    @JoinTable()
     items: Item[];
 }

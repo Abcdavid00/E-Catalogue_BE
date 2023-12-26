@@ -6,6 +6,7 @@ import { FileServerService } from 'src/file-server/file-server.service';
 import { ProductDto } from './dto/product.dto';
 import { StoreDto } from './dto/store.dto';
 import { CategoriesDto } from './dto/category.dto';
+import { OrderService } from 'src/order/order.service';
 
 type File = Express.Multer.File
 
@@ -14,7 +15,8 @@ export class ProductService {
     constructor(
         @Inject(ProductMSName)
         private readonly productClient: ClientProxy,
-        private readonly fileServerService: FileServerService
+        private readonly fileServerService: FileServerService,
+        private readonly orderService: OrderService
     ) {}
 
     async send(param: {
@@ -175,11 +177,15 @@ export class ProductService {
         })
     }
 
-    async getProductById(id: number): Promise<ProductDto> {
-        return this.send({
+    async getProductById(id: number): Promise<any> {
+        const product = await this.send({
             cmd: 'GetProductById',
             data: { id }
         })
+        const variantIds = product.variants.map(variant => variant.id)
+        const ratings = await this.orderService.getRatingByProductVariants({ product_variants: variantIds })
+        product.ratings = ratings
+        return product
     }
 
     async editProduct(param: {

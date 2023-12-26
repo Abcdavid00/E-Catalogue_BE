@@ -1,12 +1,6 @@
-import { Column, Entity, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Item } from "./item.entity";
-
-export enum DeliverStatus {
-    PENDING = 'pending',
-    DELIVERING = 'delivering',
-    DELIVERED = 'delivered',
-    CANCELLED = 'cancelled',
-}
+import { DeliverStatus } from "./deliver-status.enum";
 
 @Entity()
 export class Order {
@@ -20,6 +14,7 @@ export class Order {
     contact_id: number;
 
     @ManyToMany(() => Item)
+    @JoinTable()
     items: Item[];
 
     @Column('int', {nullable: false})
