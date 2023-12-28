@@ -66,6 +66,10 @@ services:
       MYSQL_DATABASE: $USERSDB_DATABASE
       MYSQL_USER: $USERSDB_USER
       MYSQL_PASSWORD: $USERSDB_PASSWORD
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$USERSDB_USER", "-p$USERSDB_PASSWORD"]
+      timeout: 5s
+      retries: 10
     # volumes:
     #   - ./DockerVolume/users-db:/var/lib/mysql
     networks:
@@ -93,7 +97,8 @@ services:
       - microservices-networks
       - userinfo-db-networks
     depends_on:
-      - userinfo-db
+      userinfo-db:
+        condition: service_healthy
 
   userinfo-db:
     image: mysql:latest
@@ -104,10 +109,17 @@ services:
       MYSQL_DATABASE: $USERINFODB_DATABASE
       MYSQL_USER: $USERINFODB_USER
       MYSQL_PASSWORD: $USERINFODB_PASSWORD
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$USERINFODB_USER", "-p$USERINFODB_PASSWORD"]
+      timeout: 5s
+      retries: 10
     # volumes:
     #   - ./DockerVolume/userinfo-db:/var/lib/mysql
     networks:
       - userinfo-db-networks
+    depends_on:
+      users-db:
+        condition: service_healthy
   
   product-ms:
     build:
@@ -131,7 +143,8 @@ services:
       - microservices-networks
       - product-db-networks
     depends_on:
-      - product-db
+      product-db:
+        condition: service_healthy
 
   product-db:
     image: mysql:latest
@@ -142,6 +155,10 @@ services:
       MYSQL_DATABASE: $PRODUCTDB_DATABASE
       MYSQL_USER: $PRODUCTDB_USER
       MYSQL_PASSWORD: $PRODUCTDB_PASSWORD
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$PRODUCTDB_USER", "-p$PRODUCTDB_PASSWORD"]
+      timeout: 5s
+      retries: 10
     # volumes:
     #   - ./DockerVolume/product-db:/var/lib/mysql
     networks:
@@ -169,7 +186,8 @@ services:
   #     - microservices-networks
   #     - contact-db-networks
   #   depends_on:
-  #     - contact-db
+  #     contact-db:
+  #       condition: service_healthy
 
   # contact-db:
   #   image: mysql:latest
@@ -180,48 +198,63 @@ services:
   #     MYSQL_DATABASE: $CONTACTDB_DATABASE
   #     MYSQL_USER: $CONTACTDB_USER
   #     MYSQL_PASSWORD: $CONTACTDB_PASSWORD
+  #   healthcheck:
+  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$CONTACTDB_USER", "-p$CONTACTDB_PASSWORD"]
+  #     timeout: 5s
+  #     retries: 10
   #   # volumes:
   #   #   - ./DockerVolume/contact-db:/var/lib/mysql
   #   networks:
   #     - contact-db-networks
-
-  # order-ms:
-  #   build:
-  #     context: ./OrderMS
-  #     target: dev
-  #   hostname: $ORDERMS_HOST
-  #   restart: unless-stopped
-  #   environment:
-  #     PORT: $ORDERMS_PORT
-  #     HEALTHCHECK_PORT: $ORDERMS_HEALTHCHECK_PORT
-  #     DB_HOST: $ORDERDB_HOST
-  #     DB_PORT: $ORDERDB_PORT
-  #     DB_NAME: $ORDERDB_DATABASE
-  #     DB_USER: $ORDERDB_USER
-  #     DB_PASSWORD: $ORDERDB_PASSWORD
-  #   ports:
-  #     - $ORDERMS_HEALTHCHECK_PORT:$ORDERMS_HEALTHCHECK_PORT
-  #   volumes:
-  #     - ./OrderMS/src:/app/src
-  #   networks:
-  #     - microservices-networks
-  #     - order-db-networks
   #   depends_on:
-  #     - order-db
+  #     userinfo-db:
+  #       condition: service_healthy
 
-  # order-db:
-  #   image: mysql:latest
-  #   hostname: $ORDERDB_HOST
-  #   restart: unless-stopped
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: $ORDERDB_ROOT_PASSWORD
-  #     MYSQL_DATABASE: $ORDERDB_DATABASE
-  #     MYSQL_USER: $ORDERDB_USER
-  #     MYSQL_PASSWORD: $ORDERDB_PASSWORD
-  #   # volumes:
-  #   #   - ./DockerVolume/order-db:/var/lib/mysql
-  #   networks:
-  #     - order-db-networks
+  order-ms:
+    build:
+      context: ./OrderMS
+      target: dev
+    hostname: $ORDERMS_HOST
+    restart: unless-stopped
+    environment:
+      PORT: $ORDERMS_PORT
+      HEALTHCHECK_PORT: $ORDERMS_HEALTHCHECK_PORT
+      DB_HOST: $ORDERDB_HOST
+      DB_PORT: $ORDERDB_PORT
+      DB_NAME: $ORDERDB_DATABASE
+      DB_USER: $ORDERDB_USER
+      DB_PASSWORD: $ORDERDB_PASSWORD
+    ports:
+      - $ORDERMS_HEALTHCHECK_PORT:$ORDERMS_HEALTHCHECK_PORT
+    volumes:
+      - ./OrderMS/src:/app/src
+    networks:
+      - microservices-networks
+      - order-db-networks
+    depends_on:
+      order-db:
+        condition: service_healthy
+
+  order-db:
+    image: mysql:latest
+    hostname: $ORDERDB_HOST
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: $ORDERDB_ROOT_PASSWORD
+      MYSQL_DATABASE: $ORDERDB_DATABASE
+      MYSQL_USER: $ORDERDB_USER
+      MYSQL_PASSWORD: $ORDERDB_PASSWORD
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$ORDERDB_USER", "-p$ORDERDB_PASSWORD"]
+      timeout: 5s
+      retries: 10
+    # volumes:
+    #   - ./DockerVolume/order-db:/var/lib/mysql
+    networks:
+      - order-db-networks
+    depends_on:
+      product-db:
+        condition: service_healthy
 
   adminer:
     image: adminer
