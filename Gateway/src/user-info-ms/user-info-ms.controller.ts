@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param, Post, UseGuards, Request, Body, UploadedFile, UseInterceptors, Query } from '@nestjs/common';
+import { Controller, Get, Inject, Param, Post, UseGuards, Request, Body, UploadedFile, UseInterceptors, Query, Put, BadRequestException, UnauthorizedException, Delete } from '@nestjs/common';
 import { UserInfoMsService } from './user-info-ms.service';
 import { UserInfo, UserInfoDto } from './dto/user-info.dto';
 import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
@@ -55,5 +55,167 @@ export class UserInfoMsController {
         const id = req.user.id;
         return this.userInfoMsService.setProfileImage(id, image);
     }
+
+    @Post('collection')
+    @ApiOperation({ summary: 'Create collection (User required)' })
+    @ApiTags('Favorite')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @UseInterceptors(FileInterceptor('image'))
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({ 
+        schema: {
+            type: 'object',
+            properties: {
+                name: { type: 'string' },
+                image: {
+                    type: 'string',
+                    format: 'binary'
+                }
+            }
+        }
+    })
+    async createCollection(@Request() req, @Body() body: {name: string}, @UploadedFile() image: Express.Multer.File): Promise<any> {
+        const userId = req.user.id;
+
+        const collection = await this.userInfoMsService.createCollection({
+            userId,
+            name: body.name,
+            image
+        });
+        return collection;
+    }
+
+    @Put('collection')
+    @ApiOperation({ summary: 'Update collection (User required)' })
+    @ApiTags('Favorite')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @UseInterceptors(FileInterceptor('image'))
+    @ApiConsumes('multipart/form-data')
+    @ApiBody({ 
+        schema: {
+            type: 'object',
+            properties: {
+                id: { type: 'number' },
+                name: { type: 'string' },
+                image: {
+                    type: 'string',
+                    format: 'binary'
+                }
+            }
+        }
+    })
+    async updateCollection(@Request() req, @Body() body: {id: number, name?: string}, @UploadedFile() image?: Express.Multer.File): Promise<any> {
+        const userId = req.user.id;
+
+        const collection = await this.userInfoMsService.updateCollection({
+            id: body.id,
+            name: body.name,
+            image: image,
+        });
+        return collection;
+    }
+
+    @Delete('collection')
+    @ApiOperation({ summary: 'Delete collection (User required)' })
+    @ApiTags('Favorite')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiQuery({ name: 'id', type: Number })
+    async deleteCollection(@Request() req, @Query('id') id: number): Promise<any> {
+        const userId = req.user.id;
+
+        const collection = await this.userInfoMsService.deleteCollection({
+            id,
+        });
+        return collection;
+    }
+
+    @Get('collection')
+    @ApiOperation({ summary: 'Get collection' })
+    @ApiTags('Favorite')
+    @ApiQuery({ name: 'id', type: Number })
+    async getCollection(@Query('id') id: number): Promise<any> {
+        const collection = await this.userInfoMsService.getCollection({
+            id,
+        });
+        return collection;
+    }
+
+    @Get('collections')
+    @ApiOperation({ summary: 'Get collections by user (User required)' })
+    @ApiTags('Favorite')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    async getCollectionsByUser(@Request() req): Promise<any> {
+        const userId = req.user.id;
+
+        const collections = await this.userInfoMsService.getCollectionsByUser({
+            userId,
+        });
+        return collections;
+    }
+
+    @Post('favorite')
+    @ApiOperation({ summary: 'Add favorite (User required)' })
+    @ApiTags('Favorite')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            contentId: { type: 'number' },
+            contentType: { type: 'string' },
+            collectionId: { type: 'number' },
+        }
+    } })
+    async addFavorite(@Request() req, @Body() body: {contentId: number, contentType: string, collectionId: number}): Promise<any> {
+        const userId = req.user.id;
+
+        const favorite = await this.userInfoMsService.addFavorite({
+            userId,
+            contentId: body.contentId,
+            contentType: body.contentType,
+            collectionId: body.collectionId,
+        });
+        return favorite;
+    }
+
+    @Delete('favorite')
+    @ApiOperation({ summary: 'Remove favorite (User required)' })
+    @ApiTags('Favorite')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiQuery({ name: 'id', type: Number })
+    async removeFavorite(@Request() req, @Query('id') id: number): Promise<any> {
+        const userId = req.user.id;
+
+        const favorite = await this.userInfoMsService.removeFavorite({
+            id,
+        });
+        return favorite;
+    }
+
+    @Get('favorite')
+    @ApiOperation({ summary: 'Get favorite' })
+    @ApiTags('Favorite')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiQuery({ name: 'collectionId', type: Number })
+    @ApiQuery({ name: 'contentId', type: Number })
+    @ApiQuery({ name: 'contentType', type: String })
+    async getFavorite(@Request() req, @Query('collectionId') collectionId: number, @Query('contentId') contentId: number, @Query('contentType') contentType: string): Promise<any> {
+        const userId = req.user.id;
+
+        const favorite = await this.userInfoMsService.getFavorite({
+            userId,
+            collectionId,
+            contentId,
+            contentType,
+        });
+        return favorite;
+    }
+
 
 }

@@ -15,6 +15,20 @@ export class UserInfoMsService {
         private readonly userInfoClient: ClientProxy
     ) {}
 
+    async send(param: {
+        cmd: string,
+        data: any
+    }): Promise<any> {
+        try {
+            const res: any = await firstValueFrom(
+                this.userInfoClient.send<any>({ cmd: param.cmd }, param.data)
+            )
+            return res;
+        } catch (error) {
+            throw new BadRequestException('UserInfoMS: ' + error.message);
+        }
+    }
+
     async getUserInfo(id: number): Promise<UserInfo> {
         try {
             const res: UserInfo = await firstValueFrom(
@@ -57,5 +71,92 @@ export class UserInfoMsService {
         }
     }
 
+    async createCollection(param: {userId: number, name: string, image: Express.Multer.File}): Promise<any> {
+        const image = await this.fileServerService.uploadImage(param.image);
+        return this.send({
+            cmd: 'createCollection',
+            data: {
+                userId: param.userId,
+                name: param.name,
+                image: image,
+            }
+        })
+    }
 
+    async updateCollection(param: {id: number, name?: string, image?: Express.Multer.File}): Promise<any> {
+        const image = param.image ? await this.fileServerService.uploadImage(param.image) : undefined;
+        return this.send({
+            cmd: 'updateCollection',
+            data: {
+                id: param.id,
+                name: param.name,
+                image: image,
+            }
+        })
+    }
+
+    async deleteCollection(param: {id: number}): Promise<any> {
+        return this.send({
+            cmd: 'deleteCollection',
+            data: {
+                id: param.id,
+            }
+        })
+    }
+
+    async getCollection(param: {id: number}): Promise<any> {
+        return this.send({
+            cmd: 'getCollection',
+            data: {
+                id: param.id,
+            }
+        })
+    }
+
+    async getCollectionsByUser(param: {userId: number}): Promise<any> {
+        return this.send({
+            cmd: 'getCollectionsByUser',
+            data: {
+                userId: param.userId,
+            }
+        })
+    }
+
+    async addFavorite(param: {userId: number, collectionId: number, contentId: number, contentType: string}): Promise<any> {
+        return this.send({
+            cmd: 'addFavorite',
+            data: {
+                userId: param.userId,
+                collectionId: param.collectionId,
+                contentId: param.contentId,
+                contentType: param.contentType,
+            }
+        })
+    }
+
+    async removeFavorite(param: {id: number}): Promise<any> {
+        return this.send({
+            cmd: 'removeFavorite',
+            data: {
+                id: param.id,
+            }
+        })
+    }
+
+    async getFavorite(param: {
+        userId: number,
+        collectionId: number,
+        contentId: number,
+        contentType: string
+    }): Promise<any> {
+        return this.send({
+            cmd: 'getFavorite',
+            data: {
+                userId: param.userId,
+                collectionId: param.collectionId,
+                contentId: param.contentId,
+                contentType: param.contentType,
+            }
+        })
+    }
 }

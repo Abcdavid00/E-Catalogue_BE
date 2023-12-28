@@ -71,43 +71,43 @@ services:
     networks:
       - users-db-networks
 
-  # userinfo-ms:
-  #   build:
-  #     context: ./UserInfoMS
-  #     target: dev
-  #   hostname: $USERINFOMS_HOST
-  #   restart: unless-stopped
-  #   environment:
-  #     PORT: $USERINFOMS_PORT
-  #     HEALTHCHECK_PORT: $USERINFOMS_HEALTHCHECK_PORT
-  #     DB_HOST: $USERINFODB_HOST
-  #     DB_PORT: $USERINFODB_PORT
-  #     DB_NAME: $USERINFODB_DATABASE
-  #     DB_USER: $USERINFODB_USER
-  #     DB_PASSWORD: $USERINFODB_PASSWORD
-  #   ports:
-  #     - $USERINFOMS_HEALTHCHECK_PORT:$USERINFOMS_HEALTHCHECK_PORT
-  #   volumes:
-  #     - ./UserInfoMS/src:/app/src
-  #   networks:
-  #     - microservices-networks
-  #     - userinfo-db-networks
-  #   depends_on:
-  #     - userinfo-db
+  userinfo-ms:
+    build:
+      context: ./UserInfoMS
+      target: dev
+    hostname: $USERINFOMS_HOST
+    restart: unless-stopped
+    environment:
+      PORT: $USERINFOMS_PORT
+      HEALTHCHECK_PORT: $USERINFOMS_HEALTHCHECK_PORT
+      DB_HOST: $USERINFODB_HOST
+      DB_PORT: $USERINFODB_PORT
+      DB_NAME: $USERINFODB_DATABASE
+      DB_USER: $USERINFODB_USER
+      DB_PASSWORD: $USERINFODB_PASSWORD
+    ports:
+      - $USERINFOMS_HEALTHCHECK_PORT:$USERINFOMS_HEALTHCHECK_PORT
+    volumes:
+      - ./UserInfoMS/src:/app/src
+    networks:
+      - microservices-networks
+      - userinfo-db-networks
+    depends_on:
+      - userinfo-db
 
-  # userinfo-db:
-  #   image: mysql:latest
-  #   hostname: $USERINFODB_HOST
-  #   restart: unless-stopped
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: $USERINFODB_ROOT_PASSWORD
-  #     MYSQL_DATABASE: $USERINFODB_DATABASE
-  #     MYSQL_USER: $USERINFODB_USER
-  #     MYSQL_PASSWORD: $USERINFODB_PASSWORD
-  #   # volumes:
-  #   #   - ./DockerVolume/userinfo-db:/var/lib/mysql
-  #   networks:
-  #     - userinfo-db-networks
+  userinfo-db:
+    image: mysql:latest
+    hostname: $USERINFODB_HOST
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: $USERINFODB_ROOT_PASSWORD
+      MYSQL_DATABASE: $USERINFODB_DATABASE
+      MYSQL_USER: $USERINFODB_USER
+      MYSQL_PASSWORD: $USERINFODB_PASSWORD
+    # volumes:
+    #   - ./DockerVolume/userinfo-db:/var/lib/mysql
+    networks:
+      - userinfo-db-networks
   
   product-ms:
     build:
@@ -185,43 +185,43 @@ services:
   #   networks:
   #     - contact-db-networks
 
-  order-ms:
-    build:
-      context: ./OrderMS
-      target: dev
-    hostname: $ORDERMS_HOST
-    restart: unless-stopped
-    environment:
-      PORT: $ORDERMS_PORT
-      HEALTHCHECK_PORT: $ORDERMS_HEALTHCHECK_PORT
-      DB_HOST: $ORDERDB_HOST
-      DB_PORT: $ORDERDB_PORT
-      DB_NAME: $ORDERDB_DATABASE
-      DB_USER: $ORDERDB_USER
-      DB_PASSWORD: $ORDERDB_PASSWORD
-    ports:
-      - $ORDERMS_HEALTHCHECK_PORT:$ORDERMS_HEALTHCHECK_PORT
-    volumes:
-      - ./OrderMS/src:/app/src
-    networks:
-      - microservices-networks
-      - order-db-networks
-    depends_on:
-      - order-db
+  # order-ms:
+  #   build:
+  #     context: ./OrderMS
+  #     target: dev
+  #   hostname: $ORDERMS_HOST
+  #   restart: unless-stopped
+  #   environment:
+  #     PORT: $ORDERMS_PORT
+  #     HEALTHCHECK_PORT: $ORDERMS_HEALTHCHECK_PORT
+  #     DB_HOST: $ORDERDB_HOST
+  #     DB_PORT: $ORDERDB_PORT
+  #     DB_NAME: $ORDERDB_DATABASE
+  #     DB_USER: $ORDERDB_USER
+  #     DB_PASSWORD: $ORDERDB_PASSWORD
+  #   ports:
+  #     - $ORDERMS_HEALTHCHECK_PORT:$ORDERMS_HEALTHCHECK_PORT
+  #   volumes:
+  #     - ./OrderMS/src:/app/src
+  #   networks:
+  #     - microservices-networks
+  #     - order-db-networks
+  #   depends_on:
+  #     - order-db
 
-  order-db:
-    image: mysql:latest
-    hostname: $ORDERDB_HOST
-    restart: unless-stopped
-    environment:
-      MYSQL_ROOT_PASSWORD: $ORDERDB_ROOT_PASSWORD
-      MYSQL_DATABASE: $ORDERDB_DATABASE
-      MYSQL_USER: $ORDERDB_USER
-      MYSQL_PASSWORD: $ORDERDB_PASSWORD
-    # volumes:
-    #   - ./DockerVolume/order-db:/var/lib/mysql
-    networks:
-      - order-db-networks
+  # order-db:
+  #   image: mysql:latest
+  #   hostname: $ORDERDB_HOST
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: $ORDERDB_ROOT_PASSWORD
+  #     MYSQL_DATABASE: $ORDERDB_DATABASE
+  #     MYSQL_USER: $ORDERDB_USER
+  #     MYSQL_PASSWORD: $ORDERDB_PASSWORD
+  #   # volumes:
+  #   #   - ./DockerVolume/order-db:/var/lib/mysql
+  #   networks:
+  #     - order-db-networks
 
   adminer:
     image: adminer
