@@ -325,6 +325,11 @@ export class ProductService {
         //     }
         // })
 
+        variants.forEach(variant => {
+            const item = cart.items.find(item => item.product_variant === variant.id)
+            variant.quantity = item.quantity
+        })
+
         cart.items = undefined
 
         // Group product variants by product store
