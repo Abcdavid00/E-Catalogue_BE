@@ -328,12 +328,21 @@ export class ProductService {
         cart.items = undefined
 
         // Group product variants by product store
-        const productStoreMap = {}
+        const productStoreMap = {
+            ids:[],
+            entities:{}
+        }
         variants.forEach(variant => {
-            if (!productStoreMap[variant.product.store.id]) {
-                productStoreMap[variant.product.store.id] = []
+            if (
+                !productStoreMap.ids.includes(variant.product.store.id)
+            ) {
+                productStoreMap.ids.push(variant.product.store.id)
+                productStoreMap.entities[variant.product.store.id] = {
+                    ...variant.product.store,
+                    items: []
+                }
             }
-            productStoreMap[variant.product.store.id].push(variant)
+            productStoreMap.entities[variant.product.store.id].items.push(variant)
         })
 
         cart.stores = productStoreMap
