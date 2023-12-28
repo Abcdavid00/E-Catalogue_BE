@@ -477,9 +477,11 @@ export class AppService {
       where: {
         id: In(params.ids)
       },
-      relations: [
-        'product',
-      ]
+      relations: {
+        product: {
+          store: true
+        }
+      }
     });
   }
 }
