@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectEntityManager, InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
-import { DeepPartial, EntityManager, IsNull, Repository, TreeRepository } from 'typeorm';
+import { DeepPartial, EntityManager, In, IsNull, Repository, TreeRepository } from 'typeorm';
 import { Category } from './entities/category.entity';
 import { Brand } from './entities/brand.entity';
 import { ProductImage } from './entities/product-image.entity';
@@ -455,64 +455,31 @@ export class AppService {
     return await this.productVariantRepository.remove(variant);
   }
 
-  // async createProductVariant(param: {
-  //   product: number,
-  //   size: Size,
-  //   color: Color,
-  //   image?: string,
-  //   price: number,
-  //   quantity: number
-  // }): Promise<ProductVariant> {
-  //   const product = await this.productRepository.findOne({
-  //     where: {
-  //       id: param.product
-  //     }
-  //   });
-  //   if (!product) {
-  //     throw new RpcException('Product not found');
-  //   }
-  //   const variant: ProductVariant = this.productVariantRepository.create({
-  //     product: product,
-  //     size: param.size,
-  //     color: param.color,
-  //     image: param.image,
-  //     price: param.price,
-  //     quantity: param.quantity
-  //   });
-  //   return await this.productVariantRepository.save(variant);
-  // }
+  async getProducts(params: {
+    ids: number[],
+  }): Promise<Product[]> {
+    return this.productRepository.find({
+      where: {
+        id: In(params.ids)
+      },
+      relations: [
+        'category',
+        'variants',
+        'images'
+      ]
+    });
+  }
 
-  // async updateProductVariant(param: {
-  //   id: number,
-  //   name?: string,
-  //   image?: string,
-  //   price?: number,
-  //   quantity?: number
-  // }): Promise<ProductVariant> {
-  //   const variant = await this.productVariantRepository.findOne({
-  //     where: {
-  //       id: param.id
-  //     }
-  //   });
-  //   if (!variant) {
-  //     throw new RpcException('Variant not found');
-  //   }
-  //   variant.name = param.name || variant.name;
-  //   variant.image = param.image || variant.image;
-  //   variant.price = param.price || variant.price;
-  //   variant.quantity = param.quantity || variant.quantity;
-  //   return await this.productVariantRepository.save(variant);
-  // }
-
-  // async removeProductVariant(id: number): Promise<ProductVariant> {
-  //   const variant = await this.productVariantRepository.findOne({
-  //     where: {
-  //       id: id
-  //     }
-  //   });
-  //   if (!variant) {
-  //     throw new RpcException('Variant not found');
-  //   }
-  //   return await this.productVariantRepository.remove(variant);
-  // }
+  async getProductVariants(params: {
+    ids: number[],
+  }): Promise<ProductVariant[]> {
+    return this.productVariantRepository.find({
+      where: {
+        id: In(params.ids)
+      },
+      relations: [
+        'product',
+      ]
+    });
+  }
 }

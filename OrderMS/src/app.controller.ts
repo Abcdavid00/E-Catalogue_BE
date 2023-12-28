@@ -133,6 +133,4 @@ export class AppController {
   }) {
     return this.appService.getRatingByProductVariants(param);
   }
-
-
 }

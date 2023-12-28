@@ -90,17 +90,17 @@ export class OrderController {
         });
     }
 
-    @Get('cart')
-    @ApiOperation({ summary: 'Get cart' })
-    @ApiTags('Cart')
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard)
-    async getCart(@Request() req): Promise<any> {
-        const id = req.user.id;
-        return this.orderService.getCart({
-            id: id,
-        });
-    }
+    // @Get('cart')
+    // @ApiOperation({ summary: 'Get cart' })
+    // @ApiTags('Cart')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAuthGuard)
+    // async getCart(@Request() req): Promise<any> {
+    //     const id = req.user.id;
+    //     return this.orderService.getCart({
+    //         id: id,
+    //     });
+    // }
 
     @Post('cart')
     @ApiOperation({ summary: 'Add item to cart' })

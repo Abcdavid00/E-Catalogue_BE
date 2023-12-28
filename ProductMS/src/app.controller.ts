@@ -148,4 +148,14 @@ export class AppController {
   removeProductVariant(param: {productId: number, size: string, color: string}): Promise<ProductVariant> {
     return this.appService.removeProductVariant(param);
   }
+
+  @MessagePattern({ cmd: 'GetProducts' })
+  getProducts(param: {ids: number[]}): Promise<Product[]> {
+    return this.appService.getProducts(param);
+  }
+
+  @MessagePattern({ cmd: 'GetProductVariants' })
+  getProductVariants(param: {ids: number[]}): Promise<ProductVariant[]> {
+    return this.appService.getProductVariants(param);
+  }
 }

@@ -413,4 +413,16 @@ export class ProductController {
             color: color
         });
     }
+
+    @Get('cart')
+    @ApiOperation({ summary: 'Get cart' })
+    @ApiTags('Cart')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    async getCart(@Request() req): Promise<any> {
+        const id = req.user.id;
+        return this.productService.getCartWithItems({
+            id: id,
+        });
+    }
 }

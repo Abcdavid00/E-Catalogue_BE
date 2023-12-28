@@ -285,4 +285,59 @@ export class ProductService {
             }
         })
     }
+
+    async getProducts(param: {
+        ids: number[]
+    }): Promise<any> {
+        return this.send({
+            cmd: 'GetProducts',
+            data: {
+                ids: param.ids
+            }
+        })
+    }
+
+    async getProductVariants(param: {
+        ids: number[]
+    }): Promise<any> {
+        return this.send({
+            cmd: 'GetProductVariants',
+            data: {
+                ids: param.ids
+            }
+        })
+    }
+
+    async getCartWithItems(param: {
+        id: number
+    }): Promise<any> {
+        const cart = await this.orderService.getCart(param)
+
+        const variantIds = cart.items.map(item => item.product_variant)
+
+        const variants = await this.getProductVariants({ ids: variantIds })
+
+        cart.items = cart.items.map(item => {
+            const variant = variants.find(variant => variant.id === item.product_variant)
+            return {
+                ...item,
+                product_variant: variant
+            }
+        })
+
+        // Group product variants by product store
+        const productStoreMap = {}
+        variants.forEach(variant => {
+            if (!productStoreMap[variant.product]) {
+                productStoreMap[variant.product] = []
+            }
+            productStoreMap[variant.product].push(variant)
+        })
+
+        cart.stores = productStoreMap
+
+        return cart
+    }
+
+
 }
