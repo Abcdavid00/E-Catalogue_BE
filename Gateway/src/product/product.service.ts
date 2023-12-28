@@ -317,21 +317,23 @@ export class ProductService {
 
         const variants = await this.getProductVariants({ ids: variantIds })
 
-        cart.items = cart.items.map(item => {
-            const variant = variants.find(variant => variant.id === item.product_variant)
-            return {
-                ...item,
-                product_variant: variant
-            }
-        })
+        // cart.items = cart.items.map(item => {
+        //     const variant = variants.find(variant => variant.id === item.product_variant)
+        //     return {
+        //         ...item,
+        //         product_variant: variant
+        //     }
+        // })
+
+        cart.items = undefined
 
         // Group product variants by product store
         const productStoreMap = {}
         variants.forEach(variant => {
-            if (!productStoreMap[variant.product]) {
-                productStoreMap[variant.product] = []
+            if (!productStoreMap[variant.product.store.id]) {
+                productStoreMap[variant.product.store.id] = []
             }
-            productStoreMap[variant.product].push(variant)
+            productStoreMap[variant.product.store.id].push(variant)
         })
 
         cart.stores = productStoreMap
