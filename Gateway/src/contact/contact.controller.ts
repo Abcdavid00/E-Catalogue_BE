@@ -52,11 +52,11 @@ export class ContactController {
                 type: 'string',
                 nullable: true
             },
-            city: {
+            district: {
                 type: 'string',
                 nullable: true
             },
-            district: {
+            ward: {
                 type: 'string',
                 nullable: true
             },
@@ -70,11 +70,17 @@ export class ContactController {
     updateAddress(@Body() param: {
         id: number,
         province?: string,
-        city?: string,
         district?: string,
+        ward?: string,
         details?: string
     }): Promise<AddressDto> {
-        return this.contactService.updateAddress(param);
+        return this.contactService.updateAddress({
+            id: param.id,
+            province: param.province,
+            city: param.district,
+            district: param.ward,
+            details: param.details
+        });
     }
 
     @Get('address')
@@ -121,10 +127,10 @@ export class ContactController {
             province: {
                 type: 'string'
             },
-            city: {
+            district: {
                 type: 'string'
             },
-            district: {
+            ward: {
                 type: 'string'
             },
             details: {
@@ -137,13 +143,17 @@ export class ContactController {
     createContactFull(@Body() param: {
         phone: string,
         province: string,
-        city: string,
         district: string,
+        ward: string,
         details: string,
     }, @Request() req): Promise<any> {
         const userId = req.user.id;
         return this.contactService.createContactFull({
-            ...param,
+            phone: param.phone,
+            province: param.province,
+            city: param.district,
+            district: param.ward,
+            details: param.details,
             userId: userId
         });
     }
