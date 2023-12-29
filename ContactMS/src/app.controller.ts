@@ -47,6 +47,7 @@ export class AppController {
   @MessagePattern({ cmd: 'createContactFull' })
   createContactFull(param: {
     phone: string,
+    fullname?: string,
     province: string,
     city: string,
     district: string,
@@ -59,6 +60,7 @@ export class AppController {
   @MessagePattern({ cmd: 'CreateContact' })
   createContact(param: {
     phone: string,
+    fullname?: string,
     addressId: number,
     userId: number,
   }): Promise<any> {
@@ -75,6 +77,7 @@ export class AppController {
   @MessagePattern({ cmd: 'UpdateContact' })
   updateContact(param: {
     id: number,
+    fullname?: string,
     phone: string,
   }) {
     return this.appService.updateContact(param);

@@ -100,6 +100,9 @@ export class ContactController {
             phone: {
                 type: 'string'
             },
+            fullname: {
+                type: 'string'
+            },
             addressId: {
                 type: 'number'
             }
@@ -107,6 +110,7 @@ export class ContactController {
     }})
     createContact(@Body() param: {
         phone: string,
+        fullname?: string,
         addressId: number
     }, @Request() req): Promise<any> {
         const userId = req.user.id;
@@ -122,6 +126,9 @@ export class ContactController {
         type: 'object',
         properties: {
             phone: {
+                type: 'string'
+            },
+            fullname: {
                 type: 'string'
             },
             province: {
@@ -142,6 +149,7 @@ export class ContactController {
     @ApiBearerAuth()
     createContactFull(@Body() param: {
         phone: string,
+        fullname: string,
         province: string,
         district: string,
         ward: string,
@@ -150,6 +158,7 @@ export class ContactController {
         const userId = req.user.id;
         return this.contactService.createContactFull({
             phone: param.phone,
+            fullname: param.fullname,
             province: param.province,
             city: param.district,
             district: param.ward,

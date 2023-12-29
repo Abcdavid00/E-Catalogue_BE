@@ -59,6 +59,7 @@ export class ContactService {
 
     async createContact(param: {
         phone: string,
+        fullname?: string,
         addressId: number,
         userId: number,
     }): Promise<any> {
@@ -70,6 +71,7 @@ export class ContactService {
 
     async createContactFull(param: {
         phone: string,
+        fullname?: string,
         province: string,
         city: string,
         district: string,
@@ -94,6 +96,7 @@ export class ContactService {
     async updateContact(param: {
         id: number,
         phone: string,
+        fullname?: string,
     }) {
         return this.send({
             cmd: 'UpdateContact',

@@ -83,6 +83,7 @@ export class AppService {
 
   async createContactFull(param: {
     phone: string,
+    fullname?: string,
     province: string,
     city: string,
     district: string,
@@ -116,6 +117,7 @@ export class AppService {
     await this.addressRepository.save(address);
     const contact = this.contactRepository.create({
       phone: param.phone,
+      fullname: param.fullname,
       address: address,
       user_id: param.userId
     })
@@ -125,6 +127,7 @@ export class AppService {
   async createContact(param: {
     phone: string,
     addressId: number,
+    fullname?: string,
     userId: number,
   }): Promise<Contact> {
     if (!param.phone) {
@@ -147,6 +150,7 @@ export class AppService {
     const contact = this.contactRepository.create({
       phone: param.phone,
       address: address,
+      fullname: param.fullname,
       user_id: param.userId
     })
     return this.contactRepository.save(contact);
@@ -167,7 +171,8 @@ export class AppService {
 
   async updateContact(param: {
     id: number,
-    phone: string,
+    phone?: string,
+    fullname?: string,
   }) {
     if (!param.id) {
       throw new RpcException('Id is required');
@@ -180,7 +185,12 @@ export class AppService {
     if (!contact) {
       throw new Error('Contact not found');
     }
-    contact.phone = param.phone;
+    if (param.phone) {
+      contact.phone = param.phone;
+    }
+    if (param.fullname) {
+      contact.fullname = param.fullname;
+    }
     return this.contactRepository.save(contact);
   }
 

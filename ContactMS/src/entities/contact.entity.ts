@@ -13,6 +13,9 @@ export class Contact {
     @JoinColumn()
     address: Address;
 
+    @Column('nvarchar', { length: 100, nullable: true })
+    fullname: string;
+
     @Column('int', { nullable: false })
     user_id: number;
 }
