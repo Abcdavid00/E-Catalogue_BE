@@ -27,7 +27,7 @@ export class Order {
     deliver_status: DeliverStatus;
 
     @CreateDateColumn()
-    order_data: Date;
+    order_date: Date;
 
     @Column('datetime', {nullable: true})
     delivery_date: Date;

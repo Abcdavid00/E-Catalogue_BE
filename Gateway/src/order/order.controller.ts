@@ -228,6 +228,21 @@ export class OrderController {
         });
     }
 
+    @Get('store')
+    @ApiOperation({ summary: 'Get orders by store' })
+    @ApiTags('Order')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    async getOrdersByStore(@Request() req): Promise<any> {
+        const id = req.user.id;
+        if (req.user.role !== 'shop_owner') {
+            throw new UnauthorizedException('You are not a store owner');
+        }
+        return this.orderService.getOrdersByStore({
+            store_id: id,
+        });
+    }
+
     @Put()
     @ApiOperation({ summary: 'Update order status' })
     @ApiTags('Order')

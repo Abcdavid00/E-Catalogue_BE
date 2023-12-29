@@ -242,6 +242,20 @@ export class AppService {
     });
   }
 
+  async getOrdersByStore(param: {
+    store_id: number,
+  }) {
+    if (!param.store_id) {
+      throw new RpcException('Store ID is required');
+    }
+    return this.orderRepository.find({
+      where: {
+        store_id: param.store_id,
+      },
+      relations: ['items'],
+    });
+  }
+
   async updateOrderStatus(param: {
     id: number,
     status: string,

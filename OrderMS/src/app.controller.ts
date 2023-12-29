@@ -96,6 +96,13 @@ export class AppController {
     return this.appService.getOrdersByUser(param);
   }
 
+  @MessagePattern({ cmd: 'GetOrdersByStore' })
+  getOrdersByStore(param: {
+    store_id: number,
+  }) {
+    return this.appService.getOrdersByStore(param);
+  }
+
   @MessagePattern({ cmd: 'UpdateOrderStatus' })
   updateOrderStatus(param: {
     id: number,

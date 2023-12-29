@@ -128,6 +128,15 @@ export class OrderService {
         })
     }
 
+    getOrdersByStore(param: {
+        store_id: number,
+    }): Promise<any> {
+        return this.send({
+            cmd: 'GetOrdersByStore',
+            data: param
+        })
+    }
+
     updateOrderStatus(param: {
         id: number,
         status: string,
