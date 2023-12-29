@@ -34,4 +34,10 @@ export class Product {
 
     @OneToMany(() => ProductImage, image => image.product)
     images: ProductImage[];
+
+    @Column('int', { nullable: true })
+    minPrice: number;
+
+    @Column('int', { nullable: true })
+    maxPrice: number;
 }

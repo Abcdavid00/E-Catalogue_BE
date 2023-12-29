@@ -342,6 +342,8 @@ export class AppService {
   async calculateMinMaxPrice(param: {
     productId: number
   }): Promise<void> {
+    console.log("Waiting 1s before calculating min max price for " + param.productId + "...")
+    await new Promise(resolve => setTimeout(resolve, 1000));
     console.log("Calculating min max price for " + param.productId)
     const product = await this.productRepository.findOne({
       where: {
@@ -359,6 +361,7 @@ export class AppService {
     }
     let minPrice = product.variants[0].price, maxPrice = product.variants[0].price;
     product.variants.forEach(variant => {
+      console.log(`Variant ${JSON.stringify(variant, null, 2)}`)
       if (variant.price < minPrice) {
         minPrice = variant.price;
       }
@@ -366,6 +369,7 @@ export class AppService {
         maxPrice = variant.price;
       }
     });
+    console.log(`Min price: ${minPrice}, max price: ${maxPrice}`)
     product.minPrice = minPrice;
     product.maxPrice = maxPrice;
     await this.productRepository.save(product);
@@ -405,6 +409,7 @@ export class AppService {
       variant.image = param.image || variant.image;
       variant.price = param.price || variant.price;
       variant.quantity = param.quantity || variant.quantity;
+      this.calculateMinMaxPrice({productId: param.product});
       return await this.productVariantRepository.save(variant);
     }
     if (!param.image) {
@@ -424,7 +429,7 @@ export class AppService {
       price: param.price,
       quantity: param.quantity
     });
-    this.calculateMinMaxPrice({productId: param.product});
+    await this.calculateMinMaxPrice({productId: param.product});
     return await this.productVariantRepository.save(newVariant);
   }
 
