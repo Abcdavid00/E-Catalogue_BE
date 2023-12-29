@@ -12,7 +12,23 @@ export class ContactController {
 
     @Post('address')
     @ApiOperation({ summary: 'Create address' })
-    @ApiBody({ type: AddressDto })
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            province: {
+                type: 'string'
+            },
+            city: {
+                type: 'string'
+            },
+            district: {
+                type: 'string'
+            },
+            details: {
+                type: 'string'
+            }
+        }
+    } })
     @ApiResponse({ type: AddressDto, status: 200 })
     createAddress(@Body() param: {
         province: string,
