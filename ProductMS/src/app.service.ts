@@ -339,6 +339,38 @@ export class AppService {
     return await this.productRepository.remove(product);
   }
 
+  async calculateMinMaxPrice(param: {
+    productId: number
+  }): Promise<void> {
+    console.log("Calculating min max price for " + param.productId)
+    const product = await this.productRepository.findOne({
+      where: {
+        id: param.productId
+      },
+      relations: [
+        'variants'
+      ]
+    });
+    if (!product) {
+      throw new RpcException('Product not found');
+    }
+    if (product.variants.length <= 0) {
+      return
+    }
+    let minPrice = product.variants[0].price, maxPrice = product.variants[0].price;
+    product.variants.forEach(variant => {
+      if (variant.price < minPrice) {
+        minPrice = variant.price;
+      }
+      if (variant.price > maxPrice) {
+        maxPrice = variant.price;
+      }
+    });
+    product.minPrice = minPrice;
+    product.maxPrice = maxPrice;
+    await this.productRepository.save(product);
+  }
+
   async setProductVariant(param: {
     product: number,
     size: string,
@@ -392,6 +424,7 @@ export class AppService {
       price: param.price,
       quantity: param.quantity
     });
+    this.calculateMinMaxPrice({productId: param.product});
     return await this.productVariantRepository.save(newVariant);
   }
 
@@ -472,6 +505,7 @@ export class AppService {
     if (!variant) {
       throw new RpcException('Variant not found');
     }
+    this.calculateMinMaxPrice({productId: param.productId});
     return await this.productVariantRepository.remove(variant);
   }
 

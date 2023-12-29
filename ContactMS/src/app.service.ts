@@ -60,10 +60,10 @@ export class AppService {
       address.province = param.province;
     }
     if (param.city) {
-      address.city = param.city;
+      address.district = param.city;
     }
     if (param.district) {
-      address.district = param.district;
+      address.ward = param.district;
     }
     if (param.details) {
       address.details = param.details;
@@ -109,8 +109,8 @@ export class AppService {
     }
     const address = this.addressRepository.create({
       province: param.province,
-      city: param.city,
-      district: param.district,
+      district: param.city,
+      ward: param.district,
       details: param.details
     })
     await this.addressRepository.save(address);

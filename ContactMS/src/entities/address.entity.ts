@@ -9,10 +9,10 @@ export class Address {
     province: string;
 
     @Column('varchar', { length: 50, nullable: false })
-    city: string;
+    district: string;
 
     @Column('varchar', { length: 50, nullable: false })
-    district: string;
+    ward: string;
 
     @Column('nvarchar', { length: 500, nullable: true })
     details: string;
