@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, UseGuards, Request } from '@nestjs/common';
 import { ContactService } from './contact.service';
-import { ApiBody, ApiCreatedResponse, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiCreatedResponse, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AddressDto } from './dto/address.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 
 @Controller('contact')
 @ApiTags('Contact')
@@ -84,7 +85,9 @@ export class ContactController {
     }
 
     @Post()
-    @ApiOperation({ summary: 'Create contact' })
+    @ApiOperation({ summary: 'Create contact (User required)' })
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
     @ApiBody({ schema: {
         type: 'object',
         properties: {
@@ -99,8 +102,59 @@ export class ContactController {
     createContact(@Body() param: {
         phone: string,
         addressId: number
-    }): Promise<any> {
-        return this.contactService.createContact(param);
+    }, @Request() req): Promise<any> {
+        const userId = req.user.id;
+        return this.contactService.createContact({
+            ...param,
+            userId: userId
+        });
+    }
+
+    @Post('full')
+    @ApiOperation({ summary: 'Create contact full (User required)' })
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            phone: {
+                type: 'string'
+            },
+            province: {
+                type: 'string'
+            },
+            city: {
+                type: 'string'
+            },
+            district: {
+                type: 'string'
+            },
+            details: {
+                type: 'string'
+            }
+        }
+    }})
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    createContactFull(@Body() param: {
+        phone: string,
+        province: string,
+        city: string,
+        district: string,
+        details: string,
+    }, @Request() req): Promise<any> {
+        const userId = req.user.id;
+        return this.contactService.createContactFull({
+            ...param,
+            userId: userId
+        });
+    }
+
+    @Get('user')
+    @ApiOperation({ summary: 'Get user contact (User required)' })
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    getUserContact(@Request() req): Promise<any> {
+        const userId = req.user.id;
+        return this.contactService.getContactByUserId({userId});
     }
 
     @Put()

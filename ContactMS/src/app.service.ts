@@ -81,15 +81,60 @@ export class AppService {
     });
   }
 
+  async createContactFull(param: {
+    phone: string,
+    province: string,
+    city: string,
+    district: string,
+    details: string,
+    userId: number,
+  }): Promise<Contact> {
+    if (!param.phone) {
+      throw new RpcException('Phone is required');
+    }
+    if (!param.province) {
+      throw new RpcException('Province is required');
+    }
+    if (!param.city) {
+      throw new RpcException('City is required');
+    }
+    if (!param.district) {
+      throw new RpcException('District is required');
+    }
+    if (!param.details) {
+      throw new RpcException('Details is required');
+    }
+    if (!param.userId) {
+      throw new RpcException('User is required');
+    }
+    const address = this.addressRepository.create({
+      province: param.province,
+      city: param.city,
+      district: param.district,
+      details: param.details
+    })
+    await this.addressRepository.save(address);
+    const contact = this.contactRepository.create({
+      phone: param.phone,
+      address: address,
+      user_id: param.userId
+    })
+    return this.contactRepository.save(contact);
+  }
+
   async createContact(param: {
     phone: string,
-    addressId: number
+    addressId: number,
+    userId: number,
   }): Promise<Contact> {
     if (!param.phone) {
       throw new RpcException('Phone is required');
     }
     if (!param.addressId) {
       throw new RpcException('Address is required');
+    }
+    if (!param.userId) {
+      throw new RpcException('User is required');
     }
     const address = await this.addressRepository.findOne({
       where: {
@@ -101,9 +146,23 @@ export class AppService {
     }
     const contact = this.contactRepository.create({
       phone: param.phone,
-      address: address
+      address: address,
+      user_id: param.userId
     })
     return this.contactRepository.save(contact);
+  }
+
+  async getContactByUserId(param: {
+    userId: number,
+  }): Promise<Contact[]> {
+    return this.contactRepository.find({
+      where: {
+        user_id: param.userId
+      },
+      relations: {
+        address: true
+      }
+    });
   }
 
   async updateContact(param: {

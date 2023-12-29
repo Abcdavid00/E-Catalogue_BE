@@ -44,12 +44,32 @@ export class AppController {
     return this.appService.getAddress(param);
   }
 
+  @MessagePattern({ cmd: 'createContactFull' })
+  createContactFull(param: {
+    phone: string,
+    province: string,
+    city: string,
+    district: string,
+    details: string,
+    userId: number,
+  }): Promise<any> {
+    return this.appService.createContactFull(param);
+  }
+
   @MessagePattern({ cmd: 'CreateContact' })
   createContact(param: {
     phone: string,
-    addressId: number
+    addressId: number,
+    userId: number,
   }): Promise<any> {
     return this.appService.createContact(param);
+  }
+
+  @MessagePattern({ cmd: 'getContactByUserId' })
+  getContactByUserId(param: {
+    userId: number,
+  }): Promise<any> {
+    return this.appService.getContactByUserId(param);
   }
 
   @MessagePattern({ cmd: 'UpdateContact' })

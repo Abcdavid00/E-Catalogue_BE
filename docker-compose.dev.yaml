@@ -161,48 +161,48 @@ services:
     networks:
       - product-db-networks
 
-  # contact-ms:
-  #   build:
-  #     context: ./ContactMS
-  #     target: dev
-  #   hostname: $CONTACTMS_HOST
-  #   restart: unless-stopped
-  #   environment:
-  #     PORT: $CONTACTMS_PORT
-  #     HEALTHCHECK_PORT: $CONTACTMS_HEALTHCHECK_PORT
-  #     DB_HOST: $CONTACTDB_HOST
-  #     DB_PORT: $CONTACTDB_PORT
-  #     DB_NAME: $CONTACTDB_DATABASE
-  #     DB_USER: $CONTACTDB_USER
-  #     DB_PASSWORD: $CONTACTDB_PASSWORD
-  #   ports:
-  #     - $CONTACTMS_HEALTHCHECK_PORT:$CONTACTMS_HEALTHCHECK_PORT
-  #   volumes:
-  #     - ./ContactMS/src:/app/src
-  #   networks:
-  #     - microservices-networks
-  #     - contact-db-networks
-  #   depends_on:
-  #     contact-db:
-  #       condition: service_healthy
+  contact-ms:
+    build:
+      context: ./ContactMS
+      target: dev
+    hostname: $CONTACTMS_HOST
+    restart: unless-stopped
+    environment:
+      PORT: $CONTACTMS_PORT
+      HEALTHCHECK_PORT: $CONTACTMS_HEALTHCHECK_PORT
+      DB_HOST: $CONTACTDB_HOST
+      DB_PORT: $CONTACTDB_PORT
+      DB_NAME: $CONTACTDB_DATABASE
+      DB_USER: $CONTACTDB_USER
+      DB_PASSWORD: $CONTACTDB_PASSWORD
+    ports:
+      - $CONTACTMS_HEALTHCHECK_PORT:$CONTACTMS_HEALTHCHECK_PORT
+    volumes:
+      - ./ContactMS/src:/app/src
+    networks:
+      - microservices-networks
+      - contact-db-networks
+    depends_on:
+      contact-db:
+        condition: service_healthy
 
-  # contact-db:
-  #   image: mysql:latest
-  #   hostname: $CONTACTDB_HOST
-  #   restart: unless-stopped
-  #   environment:
-  #     MYSQL_ROOT_PASSWORD: $CONTACTDB_ROOT_PASSWORD
-  #     MYSQL_DATABASE: $CONTACTDB_DATABASE
-  #     MYSQL_USER: $CONTACTDB_USER
-  #     MYSQL_PASSWORD: $CONTACTDB_PASSWORD
-  #   healthcheck:
-  #     test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$CONTACTDB_USER", "-p$CONTACTDB_PASSWORD"]
-  #     timeout: 5s
-  #     retries: 10
-  #   # volumes:
-  #   #   - ./DockerVolume/contact-db:/var/lib/mysql
-  #   networks:
-  #     - contact-db-networks
+  contact-db:
+    image: mysql:latest
+    hostname: $CONTACTDB_HOST
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: $CONTACTDB_ROOT_PASSWORD
+      MYSQL_DATABASE: $CONTACTDB_DATABASE
+      MYSQL_USER: $CONTACTDB_USER
+      MYSQL_PASSWORD: $CONTACTDB_PASSWORD
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u$CONTACTDB_USER", "-p$CONTACTDB_PASSWORD"]
+      timeout: 5s
+      retries: 10
+    # volumes:
+    #   - ./DockerVolume/contact-db:/var/lib/mysql
+    networks:
+      - contact-db-networks
 
   order-ms:
     build:

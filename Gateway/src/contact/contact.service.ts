@@ -59,10 +59,34 @@ export class ContactService {
 
     async createContact(param: {
         phone: string,
-        addressId: number
+        addressId: number,
+        userId: number,
     }): Promise<any> {
         return this.send({
             cmd: 'CreateContact',
+            data: param
+        })
+    }
+
+    async createContactFull(param: {
+        phone: string,
+        province: string,
+        city: string,
+        district: string,
+        details: string,
+        userId: number,
+    }): Promise<any> {
+        return this.send({
+            cmd: 'createContactFull',
+            data: param
+        })
+    }
+
+    async getContactByUserId(param: {
+        userId: number,
+    }): Promise<any> {
+        return this.send({
+            cmd: 'getContactByUserId',
             data: param
         })
     }

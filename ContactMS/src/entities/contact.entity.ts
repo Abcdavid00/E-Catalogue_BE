@@ -12,4 +12,7 @@ export class Contact {
     @OneToOne(() => Address)
     @JoinColumn()
     address: Address;
+
+    @Column('int', { nullable: false })
+    user_id: number;
 }
