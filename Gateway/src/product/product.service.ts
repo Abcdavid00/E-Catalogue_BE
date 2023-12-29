@@ -308,6 +308,10 @@ export class ProductService {
         })
     }
 
+    // async replaceItemsWithVariants(param: {
+
+    // })
+
     async getCartWithItems(param: {
         id: number
     }): Promise<any> {
@@ -328,6 +332,7 @@ export class ProductService {
         variants.forEach(variant => {
             const item = cart.items.find(item => item.product_variant === variant.id)
             variant.quantity = item.quantity
+            variant.itemId = item.id
         })
 
         cart.items = undefined
@@ -355,5 +360,18 @@ export class ProductService {
         return cart
     }
 
+    // async createOrder(param: {
+    //     user_id: number,
+    //     contact_id: number,
+    //     items: number[],
+    // }): Promise<any> {
+
+    //     return this.orderService.createOrder({
+    //         user_id: param.user_id,
+    //         contact_id: param.contact_id,
+    //         store_id: param.store_id,
+    //         items: param.items,
+    //     })
+    // }
 
 }
