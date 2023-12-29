@@ -117,9 +117,6 @@ services:
     #   - ./DockerVolume/userinfo-db:/var/lib/mysql
     networks:
       - userinfo-db-networks
-    depends_on:
-      users-db:
-        condition: service_healthy
   
   product-ms:
     build:
@@ -206,9 +203,6 @@ services:
   #   #   - ./DockerVolume/contact-db:/var/lib/mysql
   #   networks:
   #     - contact-db-networks
-  #   depends_on:
-  #     userinfo-db:
-  #       condition: service_healthy
 
   order-ms:
     build:
@@ -252,9 +246,6 @@ services:
     #   - ./DockerVolume/order-db:/var/lib/mysql
     networks:
       - order-db-networks
-    depends_on:
-      product-db:
-        condition: service_healthy
 
   adminer:
     image: adminer
