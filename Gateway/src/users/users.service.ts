@@ -68,6 +68,17 @@ export class UsersService {
         }
     }
 
+    async changeRole(param: {id: number, role: string}): Promise<User> {
+        try {
+            const res: User =  await firstValueFrom(
+                this.UsersClient.send<User>({ cmd: 'changeRole' }, param)
+            )
+            return res;
+        } catch (error) {
+            throw new BadRequestException(error.message);
+        }
+    }
+
     async findUserByUsername(username: string): Promise<User> {
         try {
             const res: User =  await firstValueFrom(

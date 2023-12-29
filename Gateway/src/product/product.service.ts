@@ -7,6 +7,7 @@ import { ProductDto } from './dto/product.dto';
 import { StoreDto } from './dto/store.dto';
 import { CategoriesDto } from './dto/category.dto';
 import { OrderService } from 'src/order/order.service';
+import { UsersService } from 'src/users/users.service';
 
 type File = Express.Multer.File
 
@@ -16,7 +17,8 @@ export class ProductService {
         @Inject(ProductMSName)
         private readonly productClient: ClientProxy,
         private readonly fileServerService: FileServerService,
-        private readonly orderService: OrderService
+        private readonly orderService: OrderService,
+        private readonly userService: UsersService
     ) {}
 
     async send(param: {
@@ -103,7 +105,7 @@ export class ProductService {
             param.logo ? this.fileServerService.uploadImage(param.logo) : Promise.resolve(null),
             param.cover ? this.fileServerService.uploadImage(param.cover) : Promise.resolve(null)
         ])
-        return this.send({
+        const store = this.send({
             cmd: 'RegisterStore',
             data: {
                 id: param.id,
@@ -114,6 +116,11 @@ export class ProductService {
                 cover
             }
         })
+        await this.userService.changeRole({
+            id: param.id,
+            role: 'shop_owner'
+        })
+        return store
     }
 
     async getStoreById(id: number): Promise<StoreDto> {

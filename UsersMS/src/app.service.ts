@@ -115,6 +115,26 @@ export class AppService {
     return this.userWithoutPassword(user);
   }
 
+  async changeRole(param: {
+    id: number,
+    role: string
+  }): Promise<User> {
+    if (!param.id) {
+      throw new RpcException('Id is required');
+    }
+    const role = parseUserRole(param.role);
+    const user = await this.userRepository.findOne({
+      where: {
+        id: param.id
+      }
+    });
+    if (!user) {
+      throw new RpcException('User not found');
+    }
+    user.role = role;
+    return this.userWithoutPassword(await this.userRepository.save(user));
+  }
+
   async findUserByUsername(username: string): Promise<User> {
     const user = await this.userRepository.findOne({
       where: {

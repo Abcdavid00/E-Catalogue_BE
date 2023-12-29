@@ -42,6 +42,11 @@ export class AppController {
     return this.appService.getUser(id);
   }
 
+  @MessagePattern({ cmd: 'changeRole' })
+  async changeRole(params: {id: number, role: string}): Promise<any> {
+    return this.appService.changeRole(params);
+  }
+
   @MessagePattern({ cmd: 'findUserByUsername' })
   async findUserByUsername(username: string): Promise<any> {
     return this.appService.findUserByUsername(username);
