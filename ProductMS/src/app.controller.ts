@@ -139,6 +139,12 @@ export class AppController {
   }): Promise<ProductVariant> {
     return this.appService.setProductVariant(param);
   }
+
+  @MessagePattern({ cmd: 'GetProductVariantById' })
+  getProductVariantById(param: {id: number}): Promise<ProductVariant> {
+    return this.appService.getProductVariantById(param);
+  }
+
   @MessagePattern({ cmd: 'GetProductVariant' })
   getProductVariant(param: {productId: number, size: string, color: string}): Promise<ProductVariant> {
     return this.appService.getProductVariant(param);

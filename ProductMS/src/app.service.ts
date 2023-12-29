@@ -150,7 +150,9 @@ export class AppService {
         id: id
       },
       relations: {
-        products: true
+        products: {
+          category: true,
+        }
       }
     });
     if (!store) {
@@ -391,6 +393,24 @@ export class AppService {
       quantity: param.quantity
     });
     return await this.productVariantRepository.save(newVariant);
+  }
+
+  async getProductVariantById(param: {
+    id: number
+  }): Promise<ProductVariant> {
+    return await this.productVariantRepository.findOne({
+      where: {
+        product: {
+          id: param.id
+        }
+      },
+      relations: {
+        product: {
+          store: true,
+          category: true
+        }
+      }
+    });
   }
 
   async getProductVariant(param: {

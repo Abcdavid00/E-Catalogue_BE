@@ -177,12 +177,14 @@ export class AppService {
       throw new RpcException('Item not found');
     }
     cart.items = cart.items.filter(i => i.id !== item.id);
+
     return this.cartRepository.save(cart);
   }
 
   async createOrder(param: {
     user_id: number,
     contact_id: number,
+    store_id: number,
     items: number[],
     total_price: number,
   }) {
@@ -205,6 +207,7 @@ export class AppService {
     const order = this.orderRepository.create({
       user_id: param.user_id,
       contact_id: param.contact_id,
+      store_id: param.store_id,
       items: items,
       total_price: param.total_price,
     });

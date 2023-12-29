@@ -256,6 +256,13 @@ export class ProductService {
         })
     }
 
+    async getProductVariantById(id: number): Promise<any> {
+        return this.send({
+            cmd: 'GetProductVariantById',
+            data: { id }
+        })
+    }
+
     async getProductVariant(param: {
         productId: number,
         size: string,
@@ -360,18 +367,35 @@ export class ProductService {
         return cart
     }
 
-    // async createOrder(param: {
-    //     user_id: number,
-    //     contact_id: number,
-    //     items: number[],
-    // }): Promise<any> {
+    async createOrder(param: {
+        user_id: number,
+        contact_id: number,
+        items: number[],
+    }): Promise<any> {
 
-    //     return this.orderService.createOrder({
-    //         user_id: param.user_id,
-    //         contact_id: param.contact_id,
-    //         store_id: param.store_id,
-    //         items: param.items,
-    //     })
-    // }
+        const variants = await this.getProductVariants({ ids: param.items })
+
+        const stores = []
+        variants.forEach(variant => {
+            if (!stores.includes(variant.product.store.id)) {
+                stores.push(variant.product.store.id)
+            }
+        })
+
+        console.log('stores:', stores)
+
+        if (stores.length > 1) {
+            throw new BadRequestException('Cannot order from multiple stores')
+        }
+
+        const store_id = stores[0]
+
+        return this.orderService.createOrder({
+            user_id: param.user_id,
+            contact_id: param.contact_id,
+            store_id: store_id,
+            items: param.items,
+        })
+    }
 
 }

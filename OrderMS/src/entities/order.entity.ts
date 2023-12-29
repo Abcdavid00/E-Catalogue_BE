@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Item } from "./item.entity";
 import { DeliverStatus } from "./deliver-status.enum";
 
@@ -6,6 +6,9 @@ import { DeliverStatus } from "./deliver-status.enum";
 export class Order {
     @PrimaryGeneratedColumn()
     id: number;
+
+    @Column('int', {nullable: false})
+    store_id: number;
 
     @Column('int', {nullable: false})
     user_id: number;
@@ -22,4 +25,16 @@ export class Order {
 
     @Column('enum', {enum: DeliverStatus, default: DeliverStatus.PENDING})
     deliver_status: DeliverStatus;
+
+    @CreateDateColumn()
+    order_data: Date;
+
+    @Column('datetime', {nullable: true})
+    delivery_date: Date;
+
+    @Column('datetime', {nullable: true})
+    delivered_date: Date;
+
+    @Column('datetime', {nullable: true})
+    cancelled_date: Date;
 }

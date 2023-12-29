@@ -160,40 +160,40 @@ export class OrderController {
         });
     }
 
-    @Post()
-    @ApiOperation({ summary: 'Create order' })
-    @ApiTags('Order')
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard)
-    @ApiBody({
-        schema: {
-            type: 'object',
-            properties: {
-                contact_id: {
-                    type: 'number',
-                    example: 1,
-                },
-                items: {
-                    type: 'array',
-                    items: {
-                        type: 'number',
-                        example: 1,
-                    },
-                },
-            }
-        }
-    })
-    async createOrder(@Request() req, @Body() param: {
-        contact_id: number,
-        items: number[],
-    }): Promise<any> {
-        const id = req.user.id;
-        return this.orderService.createOrder({
-            user_id: id,
-            contact_id: param.contact_id,
-            items: param.items,
-        });
-    }
+    // @Post()
+    // @ApiOperation({ summary: 'Create order' })
+    // @ApiTags('Order')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAuthGuard)
+    // @ApiBody({
+    //     schema: {
+    //         type: 'object',
+    //         properties: {
+    //             contact_id: {
+    //                 type: 'number',
+    //                 example: 1,
+    //             },
+    //             items: {
+    //                 type: 'array',
+    //                 items: {
+    //                     type: 'number',
+    //                     example: 1,
+    //                 },
+    //             },
+    //         }
+    //     }
+    // })
+    // async createOrder(@Request() req, @Body() param: {
+    //     contact_id: number,
+    //     items: number[],
+    // }): Promise<any> {
+    //     const id = req.user.id;
+    //     return this.orderService.createOrder({
+    //         user_id: id,
+    //         contact_id: param.contact_id,
+    //         items: param.items,
+    //     });
+    // }
 
     @Get()
     @ApiOperation({ summary: 'Get order' })

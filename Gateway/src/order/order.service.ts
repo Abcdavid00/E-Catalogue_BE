@@ -101,6 +101,7 @@ export class OrderService {
     createOrder(param: {
         user_id: number,
         contact_id: number,
+        store_id: number,
         items: number[],
     }): Promise<any> {
         return this.send({

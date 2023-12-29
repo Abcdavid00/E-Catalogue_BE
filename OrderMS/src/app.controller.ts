@@ -74,6 +74,7 @@ export class AppController {
   createOrder(param: {
     user_id: number,
     contact_id: number,
+    store_id: number,
     items: number[],
     total_price: number,
   }) {
