@@ -1,0 +1,211 @@
+@startuml
+entity User {
+  + id: int
+  --
+  username: varchar
+  email: varchar
+  password: varchar
+  role: UserRole
+}
+User ..> UserRole
+
+enum UserRole {
+  ADMIN
+  SHOP_OWNER
+  CUSTOMER
+}
+
+entity Userinfo {
+  + id: int
+  --
+  fullname: varchar
+  phone: varchar
+  sex: Sex
+  dob: Date
+  profile_image: varchar
+}
+Userinfo |o--|| User
+
+entity Favoritecollection {
+  + id: int
+  --
+  userId: int
+  name: nvarchar
+  image: varchar
+}
+Favoritecollection }o--|| User
+
+enum ContentType {
+  PRODUCT
+  IDEA
+}
+
+entity Favorite {
+  + id: int
+  --
+  productId: int
+  contentType: ContentType
+  collection: FavoriteCollection
+}
+Favorite ..> ContentType
+Favorite }o--|| Favoritecollection
+
+entity Address {
+  + id: int
+  --
+  province: varchar
+  district: varchar
+  ward: varchar
+  details: nvarchar
+}
+
+entity Contact {
+  + id: int
+  --
+  phone: varchar
+  user_id: int
+  fullname: nvarchar
+  address: Address
+}
+Contact }o--|| Address
+Contact }o--|| User
+
+enum Color {
+  WHITES
+  BLACKS
+  GREYS
+  BEIGES
+  BROWNS
+  REDS
+  GREENS
+  BLUES
+  PURPLES
+  YELLOWS
+  PINKS
+  ORANGES
+}
+
+enum Size {
+  XS
+  S
+  M
+  L
+  XL
+  XXL
+}
+
+entity Store {
+  + id: int
+  --
+  name: nvarchar
+  description: nvarchar
+  address: int | nullable
+  logo_image: varchar | nullable
+  cover_image: varchar | nullable
+  approved: boolean
+}
+Store }o--o| Address
+Store |o--|| User
+
+entity Category {
+  + id: int
+  --
+  name: nvarchar
+  description: nvarchar | nullable
+  image: varchar | nullable
+  parent: Category | nullable
+}
+Category }o--o| Category
+
+entity Product {
+  + id: int
+  --
+  store: Store
+  category: Category
+  name: nvarchar
+  description: nvarchar | nullable
+  image: varchar
+  minPrice: int | nullable
+  maxPrice: int | nullable
+}
+Product }o--|| Store
+Product }o--|| Category
+
+
+entity ProductVariant {
+  + id: int
+  --
+  product: Product
+  size: Size
+  color: Color
+  image: varchar | nullable
+  price: int
+  quantity: int
+}
+ProductVariant }o--|| Product
+ProductVariant ..> Color
+ProductVariant ..> Size
+
+entity ProductImage {
+  + id: int
+  --
+  product: Product
+  image: varchar
+}
+ProductImage }o--|| Product
+
+entity Item {
+  + id: int
+  --
+  productVariant: ProductVariant
+  quantity: int
+}
+
+enum DeliverStatus {
+  PENDING
+  DELIVERING
+  DELIVERED
+  CANCELLED
+}
+
+entity Order {
+  + id: int
+  --
+  store: Store
+  user: User
+  contact: Contact
+  total_price: int
+  deliver_status: DeliverStatus
+  order_date: datetime
+  deliver_date: datetime
+  delivered_date: datetime
+  cancelled_date: datetime
+}
+Order }o--|| Store
+Order }o--|| User
+Order }o--|| Contact
+Order }o--o{ Item
+Order ..> DeliverStatus
+
+entity Cart {
+  + id: int
+  --
+  user: User
+}
+Cart |o--|| User
+Cart }o--o{ Item
+
+entity Rating {
+  + id: int
+  --
+  order: Order
+  productVariant: ProductVariant
+  rate: int
+  comment: nvarchar | nullable
+  created_at: datetime
+}
+Rating }o--|| Order
+Rating }o--|| ProductVariant
+
+
+@enduml
