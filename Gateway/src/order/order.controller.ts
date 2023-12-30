@@ -160,6 +160,31 @@ export class OrderController {
         });
     }
 
+    @Put('cancel')
+    @ApiOperation({ summary: 'Cancel order' })
+    @ApiTags('Order')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @ApiQuery({
+        name: 'id',
+        type: 'number',
+        example: 1,
+    })
+    async cancelOrder(@Request() req, @Query('id') id): Promise<any> {
+        const user_id = req.user.id;
+        const order = await this.orderService.getOrder({
+            id: id,
+        });
+        if (order.user_id !== user_id && order.store_id !== user_id) {
+            throw new UnauthorizedException('You are not allowed to access this order');
+        }
+        return this.orderService.updateOrderStatus({
+            id: id,
+            status: 'cancelled',
+        })
+    }
+
+
     // @Post()
     // @ApiOperation({ summary: 'Create order' })
     // @ApiTags('Order')
