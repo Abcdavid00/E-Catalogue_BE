@@ -195,53 +195,53 @@ export class OrderController {
     //     });
     // }
 
-    @Get()
-    @ApiOperation({ summary: 'Get order' })
-    @ApiTags('Order')
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard)
-    @ApiQuery({
-        name: 'id',
-        type: 'number',
-        example: 1,
-    })
-    async getOrder(@Request() req, @Query('id') id): Promise<any> {
-        const user_id = req.user.id;
-        const order = await this.orderService.getOrder({
-            id: id,
-        });
-        if (order.user_id !== user_id) {
-            throw new UnauthorizedException('You are not allowed to access this order');
-        }
-        return order;
-    }
+    // @Get()
+    // @ApiOperation({ summary: 'Get order' })
+    // @ApiTags('Order')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAuthGuard)
+    // @ApiQuery({
+    //     name: 'id',
+    //     type: 'number',
+    //     example: 1,
+    // })
+    // async getOrder(@Request() req, @Query('id') id): Promise<any> {
+    //     const user_id = req.user.id;
+    //     const order = await this.orderService.getOrder({
+    //         id: id,
+    //     });
+    //     if (order.user_id !== user_id) {
+    //         throw new UnauthorizedException('You are not allowed to access this order');
+    //     }
+    //     return order;
+    // }
 
-    @Get('all')
-    @ApiOperation({ summary: 'Get orders by user' })
-    @ApiTags('Order')
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard)
-    async getOrdersByUser(@Request() req): Promise<any> {
-        const id = req.user.id;
-        return this.orderService.getOrdersByUser({
-            user_id: id,
-        });
-    }
+    // @Get('all')
+    // @ApiOperation({ summary: 'Get orders by user' })
+    // @ApiTags('Order')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAuthGuard)
+    // async getOrdersByUser(@Request() req): Promise<any> {
+    //     const id = req.user.id;
+    //     return this.orderService.getOrdersByUser({
+    //         user_id: id,
+    //     });
+    // }
 
-    @Get('store')
-    @ApiOperation({ summary: 'Get orders by store' })
-    @ApiTags('Order')
-    @ApiBearerAuth()
-    @UseGuards(JwtAuthGuard)
-    async getOrdersByStore(@Request() req): Promise<any> {
-        const id = req.user.id;
-        if (req.user.role !== 'shop_owner') {
-            throw new UnauthorizedException('You are not a store owner');
-        }
-        return this.orderService.getOrdersByStore({
-            store_id: id,
-        });
-    }
+    // @Get('store')
+    // @ApiOperation({ summary: 'Get orders by store' })
+    // @ApiTags('Order')
+    // @ApiBearerAuth()
+    // @UseGuards(JwtAuthGuard)
+    // async getOrdersByStore(@Request() req): Promise<any> {
+    //     const id = req.user.id;
+    //     if (req.user.role !== 'shop_owner') {
+    //         throw new UnauthorizedException('You are not a store owner');
+    //     }
+    //     return this.orderService.getOrdersByStore({
+    //         store_id: id,
+    //     });
+    // }
 
     @Put()
     @ApiOperation({ summary: 'Update order status' })

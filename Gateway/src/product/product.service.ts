@@ -331,27 +331,8 @@ export class ProductService {
     }): Promise<any> {
         const cart = await this.orderService.getCart(param)
 
-        const variantIds = cart.items.map(item => item.product_variant)
+        const variants = await this.getProductVariants({ ids: cart.items.map(item => item.product_variant) })
 
-        const variants = await this.getProductVariants({ ids: variantIds })
-
-        // cart.items = cart.items.map(item => {
-        //     const variant = variants.find(variant => variant.id === item.product_variant)
-        //     return {
-        //         ...item,
-        //         product_variant: variant
-        //     }
-        // })
-
-        variants.forEach(variant => {
-            const item = cart.items.find(item => item.product_variant === variant.id)
-            variant.quantity = item.quantity
-            variant.itemId = item.id
-        })
-
-        cart.items = undefined
-
-        // Group product variants by product store
         const productStoreMap = {
             ids:[],
             entities:{}
@@ -363,11 +344,25 @@ export class ProductService {
                 productStoreMap.ids.push(variant.product.store.id)
                 productStoreMap.entities[variant.product.store.id] = {
                     ...variant.product.store,
-                    items: []
+                    items: {
+                        ids: [],
+                        entities: {}
+                    }
                 }
             }
-            productStoreMap.entities[variant.product.store.id].items.push(variant)
         })
+
+        const itemsWithVariant = await this.addVariantToItems(cart.items)
+
+        itemsWithVariant.ids.forEach(id => {
+            const item = itemsWithVariant.entities[id]
+            const storeId = item.product.store.id
+            productStoreMap.entities[storeId].items.ids.push(id)
+            productStoreMap.entities[storeId].items.entities[id] = item
+            
+        })
+
+        cart.items = undefined
 
         cart.stores = productStoreMap
 
@@ -389,8 +384,6 @@ export class ProductService {
             }
         })
 
-        console.log('stores:', stores)
-
         if (stores.length > 1) {
             throw new BadRequestException('Cannot order from multiple stores')
         }
@@ -405,4 +398,58 @@ export class ProductService {
         })
     }
 
+    async addVariantToItems(param: [
+        {
+            "id": number,
+            "product_variant": number,
+            "quantity": number
+        }
+    ]) {
+        const variants = await this.getProductVariants({ ids: param.map(item => item.product_variant) });
+
+        const variantsMap = {};
+        variants.forEach(variant => {
+            variantsMap[variant.id] = variant;
+        });
+
+        const ids = [];
+        const entities = {};
+        param.forEach(item => {
+            const variant = variantsMap[item.product_variant];
+            const entity = {
+                ...variant,
+                item_id: item.id,
+                quantity: item.quantity
+            };
+            entities[entity.item_id] = entity;
+            ids.push(item.id);
+        });
+        return {
+            ids: ids,
+            entities: entities,
+        };
+    }
+
+    async getOrdersByUser(param: {
+        user_id: number
+    }): Promise<any> {
+        let orders = await this.orderService.getOrdersByUser(param)
+        orders = await Promise.all(orders.map(async order => {
+            order.items = await this.addVariantToItems(order.items);
+            return order;
+        }));
+        return orders
+    }
+
+    async getOrdersByStore(param: {
+        store_id: number
+    }): Promise<any> {
+        let orders = await this.orderService.getOrdersByStore(param)
+        console.log(JSON.stringify(orders, null, 2))
+        orders = await Promise.all(orders.map(async order => {
+            order.items = await this.addVariantToItems(order.items);
+            return order;
+        }));
+        return orders
+    }
 }

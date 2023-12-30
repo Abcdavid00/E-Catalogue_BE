@@ -461,4 +461,31 @@ export class ProductController {
         });
     }
 
+    @Get('order/user')
+    @ApiOperation({ summary: 'Get orders by user' })
+    @ApiTags('Order')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    async getOrdersByUser(@Request() req): Promise<any> {
+        const id = req.user.id;
+        return this.productService.getOrdersByUser({
+            user_id: id,
+        });
+    }
+
+    @Get('order/store')
+    @ApiOperation({ summary: 'Get orders by store' })
+    @ApiTags('Order')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    async getOrdersByStore(@Request() req): Promise<any> {
+        const id = req.user.id;
+        if (req.user.role !== 'shop_owner') {
+            throw new UnauthorizedException('You are not a store owner');
+        }
+        return this.productService.getOrdersByStore({
+            store_id: id,
+        });
+    }
+
 }
