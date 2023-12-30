@@ -151,6 +151,12 @@ export class AppService {
     if (!item) {
       throw new RpcException('Item not found');
     }
+    const existing_pv = cart.items.find(i => i.product_variant === item.product_variant);
+    if (existing_pv) {
+      existing_pv.quantity += item.quantity;
+      await this.itemRepository.save(existing_pv);
+      return cart;
+    }
     cart.items.push(item);
     return this.cartRepository.save(cart);
   }
