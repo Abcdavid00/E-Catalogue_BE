@@ -178,6 +178,7 @@ export class ProductService {
             data: {
                 name: param.name,
                 description: param.description,
+                store: param.store,
                 category: param.category,
                 image: imageId
             }
@@ -445,7 +446,6 @@ export class ProductService {
         store_id: number
     }): Promise<any> {
         let orders = await this.orderService.getOrdersByStore(param)
-        console.log(JSON.stringify(orders, null, 2))
         orders = await Promise.all(orders.map(async order => {
             order.items = await this.addVariantToItems(order.items);
             return order;

@@ -28,7 +28,7 @@ export class FileServerService {
   async uploadImage(
     file: Express.Multer.File,
   ): Promise<string> {
-    console.log(file);
+    // console.log(file);
     const form = new FormData();
 
     form.append('file', file.buffer, {
