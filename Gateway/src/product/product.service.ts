@@ -4,10 +4,10 @@ import { firstValueFrom } from 'rxjs';
 import { ProductMSName } from 'src/config/microservices.module';
 import { FileServerService } from 'src/file-server/file-server.service';
 import { ProductDto } from './dto/product.dto';
-import { StoreDto } from './dto/store.dto';
 import { CategoriesDto } from './dto/category.dto';
 import { OrderService } from 'src/order/order.service';
 import { UsersService } from 'src/users/users.service';
+import { UserInfoMsService } from 'src/user-info-ms/user-info-ms.service';
 
 type File = Express.Multer.File
 
@@ -18,7 +18,8 @@ export class ProductService {
         private readonly productClient: ClientProxy,
         private readonly fileServerService: FileServerService,
         private readonly orderService: OrderService,
-        private readonly userService: UsersService
+        private readonly userService: UsersService,
+        private readonly userInfoService: UserInfoMsService
     ) {}
 
     async send(param: {
@@ -99,7 +100,7 @@ export class ProductService {
         address?: number,
         logo?: Express.Multer.File,
         cover?: Express.Multer.File
-    }): Promise<StoreDto> {
+    }): Promise<any> {
         console.log("Registering store:/n" + JSON.stringify(param, null, 2))
         const [ logo, cover ] = await Promise.all([
             param.logo ? this.fileServerService.uploadImage(param.logo) : Promise.resolve(null),
@@ -123,14 +124,21 @@ export class ProductService {
         return store
     }
 
-    async getStoreById(id: number): Promise<StoreDto> {
-        return this.send({
+    async addFollowerForStore(store) {
+        const follows = await this.userInfoService.getStoreFollowByStore({ storeId: store.id })
+        store.followers = follows.map(follow => follow.userId)
+        return store
+    }
+
+    async getStoreById(id: number): Promise<any> {
+        const store = await this.send({
             cmd: 'GetStoreById',
             data: { id }
         })
+        return this.addFollowerForStore(store)
     }
 
-    async getAllUnapprovedStores(): Promise<StoreDto[]> {
+    async getAllUnapprovedStores(): Promise<any> {
         console.log('getting all unapproved stores')
         return this.send({
             cmd: 'GetAllUnapprovedStores',
@@ -138,14 +146,15 @@ export class ProductService {
         })
     }
 
-    async getAllApprovedStores(): Promise<StoreDto[]> {
-        return this.send({
+    async getAllApprovedStores(): Promise<any> {
+        const stores = await this.send({
             cmd: 'GetAllApprovedStores',
             data: {}
         })
+        return Promise.all(stores.map(store => this.addFollowerForStore(store)))
     }
 
-    async approveStore(id: number): Promise<StoreDto> {
+    async approveStore(id: number): Promise<any> {
         return this.send({
             cmd: 'ApproveStore',
             data: { id }

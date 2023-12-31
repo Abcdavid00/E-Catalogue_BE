@@ -4,6 +4,7 @@ import { MessagePattern } from '@nestjs/microservices';
 import { UserInfo } from './entities/userinfo.entity';
 import { Favorite } from './entities/favorite.entity';
 import { FavoriteCollection } from './entities/favorite-collection.entity';
+import { StoreFollower } from './entities/store-follower.entity';
 
 @Controller()
 export class AppController {
@@ -72,5 +73,20 @@ export class AppController {
   @MessagePattern({ cmd: 'getFavorite' })
   async getFavorite(param: {userId: number, collectionId: number, contentId: number, contentType: string}): Promise<Boolean> {
     return this.appService.getFavorite(param);
+  }
+
+  @MessagePattern({ cmd: 'getStoreFollowByUser' })
+  async getStoreFollowByUser(param: {userId: number}): Promise<StoreFollower[]> {
+    return this.appService.getStoreFollowByUser(param);
+  }
+
+  @MessagePattern({ cmd: 'getStoreFollowByStore' })
+  async getStoreFollowByStore(param: {storeId: number}): Promise<StoreFollower[]> {
+    return this.appService.getStoreFollowByStore(param);
+  }
+
+  @MessagePattern({ cmd: 'setStoreFollow' })
+  async setStoreFollow(param: {userId: number, storeId: number, follow: boolean}): Promise<StoreFollower[]> {
+    return this.appService.setStoreFollow(param);
   }
 }

@@ -217,5 +217,53 @@ export class UserInfoMsController {
         return favorite;
     }
 
+    @Get('user/follow')
+    @ApiOperation({ summary: 'Get store follow by user (User required)' })
+    @ApiTags('Store Follower')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    async getStoreFollowByUser(@Request() req): Promise<any> {
+        const userId = req.user.id;
+
+        const storeFollowers = await this.userInfoMsService.getStoreFollowByUser({
+            userId,
+        });
+        return storeFollowers;
+    }
+
+    @Get('store/follow')
+    @ApiOperation({ summary: 'Get store follow by store' })
+    @ApiTags('Store Follower')
+    @ApiQuery({ name: 'storeId', type: Number })
+    async getStoreFollowByStore(@Query('storeId') storeId: number): Promise<any> {
+        const storeFollowers = await this.userInfoMsService.getStoreFollowByStore({
+            storeId,
+        });
+        return storeFollowers;
+    }
+
+    @Post('store/follow')
+    @ApiOperation({ summary: 'Set store follow (User required)' })
+    @ApiTags('Store Follower')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            storeId: { type: 'number' },
+            follow: { type: 'boolean' },
+        }
+    } })
+    async setStoreFollow(@Request() req, @Body() body: {storeId: number, follow: boolean}): Promise<any> {
+        const userId = req.user.id;
+
+        const storeFollowers = await this.userInfoMsService.setStoreFollow({
+            userId: userId,
+            storeId: body.storeId,
+            follow: body.follow,
+        });
+        return storeFollowers;
+    }
+
 
 }

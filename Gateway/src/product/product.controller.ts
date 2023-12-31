@@ -8,7 +8,6 @@ import { UserRole } from 'src/users/dto/user.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
-import { StoreDto } from './dto/store.dto';
 
 @Controller('product')
 export class ProductController {
@@ -160,7 +159,7 @@ export class ProductController {
     @ApiOperation({ summary: 'Get all unapproved stores (admin required)' })
     @ApiTags('Store', 'Admin')
     @ApiOkResponse({ type: [CategoriesDto] })
-    async getAllUnapprovedStores(): Promise<StoreDto[]> {
+    async getAllUnapprovedStores(): Promise<any[]> {
         return this.productService.getAllUnapprovedStores();
     }
 
@@ -168,7 +167,7 @@ export class ProductController {
     @ApiOperation({ summary: 'Get all stores' })
     @ApiTags('Store')
     @ApiOkResponse({ type: [CategoriesDto] })
-    async getAllStores(): Promise<StoreDto[]> {
+    async getAllStores(): Promise<any[]> {
         return this.productService.getAllApprovedStores();
     }
 
@@ -177,7 +176,7 @@ export class ProductController {
     @ApiTags('Store')
     @ApiQuery({ name: 'id', type: Number })
     @ApiOkResponse({ type: CategoriesDto })
-    async getStoreById(@Query('id') id: number): Promise<StoreDto> {
+    async getStoreById(@Query('id') id: number): Promise<any> {
         return this.productService.getStoreById(id);
     }
 
@@ -187,7 +186,7 @@ export class ProductController {
     @ApiTags('Store', 'Admin')
     @ApiQuery({ name: 'id', type: Number })
     @ApiOkResponse({ type: CategoriesDto })
-    async approveStore(@Query('id') id: number): Promise<StoreDto> {
+    async approveStore(@Query('id') id: number): Promise<any> {
         console.log('approve store: ' + id)
         return this.productService.approveStore(id);
     }

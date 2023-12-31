@@ -6,6 +6,7 @@ import { RpcException } from '@nestjs/microservices';
 import { ContentType, parseContentType } from './entities/content-type.enum';
 import { Favorite } from './entities/favorite.entity';
 import { FavoriteCollection } from './entities/favorite-collection.entity';
+import { StoreFollower } from './entities/store-follower.entity';
 
 @Injectable()
 export class AppService {
@@ -17,6 +18,8 @@ export class AppService {
     private readonly favoriteRepository: Repository<Favorite>,
     @InjectRepository(FavoriteCollection)
     private readonly favoriteCollectionRepository: Repository<FavoriteCollection>,
+    @InjectRepository(StoreFollower)
+    private readonly storeFollowerRepository: Repository<StoreFollower>,
   ) {}
 
   getHello(): string {
@@ -186,7 +189,51 @@ export class AppService {
     return !!favorite;
   }
 
-  
+  async getStoreFollowByUser(param: {
+    userId: number,
+  }) {
+    return this.storeFollowerRepository.find({
+      where: {
+        userId: param.userId,
+       },
+    });
+  }
+
+  async getStoreFollowByStore(param: {
+    storeId: number,
+  }) {
+    return this.storeFollowerRepository.find({
+      where: {
+        storeId: param.storeId,
+       },
+    });
+  }
+
+  async setStoreFollow(param: {
+    userId: number,
+    storeId: number,
+    follow: boolean,
+  }) {
+    const follows = await this.getStoreFollowByUser({ userId: param.userId });
+    const follow = follows.find(f => f.storeId === param.storeId);
+
+    if (param.follow) {
+      if (!follow) {
+        const storeFollow = this.storeFollowerRepository.create({
+          userId: param.userId,
+          storeId: param.storeId,
+        });
+        follows.push(storeFollow);
+        await this.storeFollowerRepository.save(storeFollow);
+      }
+      return follows;
+    } else {
+      if (follow) {
+        await this.storeFollowerRepository.remove(follow);
+      }
+      return follows;
+    }
+  }
 
 }
 

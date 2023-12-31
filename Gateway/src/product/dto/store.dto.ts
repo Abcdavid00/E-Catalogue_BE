@@ -31,7 +31,3 @@ export class StoresDto {
     })
     approved?: boolean;
 }
-
-export class StoreDto {
-    
-}

@@ -12,6 +12,7 @@ import { FileServerModule } from 'src/file-server/file-server.module';
     FileServerModule,
   ],
   providers: [UserInfoMsService],
-  controllers: [UserInfoMsController]
+  controllers: [UserInfoMsController],
+  exports: [UserInfoMsService]
 })
 export class UserInfoMsModule {}

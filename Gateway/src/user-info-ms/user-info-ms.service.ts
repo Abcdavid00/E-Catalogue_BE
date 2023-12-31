@@ -159,4 +159,41 @@ export class UserInfoMsService {
             }
         })
     }
+
+    async getStoreFollowByUser(param: {
+        userId: number,
+    }): Promise<any> {
+        return this.send({
+            cmd: 'getStoreFollowByUser',
+            data: {
+                userId: param.userId,
+            }
+        })
+    }
+
+    async getStoreFollowByStore(param: {
+        storeId: number,
+    }): Promise<any> {
+        return this.send({
+            cmd: 'getStoreFollowByStore',
+            data: {
+                storeId: param.storeId,
+            }
+        })
+    }
+
+    async setStoreFollow(param: {
+        userId: number,
+        storeId: number,
+        follow: boolean,
+    }): Promise<any> {
+        return this.send({
+            cmd: 'setStoreFollow',
+            data: {
+                userId: param.userId,
+                storeId: param.storeId,
+                follow: param.follow,
+            }
+        })
+    }
 }

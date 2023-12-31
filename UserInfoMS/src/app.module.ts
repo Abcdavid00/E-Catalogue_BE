@@ -7,11 +7,12 @@ import { HttpModule } from '@nestjs/axios';
 import { UserInfo } from './entities/userinfo.entity';
 import { Favorite } from './entities/favorite.entity';
 import { FavoriteCollection } from './entities/favorite-collection.entity';
+import { StoreFollower } from './entities/store-follower.entity';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(mysqlConfig),
-    TypeOrmModule.forFeature([UserInfo, Favorite, FavoriteCollection]),
+    TypeOrmModule.forFeature([UserInfo, Favorite, FavoriteCollection, StoreFollower]),
     HttpModule,
   ],
   controllers: [AppController],
