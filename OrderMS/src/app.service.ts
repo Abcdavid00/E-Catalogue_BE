@@ -210,6 +210,7 @@ export class AppService {
     if (items.length === 0) {
       throw new RpcException('Items not found');
     }
+    console.log('Create order param', param)
     const order = this.orderRepository.create({
       user_id: param.user_id,
       contact_id: param.contact_id,

@@ -391,6 +391,10 @@ export class ProductService {
 
         const store_id = stores[0]
 
+        console.log('Create order stores list:', stores)
+        console.log('Chosen store:', store_id)
+
+
         return this.orderService.createOrder({
             user_id: param.user_id,
             contact_id: param.contact_id,
