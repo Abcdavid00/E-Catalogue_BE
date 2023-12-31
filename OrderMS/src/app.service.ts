@@ -382,5 +382,18 @@ export class AppService {
       },
     });
   }
+
+  getItems(param: {
+    ids: number[],
+  }) {
+    if (!param.ids) {
+      throw new RpcException('Item IDs is required');
+    }
+    return this.itemRepository.find({
+      where: {
+        id: In(param.ids),
+      },
+    })
+  }
   
 }

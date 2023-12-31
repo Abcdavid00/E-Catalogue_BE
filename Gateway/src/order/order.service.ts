@@ -185,4 +185,14 @@ export class OrderService {
             data: param
         })
     }
+
+    getItems(param: {
+        ids: number[],
+    }): Promise<any> {
+        console.log('Get items with orderMS param', param)
+        return this.send({
+            cmd: 'GetItems',
+            data: param
+        })
+    }
 }

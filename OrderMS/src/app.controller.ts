@@ -141,4 +141,11 @@ export class AppController {
   }) {
     return this.appService.getRatingByProductVariants(param);
   }
+
+  @MessagePattern({ cmd: 'GetItems' })
+  getItems(param: {
+    ids: number[],
+  }) {
+    return this.appService.getItems(param);
+  }
 }

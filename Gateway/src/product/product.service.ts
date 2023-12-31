@@ -376,7 +376,11 @@ export class ProductService {
         items: number[],
     }): Promise<any> {
 
-        const variants = await this.getProductVariants({ ids: param.items })
+        const items = await this.orderService.getItems({ ids: param.items })
+        if (items.length === 0) {
+            throw new BadRequestException('No items in cart')
+        }
+        const variants = await this.getProductVariants({ ids: items.map(item => item.product_variant) })
 
         const stores = []
         variants.forEach(variant => {
@@ -390,10 +394,6 @@ export class ProductService {
         }
 
         const store_id = stores[0]
-
-        console.log('Create order stores list:', stores)
-        console.log('Chosen store:', store_id)
-
 
         return this.orderService.createOrder({
             user_id: param.user_id,
