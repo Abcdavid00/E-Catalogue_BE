@@ -232,11 +232,12 @@ export class AppService {
       where: {
         id: id
       },
-      relations: [
-        'category',
-        'variants',
-        'images'
-      ]
+      relations: {
+        category: true,
+        variants: true,
+        images: true,
+        store: true
+      }
     });
     if (!product) {
       throw new RpcException('Product not found');
