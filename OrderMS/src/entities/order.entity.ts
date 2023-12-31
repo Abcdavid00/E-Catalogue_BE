@@ -36,5 +36,5 @@ export class Order {
     delivered_date: Date;
 
     @Column('datetime', {nullable: true})
-    cancelled_date: Date;
+    canceled_date: Date;
 }

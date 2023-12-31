@@ -4,7 +4,7 @@ export enum DeliverStatus {
     PENDING = 'pending',
     DELIVERING = 'delivering',
     DELIVERED = 'delivered',
-    CANCELLED = 'cancelled',
+    CANCELED = 'canceled',
 }
 
 export function parseDeliverStatus(status: string): DeliverStatus {

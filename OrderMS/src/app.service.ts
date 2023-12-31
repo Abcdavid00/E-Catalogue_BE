@@ -277,10 +277,18 @@ export class AppService {
       where: {
         id: param.id,
       },
+      relations: ['items'],
     });
     if (!order) {
       throw new RpcException('Order not found');
     }
+    if (order.deliver_status === 'delivered') {
+      throw new RpcException('Order has been delivered');
+    }
+    if (order.deliver_status === 'canceled') {
+      throw new RpcException('Order has been canceled');
+    }
+
     order.deliver_status = parseDeliverStatus(param.status);
     return this.orderRepository.save(order);
   }
@@ -307,11 +315,22 @@ export class AppService {
       where: {
         id: param.order_id,
       },
+      relations: ['items'],
     });
 
     if (!order) {
       throw new RpcException('Order not found');
     }
+    if (order.deliver_status !== 'delivered') {
+      throw new RpcException('Order has not been delivered');
+    }
+
+    const item = order.items.find(i => i.product_variant === param.product_variant);
+    if (!item) {
+      throw new RpcException('Item not found');
+    }
+
+
 
     const rating = await this.ratingRepository.findOne({
       where: {
@@ -357,6 +376,27 @@ export class AppService {
     });
   }
 
+  async getRatingByOrder(param: {
+    order_id: number,
+  }) {
+    if (!param.order_id) {
+      throw new RpcException('Order ID is required');
+    }
+    const order = await this.orderRepository.findOne({
+      where: {
+        id: param.order_id,
+      },
+    })
+    if (!order) {
+      throw new RpcException('Order not found');
+    }
+    return this.ratingRepository.find({
+      where: {
+        order: order,
+      },
+    });
+  }
+
   getRatingByProductVariant(param: {
     product_variant: number,
   }) {
@@ -367,6 +407,7 @@ export class AppService {
       where: {
         product_variant: param.product_variant,
       },
+      relations: ['order'],
     });
   }
 
@@ -380,6 +421,7 @@ export class AppService {
       where: {
         product_variant: In(param.product_variants)
       },
+      relations: ['order'],
     });
   }
 
