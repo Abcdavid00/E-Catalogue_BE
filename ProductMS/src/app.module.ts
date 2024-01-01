@@ -9,6 +9,9 @@ import { Brand } from './entities/brand.entity';
 import { ProductVariant } from './entities/product-variant.entity';
 import { ProductImage } from './entities/product-image.entity';
 import { Store } from './entities/store.entity';
+import { Style } from './entities/style.entity';
+import { Rectangle } from './entities/rectangle.entity';
+import { StyleImage } from './entities/style-image.entity';
 
 @Module({
   imports: [
@@ -21,7 +24,10 @@ import { Store } from './entities/store.entity';
       Store,
       Brand,
       ProductVariant,
-      ProductImage
+      ProductImage,
+      Style,
+      Rectangle,
+      StyleImage
     ]),
   ],
   controllers: [AppController],

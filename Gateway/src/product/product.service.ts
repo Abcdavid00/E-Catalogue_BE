@@ -135,6 +135,13 @@ export class ProductService {
             cmd: 'GetStoreById',
             data: { id }
         })
+        const productIds = store.products.map(product => product.id)
+        const products = await Promise.all(productIds.map(id => this.getProductById(id)))
+        let ratingCount = 0
+        products.forEach(product => {
+            ratingCount += product.ratings.length
+        })
+        store.ratingCount = ratingCount
         return this.addFollowerForStore(store)
     }
 
@@ -464,5 +471,121 @@ export class ProductService {
             return order;
         }));
         return orders
+    }
+
+    async createStyle(param: {
+        name: string,
+        category: string,
+        store: number,
+        mainImage: Express.Multer.File,
+        width: number,
+        height: number,
+        rectangles: {
+            minX: number,
+            minY: number,
+            maxX: number,
+            maxY: number,
+            variant: number
+        }[],
+    }): Promise<any> {
+        const mainImage = await this.fileServerService.uploadImage(param.mainImage);
+        return this.send({
+            cmd: 'CreateStyle',
+            data: {
+                name: param.name,
+                category: param.category,
+                store: param.store,
+                mainImage,
+                width: param.width,
+                height: param.height,
+                rectangles: param.rectangles
+            }
+        })
+    }
+
+    async updateStyle(param: {
+        id: number,
+        name?: string,
+        category?: string,
+        mainImage?: Express.Multer.File,
+        width?: number,
+        height?: number,
+        rectangles?: {
+            id?: number,
+            minX: number,
+            minY: number,
+            maxX: number,
+            maxY: number,
+            variant: number
+        }[]
+    }): Promise<any> {
+        let mainImage = undefined;
+        if (param.mainImage) {
+            mainImage = await this.fileServerService.uploadImage(param.mainImage);
+        }
+        return this.send({
+            cmd: 'UpdateStyle',
+            data: {
+                id: param.id,
+                name: param.name,
+                category: param.category,
+                mainImage: mainImage,
+                width: param.width,
+                height: param.height,
+                rectangles: param.rectangles
+            }
+        })
+    }
+
+    async addImageToStyle(param: {
+        style: number,
+        image: Express.Multer.File
+    }): Promise<any> {
+        const image = await this.fileServerService.uploadImage(param.image);
+        return this.send({
+            cmd: 'AddImageToStyle',
+            data: {
+                style: param.style,
+                image: image
+            }
+        })
+    }
+
+    async removeImageFromStyle(param: {
+        style: number,
+        image: string
+    }): Promise<any> {
+        return this.send({
+            cmd: 'RemoveImageFromStyle',
+            data: param
+        })
+    }
+
+    async getStyleById(param: {id: number}): Promise<any> {
+        return this.send({
+            cmd: 'GetStyleById',
+            data: param
+        })
+    }
+
+    async removeStyleById(param: {id: number}): Promise<any> {
+        return this.send({
+            cmd: 'RemoveStyleById',
+            data: param
+        })
+    }
+
+    async getStylesByStore(param: {storeId: number}): Promise<any> {
+        return this.send({
+            cmd: 'GetStylesByStore',
+            data: param
+        })
+    }
+
+    async getStylesByCategory(param: {category: string}): Promise<any> {
+        return this.send({
+            cmd: 'GetStylesByCategory',
+            data: param
+        })
     }
 }

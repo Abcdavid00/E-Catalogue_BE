@@ -1,5 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryColumn } from "typeorm";
 import { Product } from "./product.entity";
+import { Style } from "./style.entity";
 
 @Entity()
 export class Store {
@@ -23,6 +24,9 @@ export class Store {
 
     @OneToMany(() => Product, product => product.store)
     products?: Product[];
+
+    @OneToMany(() => Style, style => style.store)
+    styles?: Style[];
 
     @Column('boolean', { default: false })
     approved?: boolean;

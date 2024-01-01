@@ -117,16 +117,21 @@ export class AppService {
       throw new RpcException('Cart ID is required');
     }
 
-    const cart = await this.cartRepository.findOne({
-      where: {
-        id: param.id,
-      },
-      relations: ['items'],
-    });
-
-    if (cart) {
-      return cart;
+    try {
+      const cart = await this.cartRepository.findOne({
+        where: {
+          id: param.id,
+        },
+        relations: ['items'],
+      });
+      if (cart) {
+        return cart;
+      }
     }
+    catch (e) {
+      console.log(e);
+    }
+
     return this.createCart(param);
   }
 
@@ -241,12 +246,16 @@ export class AppService {
     if (!param.user_id) {
       throw new RpcException('User ID is required');
     }
-    return this.orderRepository.find({
+    const orders = await this.orderRepository.find({
       where: {
         user_id: param.user_id,
       },
       relations: ['items'],
     });
+    return Promise.all(orders.map(async order => {
+      const ratings = await this.getRatingByOrder({ order_id: order.id });
+      return { ...order, ratings };
+    }));
   }
 
   async getOrdersByStore(param: {
@@ -330,14 +339,20 @@ export class AppService {
       throw new RpcException('Item not found');
     }
 
+    order.items = undefined;
 
+    console.log('Order', order);
 
     const rating = await this.ratingRepository.findOne({
       where: {
-        order: order,
+        order: {
+          id: param.order_id,
+        },
         product_variant: param.product_variant,
       },
     });
+
+    console.log('Finding rating', rating)
 
     if (rating) {
       if (param.rate) {
@@ -392,7 +407,9 @@ export class AppService {
     }
     return this.ratingRepository.find({
       where: {
-        order: order,
+        order: {
+          id: param.order_id,
+        },
       },
     });
   }

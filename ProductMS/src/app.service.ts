@@ -11,6 +11,10 @@ import { mysqlConfig } from './config/mysql.module';
 import { ParseSize, Size } from './entities/size.enum';
 import { Color, ParseColor } from './entities/color.enum';
 import { Store } from './entities/store.entity';
+import { Style } from './entities/style.entity';
+import { Rectangle } from './entities/rectangle.entity';
+import { StyleImage } from './entities/style-image.entity';
+import { parseStyleCategory } from './entities/style-category.enum';
 
 @Injectable()
 export class AppService {
@@ -31,7 +35,13 @@ export class AppService {
     @InjectRepository(ProductImage)
     private readonly productImageRepository: Repository<ProductImage>,
     @InjectEntityManager(mysqlConfig)
-    private readonly entityManager: EntityManager
+    private readonly entityManager: EntityManager,
+    @InjectRepository(Style)
+    private readonly styleRepository: Repository<Style>,
+    @InjectRepository(Rectangle)
+    private readonly rectangleRepository: Repository<Rectangle>,
+    @InjectRepository(StyleImage)
+    private readonly styleImageRepository: Repository<StyleImage>,
   ) {
     // this.categoryTreeRepository = entityManager.getTreeRepository(Category);
   }
@@ -544,4 +554,266 @@ export class AppService {
       }
     });
   }
+
+  async createStyle(param: {
+    name: string,
+    category: string,
+    store: number,
+    mainImage: string,
+    width: number,
+    height: number,
+    rectangles: [{
+      minX: number,
+      minY: number,
+      maxX: number,
+      maxY: number,
+      variant: number
+    }],
+  }): Promise<Style> {
+    const store = await this.storeRepository.findOne({
+      where: {
+        id: param.store
+      }
+    });
+    if (!param.name) {
+      throw new RpcException('Name is required');
+    }
+    if (!store) {
+      throw new RpcException('Store not found');
+    }
+    const category = parseStyleCategory(param.category);
+    console.log("Rectangles:", param.rectangles)
+    const variantIds = param.rectangles.map(rect => rect.variant);
+    const variants = await this.getProductVariants({ids: variantIds});
+    if (variants.length !== variantIds.length) {
+      throw new RpcException('Variant not found');
+    }
+    const variantMap = {};
+    variants.forEach(variant => {
+      variantMap[variant.id] = variant;
+    });
+
+    const style: Style = this.styleRepository.create({
+      name: param.name,
+      category: category,
+      store: store,
+      mainImage: param.mainImage,
+      width: param.width,
+      height: param.height,
+      rectangles: param.rectangles.map(rect => {
+        return this.rectangleRepository.create({
+          minX: rect.minX,
+          minY: rect.minY,
+          maxX: rect.maxX,
+          maxY: rect.maxY,
+          variant: variantMap[rect.variant]
+        });
+      }),
+    });
+
+    return await this.styleRepository.save(style);
+  }
+
+  async updateStyle(param: {
+    id: number,
+    name?: string,
+    category?: string,
+    mainImage?: string,
+    width?: number,
+    height?: number,
+    rectangles?: {
+      id?: number,
+      minX: number,
+      minY: number,
+      maxX: number,
+      maxY: number,
+      variant: number
+    }[]
+  }): Promise<Style> {
+    const style = await this.styleRepository.findOne({
+      where: {
+        id: param.id
+      },
+      relations: {
+        store: true,
+        rectangles: {
+          variant: true
+        },
+        images: true
+      }
+    });
+    console.log("Style:", JSON.stringify(style, null, 2))
+    if (!style) {
+      throw new RpcException('Style not found');
+    }
+    if (param.name) {
+      style.name = param.name;
+    }
+    if (param.category) {
+      style.category = parseStyleCategory(param.category);
+    }
+    if (param.mainImage) {
+      style.mainImage = param.mainImage;
+    }
+    if (param.width) {
+      style.width = param.width;
+    }
+    if (param.height) {
+      style.height = param.height;
+    }
+    if (param.rectangles) {
+      const variantIds = param.rectangles.map(rect => rect.variant);
+      const variants = await this.getProductVariants({ids: variantIds});
+      if (variants.length !== variantIds.length) {
+        throw new RpcException('Variant not found');
+      }
+      const variantMap = {};
+      variants.forEach(variant => {
+        variantMap[variant.id] = variant;
+      });
+      style.rectangles = param.rectangles.map(rect => {
+        const rectangle = this.rectangleRepository.create({
+          id: rect?.id,
+          minX: rect.minX,
+          minY: rect.minY,
+          maxX: rect.maxX,
+          maxY: rect.maxY,
+          variant: variantMap[rect.variant]
+        });
+        rectangle.id = rect.id;
+        return rectangle;
+      });
+    }
+
+    console.log("Updating Style:", JSON.stringify(style, null, 2))
+
+    return this.styleRepository.save(style);
+  }
+
+  async addImageToStyle(param: {
+    style: number,
+    image: string
+  }): Promise<Style> {
+    const style = await this.styleRepository.findOne({
+      where: {
+        id: param.style
+      }
+    });
+    if (!style) {
+      throw new RpcException('Style not found');
+    }
+    const img = this.styleImageRepository.create({
+      style: style,
+      image: param.image
+    });
+    await this.styleImageRepository.save(img);
+    return await this.styleRepository.findOne({
+      where: {
+        id: param.style
+      },
+      relations: {
+        store: true,
+        rectangles: {
+          variant: true
+        },
+        images: true
+      }
+    });
+  }
+
+  async removeImageFromStyle(param: {
+    style: number,
+    image: string
+  }): Promise<Style> {
+    const style = await this.styleRepository.findOne({
+      where: {
+        id: param.style
+      }
+    });
+    if (!style) {
+      throw new RpcException('Style not found');
+    }
+    const img = await this.styleImageRepository.findOne({
+      where: {
+        style: style,
+        image: param.image
+      }
+    });
+    if (!img) {
+      throw new RpcException('Image not found');
+    }
+    await this.styleImageRepository.remove(img);
+    return await this.styleRepository.findOne({
+      where: {
+        id: param.style
+      },
+      relations: {
+        store: true,
+        rectangles: {
+          variant: true
+        },
+        images: true
+      }
+    });
+  }
+
+  async getStyleById(param: {id: number}): Promise<Style> {
+    return await this.styleRepository.findOne({
+      where: {
+        id: param.id
+      },
+      relations: {
+        store: true,
+        rectangles: {
+          variant: true
+        },
+        images: true
+      }
+    });
+  }
+
+  async removeStyleById(param: {id: number}): Promise<Style> {
+    const style = await this.styleRepository.findOne({
+      where: {
+        id: param.id
+      }
+    });
+    if (!style) {
+      throw new RpcException('Style not found');
+    }
+    return await this.styleRepository.remove(style);
+  }
+
+  async getStylesByStore(param: {storeId: number}): Promise<Style[]> {
+    return await this.styleRepository.find({
+      where: {
+        store: {
+          id: param.storeId
+        }
+      },
+      relations: {
+        store: true,
+        rectangles: {
+          variant: true
+        },
+        images: true
+      }
+    });
+  }
+
+  async getStylesByCategory(param: {category: string}): Promise<Style[]> {
+    return await this.styleRepository.find({
+      where: {
+        category: parseStyleCategory(param.category)
+      },
+      relations: {
+        store: true,
+        rectangles: {
+          variant: true
+        },
+        images: true
+      }
+    });
+  }
+
 }
