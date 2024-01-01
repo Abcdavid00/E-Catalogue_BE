@@ -1,20 +1,20 @@
-id,name,price
-58,Stretch fabric slim-fit suit trousers,1999000
-59,Stretch fabric super slim-fit suit trousers,1999000
-60,Stretch fabric slim-fit printed suit jacket ,4499000
-61,Stretch fabric slim-fit printed suit trousers,1999000
-62,Stretch fabric slim-fit printed suit jacket ,3199000
-63,Stretch fabric slim-fit suit trousers,1399000
-64,Stretch fabric slim-fit printed suit trousers,1399000
-65,Slim-fit houndstooth wool suit jacket,5499000
-66,Slim-fit houndstooth wool suit trousers,2499000
-67,Slim-fit pinstripe wool suit jacket,5499000
-68,Slim-fit pinstripe wool suit trousers,2499000
-69,Slim-fit wool suit jacket,5499000
-70,Wool slim-fit suit trousers,2499000
-71,Slim-fit check wool suit jacket,5499000
-72,Wool slim-fit check suit trousers,2499000
-73,Wool slim-fit suit trousers,2499000
-74,Stretch fabric slim-fit printed suit jacket ,3199000
-75,Stretch fabric slim-fit printed suit trousers,1399000
-76,Stretch fabric slim-fit suit trousers,1399000
+id,name,category,price
+58,Stretch fabric slim-fit suit trousers,"Men/Clothing/Suits/Trousers",1999000
+59,Stretch fabric super slim-fit suit trousers,"Men/Clothing/Suits/Trousers",1999000
+60,Stretch fabric slim-fit printed suit jacket,"Men/Clothing/Suits/Blazers",4499000
+61,Stretch fabric slim-fit printed suit trousers,"Men/Clothing/Suits/Trousers",1999000
+62,Stretch fabric slim-fit printed suit jacket,"Men/Clothing/Suits/Blazers",3199000
+63,Stretch fabric slim-fit suit trousers,"Men/Clothing/Suits/Trousers",1399000
+64,Stretch fabric slim-fit printed suit trousers,"Men/Clothing/Suits/Trousers",1399000
+65,Slim-fit houndstooth wool suit jacket,"Men/Clothing/Suits/Blazers",5499000
+66,Slim-fit houndstooth wool suit trousers,"Men/Clothing/Suits/Trousers",2499000
+67,Slim-fit pinstripe wool suit jacket,"Men/Clothing/Suits/Blazers",5499000
+68,Slim-fit pinstripe wool suit trousers,"Men/Clothing/Suits/Trousers",2499000
+69,Slim-fit wool suit jacket,"Men/Clothing/Suits/Blazers",5499000
+70,Wool slim-fit suit trousers,"Men/Clothing/Suits/Trousers",2499000
+71,Slim-fit check wool suit jacket,"Men/Clothing/Suits/Blazers",5499000
+72,Wool slim-fit check suit trousers,"Men/Clothing/Suits/Trousers",2499000
+73,Wool slim-fit suit trousers,"Men/Clothing/Suits/Trousers",2499000
+74,Stretch fabric slim-fit printed suit jacket,"Men/Clothing/Suits/Blazers",3199000
+75,Stretch fabric slim-fit printed suit trousers,"Men/Clothing/Suits/Trousers",1399000
+76,Stretch fabric slim-fit suit trousers,"Men/Clothing/Suits/Trousers",1399000

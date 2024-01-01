@@ -1,20 +1,20 @@
-id,name,price
-20,Turtleneck wool sweater,1799000
-21,Turtleneck wool sweater,1799000
-22,Fine-knit polo shirt,899000
-23,Striped fine-knit polo shirt,1199000
-24,Fine-knit polo shirt,899000
-25,Fine-knit polo shirt,899000
-26,Fine-knit polo shirt,899000
-27,Fine-knit polo shirt,899000
-28,Fine-knit polo shirt,899000
-29,Turtleneck wool sweater,1799000
-30,Long-sleeved cotton jersey polo shirt,899000
-31,Fine-knit polo shirt,899000
-32,Ribbed cotton polo shirt,899000
-33,Ribbed cotton polo shirt,899000
-34,Fine-knit polo shirt,899000
-35,Christmas jacquard sweater,1299000
-36,Polo collar wool sweater,1999000
-37,Ribbed knit polo shirt,1999000
-38,Fine modal-silk sweater,1999000
+id,name,category,price
+20,Turtleneck wool sweater,"Men/Clothing/Cardigans and sweaters",1799000
+21,Turtleneck wool sweater,"Men/Clothing/Cardigans and sweaters",1799000
+22,Fine-knit polo shirt,"Men/Clothing/Polos",899000
+23,Striped fine-knit polo shirt,"Men/Clothing/Polos",1199000
+24,Fine-knit polo shirt,"Men/Clothing/Polos",899000
+25,Fine-knit polo shirt,"Men/Clothing/Polos",899000
+26,Fine-knit polo shirt,"Men/Clothing/Polos",899000
+27,Fine-knit polo shirt,"Men/Clothing/Polos",899000
+28,Fine-knit polo shirt,"Men/Clothing/Polos",899000
+29,Turtleneck wool sweater,"Men/Clothing/Cardigans and sweaters",1799000
+30,Long-sleeved cotton jersey polo shirt,"Men/Clothing/Polos",899000
+31,Fine-knit polo shirt,"Men/Clothing/Polos",899000
+32,Ribbed cotton polo shirt,"Men/Clothing/Polos",899000
+33,Ribbed cotton polo shirt,"Men/Clothing/Polos",899000
+34,Fine-knit polo shirt,"Men/Clothing/Polos",899000
+35,Christmas jacquard sweater,"Men/Clothing/Cardigans and sweaters",1299000
+36,Polo collar wool sweater,"Men/Clothing/Cardigans and sweaters",1999000
+37,Ribbed knit polo shirt,"Men/Clothing/Polos",1999000
+38,Fine modal-silk sweater,"Men/Clothing/Cardigans and sweaters",1999000
