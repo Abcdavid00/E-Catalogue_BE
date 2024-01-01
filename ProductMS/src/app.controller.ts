@@ -164,4 +164,79 @@ export class AppController {
   getProductVariants(param: {ids: number[]}): Promise<ProductVariant[]> {
     return this.appService.getProductVariants(param);
   }
+
+  @MessagePattern({ cmd: 'CreateStyle' })
+  createStyle(param: {
+    name: string,
+    category: string,
+    store: number,
+    mainImage: string,
+    width: number,
+    height: number,
+    rectangles: [{
+      minX: number,
+      minY: number,
+      maxX: number,
+      maxY: number,
+      variant: number
+    }],
+  }): Promise<any> {
+    return this.appService.createStyle(param);
+  }
+
+  @MessagePattern({ cmd: 'UpdateStyle' })
+  updateStyle(param: {
+    id: number,
+    name?: string,
+    category?: string,
+    mainImage?: string,
+    width?: number,
+    height?: number,
+    rectangles?: {
+      id?: number,
+      minX: number,
+      minY: number,
+      maxX: number,
+      maxY: number,
+      variant: number
+    }[]
+  }): Promise<any> {
+    return this.appService.updateStyle(param);
+  }
+
+  @MessagePattern({ cmd: 'AddImageToStyle' })
+  addImageToStyle(param: {
+    style: number,
+    image: string
+  }): Promise<any> {
+    return this.appService.addImageToStyle(param);
+  }
+
+  @MessagePattern({ cmd: 'RemoveImageFromStyle' })
+  removeImageFromStyle(param: {
+    style: number,
+    image: string
+  }): Promise<any> {
+    return this.appService.removeImageFromStyle(param);
+  }
+
+  @MessagePattern({ cmd: 'GetStyleById' })
+  getStyleById(param: {id: number}): Promise<any> {
+    return this.appService.getStyleById(param);
+  }
+
+  @MessagePattern({ cmd: 'RemoveStyleById' })
+  removeStyleById(param: {id: number}): Promise<any> {
+    return this.appService.removeStyleById(param);
+  }
+
+  @MessagePattern({ cmd: 'GetStylesByStore' })
+  getStylesByStore(param: {storeId: number}): Promise<any> {
+    return this.appService.getStylesByStore(param);
+  }
+
+  @MessagePattern({ cmd: 'GetStylesByCategory' })
+  getStylesByCategory(param: {category: string}): Promise<any> {
+    return this.appService.getStylesByCategory(param);
+  }
 }
