@@ -135,6 +135,13 @@ export class ProductService {
             cmd: 'GetStoreById',
             data: { id }
         })
+        const productIds = store.products.map(product => product.id)
+        const products = await Promise.all(productIds.map(id => this.getProductById(id)))
+        let ratingCount = 0
+        products.forEach(product => {
+            ratingCount += product.ratings.length
+        })
+        store.ratingCount = ratingCount
         return this.addFollowerForStore(store)
     }
 
