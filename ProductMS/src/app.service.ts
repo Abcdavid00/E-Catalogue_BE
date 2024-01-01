@@ -436,7 +436,7 @@ export class AppService {
       variant.image = param.image || variant.image;
       variant.price = param.price || variant.price;
       variant.quantity = param.quantity || variant.quantity;
-      await this.calculateMinMaxPrice({productId: param.product});
+      await this.calculateMinMaxPrice({productId: product.id});
       return await this.productVariantRepository.save(variant);
     }
     if (!param.image) {
@@ -456,6 +456,7 @@ export class AppService {
       price: param.price,
       quantity: param.quantity
     });
+    console.log('Set new variant for product ' + product.id + ': ' + JSON.stringify(newVariant, null, 2));
     await this.calculateMinMaxPrice({productId: product.id});
     return await this.productVariantRepository.save(newVariant);
   }
