@@ -39,7 +39,7 @@ export class AuthService {
     }
 
     async generateTokens(user: any) {
-        const payload = { username: user.username, sub: user.id, role: user.role };
+        const payload = { username: user.username, sub: user.id, role: user.role, email: user.email };
         return {
             access_token: this.jwtService.sign(payload, { expiresIn: jwtExpiresIn }),
             refresh_token: this.jwtService.sign({...payload, isRefreshToken: true}, { expiresIn: jwtRefreshExpiresIn })
