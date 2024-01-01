@@ -643,7 +643,6 @@ export class ProductController {
             }
         }
     }})
-    @ApiQuery({ name: 'id', type: Number })
     async addImageToStyle(@Request() req, @Body() param: {
         style: number,
     }, @UploadedFile() image: Express.Multer.File): Promise<any> {
