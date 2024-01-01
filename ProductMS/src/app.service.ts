@@ -611,6 +611,8 @@ export class AppService {
       }),
     });
 
+    console.log("Creating Style:", JSON.stringify(style, null, 2))
+
     return await this.styleRepository.save(style);
   }
 
