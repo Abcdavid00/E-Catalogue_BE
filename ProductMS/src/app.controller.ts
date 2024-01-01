@@ -20,6 +20,14 @@ export class AppController {
     return this.appService.getHello();
   }
 
+  @MessagePattern({ cmd: 'VisitStore' })
+  visitStore(param: {
+    userId: number,
+    storeId: number,
+  }): Promise<any> {
+    return this.appService.visitStore(param);
+  }
+
   @MessagePattern({ cmd: 'CreateCategory' })
   createCategory(param: {
     name: string,

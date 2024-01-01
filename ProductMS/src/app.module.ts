@@ -12,6 +12,7 @@ import { Store } from './entities/store.entity';
 import { Style } from './entities/style.entity';
 import { Rectangle } from './entities/rectangle.entity';
 import { StyleImage } from './entities/style-image.entity';
+import { StoreVisitor } from './entities/store-visitor.entity';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { StyleImage } from './entities/style-image.entity';
       ProductImage,
       Style,
       Rectangle,
-      StyleImage
+      StyleImage,
+      StoreVisitor,
     ]),
   ],
   controllers: [AppController],

@@ -15,6 +15,27 @@ export class ProductController {
         private readonly productService: ProductService
     ) { }
 
+    @Post('visit_store')
+    @ApiOperation({ summary: 'Visit a store (User required)' })
+    @ApiTags('Store')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    @ApiBody({ schema: {
+        type: 'object',
+        properties: {
+            storeId: { type: 'number', nullable: false},
+        }
+    }})
+    async visitStore(@Request() req, @Body() param: {
+        storeId: number,
+    }): Promise<any> {
+        const id = req.user.id;
+        return this.productService.visitStore({
+            userId: id,
+            storeId: param.storeId,
+        });
+    }
+
     @Post('category')
     @Roles(UserRole.ADMIN)
     @ApiOperation({ summary: 'Create a category (admin required)' })

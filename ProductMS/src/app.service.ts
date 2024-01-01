@@ -15,6 +15,7 @@ import { Style } from './entities/style.entity';
 import { Rectangle } from './entities/rectangle.entity';
 import { StyleImage } from './entities/style-image.entity';
 import { parseStyleCategory } from './entities/style-category.enum';
+import { StoreVisitor } from './entities/store-visitor.entity';
 
 @Injectable()
 export class AppService {
@@ -42,12 +43,46 @@ export class AppService {
     private readonly rectangleRepository: Repository<Rectangle>,
     @InjectRepository(StyleImage)
     private readonly styleImageRepository: Repository<StyleImage>,
+    @InjectRepository(StoreVisitor)
+    private readonly storeVisitorRepository: Repository<StoreVisitor>,
   ) {
     // this.categoryTreeRepository = entityManager.getTreeRepository(Category);
   }
 
   getHello(): string {
     return 'ProductMS Online!';
+  }
+
+  async visitStore(param: {
+    userId: number,
+    storeId: number
+  }) {
+    console.log(`User ${param.userId} visit store ${param.storeId}`)
+    const visitor = await this.storeVisitorRepository.findOne({
+      where: {
+        userId: param.userId,
+        storeId: param.storeId
+      }
+    })
+    if (visitor) {
+      return 'Already visited';
+    }
+    const newVisitor = this.storeVisitorRepository.create({
+      userId: param.userId,
+      storeId: param.storeId
+    });
+    await this.storeVisitorRepository.save(newVisitor);
+    return 'Visited';
+  }
+
+  async countVisitor(param: {
+    storeId: number
+  }): Promise<number> {
+    return await this.storeVisitorRepository.count({
+      where: {
+        storeId: param.storeId
+      }
+    })
   }
 
   async createCategory(param: {
@@ -153,7 +188,7 @@ export class AppService {
     return await this.storeRepository.save(store);
   }
 
-  async getStoreById(id: number): Promise<Store> {
+  async getStoreById(id: number): Promise<any> {
     const store = await this.storeRepository.findOne({
       where: {
         id: id
@@ -167,7 +202,11 @@ export class AppService {
     if (!store) {
       throw new RpcException('Store not found');
     }
-    return store;
+    const visitors = await this.countVisitor({storeId: store.id});
+    return {
+      ...store,
+      visitors: visitors
+    };
   }
 
   async getAllUnapprovedStores(): Promise<Store[]> {
@@ -179,12 +218,19 @@ export class AppService {
     });
   }
 
-  async getAllApprovedStores(): Promise<Store[]> {
-    return await this.storeRepository.find({
+  async getAllApprovedStores(): Promise<any> {
+    const stores = await this.storeRepository.find({
       where: {
         approved: true
       }
     });
+    return await Promise.all(stores.map(async store => {
+      const visitors = await this.countVisitor({storeId: store.id});
+      return {
+        ...store,
+        visitors: visitors
+      }
+    }));
   }
 
   async approveStore(id: number): Promise<Store> {

@@ -35,6 +35,17 @@ export class ProductService {
             throw new BadRequestException('ProductMS: ' + error.message);
         }
     }
+
+    async visitStore(param: {
+        userId: number,
+        storeId: number,
+    }): Promise<any> {
+        return this.send({
+            cmd: 'VisitStore',
+            data: param
+        })
+    }
+
     async createCategory(param: {
         name: string,
         description?: string,
@@ -398,12 +409,19 @@ export class ProductService {
         contact_id: number,
         items: number[],
     }): Promise<any> {
-
         const items = await this.orderService.getItems({ ids: param.items })
         if (items.length === 0) {
             throw new BadRequestException('No items in cart')
         }
         const variants = await this.getProductVariants({ ids: items.map(item => item.product_variant) })
+        const variantIds = []
+        const variantMap = {}
+        variants.forEach(variant => {
+            if (!variantIds.includes(variant.id)) {
+                variantIds.push(variant.id)
+                variantMap[variant.id] = variant
+            }
+        })
 
         const stores = []
         variants.forEach(variant => {
@@ -411,6 +429,13 @@ export class ProductService {
                 stores.push(variant.product.store.id)
             }
         })
+
+        let totalPrice = 0
+        items.forEach(item => {
+            const variant = variantMap[item.product_variant]
+            totalPrice += variant.price * item.quantity
+        })
+        totalPrice *= 1.05
 
         if (stores.length > 1) {
             throw new BadRequestException('Cannot order from multiple stores')
@@ -423,6 +448,7 @@ export class ProductService {
             contact_id: param.contact_id,
             store_id: store_id,
             items: param.items,
+            total_price: totalPrice
         })
     }
 
