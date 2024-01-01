@@ -260,16 +260,21 @@ export class AppService {
   }): Promise<boolean> {
     const product = await this.productRepository.findOne({
       where: {
-        id: param.productId
+        id: param.productId,
+        store: {
+          id: param.storeId
+        }
       },
-      relations: [
-        'store'
-      ]
+      relations: {
+        store: true
+      }
     });
+    console.log("Check store has product", param.storeId, param.productId)
+    console.log("Product:", JSON.stringify(product, null, 2))
     if (!product) {
       throw new RpcException('Product not found');
     }
-    return product.store.id === param.storeId;
+    return !!product;
   }
 
   async editProduct(param: {
@@ -419,7 +424,7 @@ export class AppService {
       variant.image = param.image || variant.image;
       variant.price = param.price || variant.price;
       variant.quantity = param.quantity || variant.quantity;
-      this.calculateMinMaxPrice({productId: param.product});
+      await this.calculateMinMaxPrice({productId: param.product});
       return await this.productVariantRepository.save(variant);
     }
     if (!param.image) {

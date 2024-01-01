@@ -360,6 +360,7 @@ export class ProductController {
         quantity?: number,
     }, @UploadedFile() image: Express.Multer.File): Promise<any> {
         const storeId = req.user.id;
+        console.log(`{ storeId: ${storeId}, productId: ${product} }`)
         if (!(await this.productService.storeHas({
             storeId: storeId,
             productId: product
