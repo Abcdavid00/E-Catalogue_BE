@@ -377,6 +377,15 @@ export class ProductController {
         });
     }
 
+    @Get('price_update')
+    @Roles(UserRole.ADMIN)
+    @ApiOperation({ summary: 'Update price for all products (admin required)' })
+    @ApiTags('Product', 'Admin')
+    async updatePriceForAllProducts(): Promise<any> {
+        return this.productService.updatePriceForAllProducts();
+    }
+
+
     @Get('variant')
     @ApiOperation({ summary: 'Get a product variant' })
     @ApiTags('Product')

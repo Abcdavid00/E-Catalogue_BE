@@ -390,6 +390,18 @@ export class AppService {
     await this.productRepository.save(product);
   }
 
+  async updatePriceForAllProducts(): Promise<void> {
+    console.log("Updating price for all products...")
+    const products = await this.productRepository.find({
+      relations: [
+        'variants'
+      ]
+    });
+    for (const product of products) {
+      await this.calculateMinMaxPrice({productId: product.id});
+    }
+  }
+
   async setProductVariant(param: {
     product: number,
     size: string,
@@ -444,7 +456,7 @@ export class AppService {
       price: param.price,
       quantity: param.quantity
     });
-    await this.calculateMinMaxPrice({productId: param.product});
+    await this.calculateMinMaxPrice({productId: product.id});
     return await this.productVariantRepository.save(newVariant);
   }
 

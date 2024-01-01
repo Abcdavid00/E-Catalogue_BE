@@ -88,6 +88,11 @@ export class AppController {
     return this.appService.storeHas(param);
   }
 
+  @MessagePattern({ cmd: 'UpdatePriceForAllProducts' })
+  updatePriceForAllProducts(): Promise<void> {
+    return this.appService.updatePriceForAllProducts();
+  }
+
   @MessagePattern({ cmd: 'CreateProduct' })
   createProduct(param: {
     name: string,

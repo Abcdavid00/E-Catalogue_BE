@@ -178,6 +178,13 @@ export class ProductService {
         })
     }
 
+    async updatePriceForAllProducts(): Promise<void> {
+        return this.send({
+            cmd: 'UpdatePriceForAllProducts',
+            data: {}
+        })
+    }
+
     async createProduct(param: {
         name: string,
         description?: string,
