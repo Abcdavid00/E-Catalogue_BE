@@ -23,8 +23,8 @@ export class AppController {
   }
 
   @MessagePattern({ cmd: 'isEmailAvailable' })
-  async isEmailAvailable(email: string): Promise<boolean> {
-    return this.appService.isEmailAvailable(email);
+  async isEmailAvailable(param: {email: string}): Promise<boolean> {
+    return this.appService.isEmailAvailable(param.email);
   }
 
   @MessagePattern({ cmd: 'createUser' })
