@@ -586,7 +586,7 @@ export class AppService {
     console.log("Style category:", category)
 
     console.log("Rectangles:", param.rectangles)
-    const variantIds = param.rectangles.map(rect => rect.variant);
+    const variantIds = [...new Set(param.rectangles.map(rect => rect.variant))];
 
     console.log("Styles Variant IDs:", variantIds)
     const variants = await this.getProductVariants({ids: variantIds});
@@ -608,20 +608,26 @@ export class AppService {
       mainImage: param.mainImage,
       width: param.width,
       height: param.height,
-      rectangles: param.rectangles.map(rect => {
-        return this.rectangleRepository.create({
-          minX: rect.minX,
-          minY: rect.minY,
-          maxX: rect.maxX,
-          maxY: rect.maxY,
-          variant: variantMap[rect.variant]
-        });
-      }),
     });
 
     console.log("Creating Style:", JSON.stringify(style, null, 2))
 
-    return await this.styleRepository.save(style);
+    const savedStyle = await this.styleRepository.save(style);
+
+    const rectangles = await Promise.all(param.rectangles.map(rect => {
+      return this.rectangleRepository.save(this.rectangleRepository.create({
+        minX: rect.minX,
+        minY: rect.minY,
+        maxX: rect.maxX,
+        maxY: rect.maxY,
+        variant: variantMap[rect.variant],
+        style: savedStyle
+      }));
+    }));
+
+    console.log("Style Rectangles:", rectangles)
+
+    return savedStyle;
   }
 
   async updateStyle(param: {
@@ -646,9 +652,7 @@ export class AppService {
       },
       relations: {
         store: true,
-        rectangles: {
-          variant: true
-        },
+        rectangles: true,
         images: true
       }
     });
@@ -671,8 +675,19 @@ export class AppService {
     if (param.height) {
       style.height = param.height;
     }
+
+    console.log("Updating Style:", JSON.stringify(style, null, 2))
+
+    const newStyle = await this.styleRepository.save(style);
+
     if (param.rectangles) {
-      const variantIds = param.rectangles.map(rect => rect.variant);
+      console.log("Deleting old rectangles")
+      await this.rectangleRepository.delete({
+        style: style
+      });
+
+      const variantIds = [...new Set(param.rectangles.map(rect => rect.variant))];
+
       const variants = await this.getProductVariants({ids: variantIds});
       if (variants.length !== variantIds.length) {
         throw new RpcException('Variant not found');
@@ -681,23 +696,22 @@ export class AppService {
       variants.forEach(variant => {
         variantMap[variant.id] = variant;
       });
-      style.rectangles = param.rectangles.map(rect => {
-        const rectangle = this.rectangleRepository.create({
-          id: rect?.id,
+      
+      console.log("Creating new rectangles")
+      const rectangles = await Promise.all(param.rectangles.map(rect => {
+        return this.rectangleRepository.save(this.rectangleRepository.create({
           minX: rect.minX,
           minY: rect.minY,
           maxX: rect.maxX,
           maxY: rect.maxY,
-          variant: variantMap[rect.variant]
-        });
-        rectangle.id = rect.id;
-        return rectangle;
-      });
+          variant: variantMap[rect.variant],
+          style: newStyle
+        }));
+      }));
+      newStyle.rectangles = rectangles.map(rect => { return {...rect, style: undefined}});
     }
 
-    console.log("Updating Style:", JSON.stringify(style, null, 2))
-
-    return this.styleRepository.save(style);
+    return newStyle;
   }
 
   async addImageToStyle(param: {
