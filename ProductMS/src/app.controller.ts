@@ -244,4 +244,15 @@ export class AppController {
   getStylesByCategory(param: {category: string}): Promise<any> {
     return this.appService.getStylesByCategory(param);
   }
+
+  @MessagePattern({ cmd: 'FilterProducts' })
+  filterProducts(param: {
+    name?: string,
+    colors?: string[],
+    sizes?: string[],
+    minPrice?: number,
+    maxPrice?: number,
+  }): Promise<any> {
+    return this.appService.filterProducts(param);
+  }
 }

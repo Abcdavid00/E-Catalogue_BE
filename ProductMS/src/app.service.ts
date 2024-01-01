@@ -888,4 +888,29 @@ export class AppService {
     });
   }
 
+  async filterProducts(param: {
+    name?: string,
+    colors?: string[],
+    sizes?: string[],
+    minPrice?: number,
+    maxPrice?: number,
+  }) {
+    const sizes = param.sizes ? param.sizes.map(size => ParseSize(size)) : undefined;
+    const colors = param.colors ? param.colors.map(color => ParseColor(color)) : undefined;
+
+    const query = this.productRepository.createQueryBuilder('product')
+      .leftJoinAndSelect('product.variants', 'variant')
+      .leftJoinAndSelect('product.images', 'image')
+      .leftJoinAndSelect('product.category', 'category')
+      .leftJoinAndSelect('product.store', 'store')
+      .where('product.name LIKE :name', {name: `%${param.name || ''}%`})
+      .andWhere('product.minPrice >= :minPrice', {minPrice: param.minPrice || 0})
+      .andWhere('product.maxPrice <= :maxPrice', {maxPrice: param.maxPrice || 1000000000})
+      .andWhere('variant.size IN (:...sizes)', {sizes: sizes || [Size.XS, Size.S, Size.M, Size.L, Size.XL, Size.XXL]})
+      .andWhere('variant.color IN (:...colors)', {colors: colors || [Color.BLACKS, Color.WHITES, Color.REDS, Color.BLUES, Color.GREENS, Color.YELLOWS, Color.PINKS, Color.PURPLES, Color.ORANGES, Color.GREYS, Color.BEIGES, Color.BROWNS]})
+      .orderBy('product.id', 'DESC');
+
+    return await query.getMany();
+  }
+
 }

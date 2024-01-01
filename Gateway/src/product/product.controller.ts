@@ -731,4 +731,49 @@ export class ProductController {
         return this.productService.getStylesByCategory({ category: category });
     }
 
+    @Get('filter')
+    @ApiOperation({ summary: 'Get products by filter' })
+    @ApiTags('Product')
+    @ApiQuery({ name: 'name', type: String, required: false })
+    @ApiQuery({ name: 'colors', type: [String], required: false })
+    @ApiQuery({ name: 'sizes', type: [String], required: false })
+    @ApiQuery({ name: 'minPrice', type: Number, required: false })
+    @ApiQuery({ name: 'maxPrice', type: Number, required: false })
+    async filterProducts(
+        @Query('name') name: string,
+        @Query('colors') colors: string[],
+        @Query('sizes') sizes: string[],
+        @Query('minPrice') minPrice: number,
+        @Query('maxPrice') maxPrice: number
+    ): Promise<any> {
+        let colorsArray = undefined
+        let sizesArray = undefined
+        if (colors) {
+            console.log('Colors input: ' + colors)
+            if (JSON.stringify(colors)[0] != '[' && JSON.stringify(colors)[JSON.stringify(colors).length - 1] != ']') {
+                console.log('Make colors an array:',JSON.stringify(colors))
+                colorsArray = JSON.parse('['+JSON.stringify(colors)+']');
+            }
+        }
+        if (sizes) {
+            console.log('Sizes input: ' + sizes)
+            if (JSON.stringify(sizes)[0] != '[' && JSON.stringify(sizes)[JSON.stringify(sizes).length - 1] != ']') {
+                console.log('Make sizes an array:',JSON.stringify(sizes))
+                sizesArray = JSON.parse('['+JSON.stringify(sizes)+']');
+            }
+        }
+        console.log('Filtering products');
+        console.log('Name: ' + name);
+        console.log('Colors: ' + JSON.stringify(colorsArray));
+        console.log('Sizes: ' + JSON.stringify(sizesArray));
+        console.log('Min price: ' + minPrice);
+        console.log('Max price: ' + maxPrice);
+        return this.productService.filterProducts({
+            name: name,
+            colors: colorsArray,
+            sizes: sizesArray,
+            minPrice: minPrice,
+            maxPrice: maxPrice
+        });
+    }
 }

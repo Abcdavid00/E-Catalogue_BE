@@ -595,4 +595,17 @@ export class ProductService {
             data: param
         })
     }
+
+    async filterProducts(param: {
+        name?: string,
+        colors?: string[],
+        sizes?: string[],
+        minPrice?: number,
+        maxPrice?: number,
+    }): Promise<any> {
+        return this.send({
+            cmd: 'FilterProducts',
+            data: param
+        })
+    }
 }
