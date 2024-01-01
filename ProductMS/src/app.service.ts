@@ -82,7 +82,6 @@ export class AppService {
   async getAllCategories(): Promise<Category[]> {
 
     const res = await this.categoryTreeRepository.findTrees();
-    console.log(JSON.stringify(res, null, 2));
     return res;
   }
 
