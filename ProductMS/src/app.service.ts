@@ -614,8 +614,19 @@ export class AppService {
 
     const savedStyle = await this.styleRepository.save(style);
 
-    const rectangles = await Promise.all(param.rectangles.map(rect => {
-      return this.rectangleRepository.save(this.rectangleRepository.create({
+    // const rectangles = await Promise.all(param.rectangles.map(rect => {
+    //   return this.rectangleRepository.save(this.rectangleRepository.create({
+    //     minX: rect.minX,
+    //     minY: rect.minY,
+    //     maxX: rect.maxX,
+    //     maxY: rect.maxY,
+    //     variant: variantMap[rect.variant],
+    //     style: savedStyle
+    //   }));
+    // }));
+    const rectangles = [];
+    for (const rect of param.rectangles) {
+      const rectangle = await this.rectangleRepository.save(this.rectangleRepository.create({
         minX: rect.minX,
         minY: rect.minY,
         maxX: rect.maxX,
@@ -623,7 +634,8 @@ export class AppService {
         variant: variantMap[rect.variant],
         style: savedStyle
       }));
-    }));
+      rectangles.push(rectangle);
+    }
 
     console.log("Style Rectangles:", rectangles)
 
@@ -698,8 +710,19 @@ export class AppService {
       });
       
       console.log("Creating new rectangles")
-      const rectangles = await Promise.all(param.rectangles.map(rect => {
-        return this.rectangleRepository.save(this.rectangleRepository.create({
+      // const rectangles = await Promise.all(param.rectangles.map(rect => {
+      //   return this.rectangleRepository.save(this.rectangleRepository.create({
+      //     minX: rect.minX,
+      //     minY: rect.minY,
+      //     maxX: rect.maxX,
+      //     maxY: rect.maxY,
+      //     variant: variantMap[rect.variant],
+      //     style: newStyle
+      //   }));
+      // }));
+      const rectangles = [];
+      for (const rect of param.rectangles) {
+        const rectangle = await this.rectangleRepository.save(this.rectangleRepository.create({
           minX: rect.minX,
           minY: rect.minY,
           maxX: rect.maxX,
@@ -707,7 +730,8 @@ export class AppService {
           variant: variantMap[rect.variant],
           style: newStyle
         }));
-      }));
+        rectangles.push(rectangle);
+      }
       newStyle.rectangles = rectangles.map(rect => { return {...rect, style: undefined}});
     }
 
