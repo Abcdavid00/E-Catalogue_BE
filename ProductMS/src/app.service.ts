@@ -765,7 +765,9 @@ export class AppService {
       relations: {
         store: true,
         rectangles: {
-          variant: true
+          variant: {
+            product: true
+          }
         },
         images: true
       }
@@ -794,7 +796,9 @@ export class AppService {
       relations: {
         store: true,
         rectangles: {
-          variant: true
+          variant: {
+            product: true
+          }
         },
         images: true
       }
@@ -809,7 +813,9 @@ export class AppService {
       relations: {
         store: true,
         rectangles: {
-          variant: true
+          variant: {
+            product: true
+          }
         },
         images: true
       }
