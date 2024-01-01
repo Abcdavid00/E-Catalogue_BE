@@ -543,6 +543,7 @@ export class AppService {
   async getProductVariants(params: {
     ids: number[],
   }): Promise<ProductVariant[]> {
+    console.log("Getting product variants: ", params.ids)
     return this.productVariantRepository.find({
       where: {
         id: In(params.ids)
@@ -581,10 +582,17 @@ export class AppService {
     if (!store) {
       throw new RpcException('Store not found');
     }
+    console.log("Create Style in store:", store.id)
     const category = parseStyleCategory(param.category);
+    console.log("Style category:", category)
+
     console.log("Rectangles:", param.rectangles)
     const variantIds = param.rectangles.map(rect => rect.variant);
+
+    console.log("Styles Variant IDs:", variantIds)
     const variants = await this.getProductVariants({ids: variantIds});
+
+    console.log("Style Variants:", variants)
     if (variants.length !== variantIds.length) {
       throw new RpcException('Variant not found');
     }
@@ -592,6 +600,7 @@ export class AppService {
     variants.forEach(variant => {
       variantMap[variant.id] = variant;
     });
+    console.log("Style Variant Map:", variantMap)
 
     const style: Style = this.styleRepository.create({
       name: param.name,
