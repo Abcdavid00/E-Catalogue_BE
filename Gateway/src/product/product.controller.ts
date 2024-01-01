@@ -15,7 +15,7 @@ export class ProductController {
         private readonly productService: ProductService
     ) { }
 
-    @Post('visit_store')
+    @Post('store/visit')
     @ApiOperation({ summary: 'Visit a store (User required)' })
     @ApiTags('Store')
     @ApiBearerAuth()
@@ -33,6 +33,18 @@ export class ProductController {
         return this.productService.visitStore({
             userId: id,
             storeId: param.storeId,
+        });
+    }
+
+    @Get('store/income')
+    @ApiOperation({ summary: 'Get store income (Store owner required)' })
+    @ApiTags('Store', 'Store owner')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    async getStoreIncome(@Request() req): Promise<any> {
+        const id = req.user.id;
+        return this.productService.getStoreIncome({
+            storeId: id,
         });
     }
 

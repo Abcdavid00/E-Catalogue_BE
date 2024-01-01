@@ -46,6 +46,21 @@ export class ProductService {
         })
     }
 
+    async getStoreIncome(param: {
+        storeId: number
+    }): Promise<any> {
+        const store = await this.getStoreById(param.storeId)
+        if (!store) {
+            throw new BadRequestException('Store not found')
+        }
+        const orders = await this.orderService.getOrdersByStore({ store_id: param.storeId })
+        let income = 0
+        orders.forEach(order => {
+            income += order.total_price * 100 / 105
+        })
+        return income
+    }
+
     async createCategory(param: {
         name: string,
         description?: string,
